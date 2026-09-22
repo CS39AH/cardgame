@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Substitute Chaos</title>
+    <meta name="description" content="A school-themed deck-building card game. Survive the school day as a substitute teacher.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!--
+        =============================================================
+        SUBSTITUTE CHAOS — SPA SHELL
+        =============================================================
+        Single HTML file. The <main id="screen"> container holds the
+        current screen (title, combat, reward, gameover, etc.).
+        js/main.js swaps in the matching screens/<name>.html fragment
+        based on game state.
+
+        TEAMMATES: Don't edit index.html without team agreement.
+        Screen content goes in screens/<yourscreen>.html.
+        =============================================================
+    -->
+
+    <main id="screen">
+
+        <!-- Default screen: title (entry point) -->
+        <section class="title-screen">
+
+            <div class="title-screen__header">
+                <p class="title-screen__welcome">A Deck-Building Card Game</p>
+                <h1 class="title-screen__brand">Substitute Chaos</h1>
+                <p class="title-screen__subtitle">Survive the school day. Restore order. Escape before the bell.</p>
+            </div>
+
+            <div class="title-screen__art">
+                <img
+                    src="graphics/title/classroom.png"
+                    alt="A chaotic classroom with animated school supplies"
+                    class="title-screen__art-img"
+                    onerror="this.style.display='none'">
+                <div class="title-screen__art-placeholder">
+                    ✏️ 📏 📎 📚 ✂️
+                </div>
+            </div>
+
+            <div class="title-screen__menu">
+                <button id="btn-start" class="btn btn--primary">Start a New Day</button>
+                <button id="btn-continue" class="btn" hidden>Continue Your Day</button>
+                <button id="btn-how" class="btn btn--secondary">How to Play</button>
+                <button id="btn-credits" class="btn btn--secondary">Credits</button>
+            </div>
+
+            <div class="title-screen__footer">
+                <p>MSU Denver · CS 3980 · Fall 2026</p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="js/main.js" type="module"></script>
+</body>
+</html>

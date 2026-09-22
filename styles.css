@@ -1,0 +1,283 @@
+/* =========================================================
+   SUBSTITUTE CHAOS — SHARED THEME
+   ========================================================= */
+
+/* ---------- 1. DESIGN TOKENS ---------- */
+:root {
+    --color-bg-top:       #1e3a2b;
+    --color-bg-bottom:    #0f2418;
+    --color-chalk:        #f4f0e5;
+    --color-chalk-dim:    #c8c2b0;
+    --color-chalk-faint:  #8a8578;
+    --color-accent:       #ffd23f;
+    --color-danger:       #d94848;
+    --color-good:         #6ec96e;
+
+    --font-title:  'Kalam', 'Comic Sans MS', cursive;
+    --font-body:   'Special Elite', 'Courier New', monospace;
+
+    --size-brand:   clamp(3rem, 8vw, 5.5rem);
+    --size-h2:      clamp(1.5rem, 3vw, 2rem);
+    --size-lead:    clamp(1.125rem, 2vw, 1.375rem);
+    --size-body:    1.0625rem;
+    --size-small:   0.9375rem;
+
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+
+    --content-max: 720px;
+    --radius: 6px;
+    --radius-lg: 12px;
+
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- 2. BASE ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--color-chalk);
+    font-family: var(--font-body);
+    font-size: var(--size-body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+
+    position: relative;
+    overflow-x: hidden;
+
+    /* Base color under everything */
+    background-color: #0a1810;
+}
+
+/* =========================================================
+   CLASSROOM SCENE (pure CSS, no images)
+   =========================================================
+   Layer stack (bottom to top):
+     body            → deep dark green base
+     body::before    → chalkboard + warm light glow
+     body::after     → chalk dust particles + vignette
+     #screen content → title screen (sits above all layers)
+   ========================================================= */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+        /* Warm window glow, upper right — like afternoon sunlight through a window */
+        radial-gradient(
+            ellipse 60% 50% at 85% 20%,
+            rgba(255, 210, 63, 0.35) 0%,
+            rgba(255, 210, 63, 0.15) 30%,
+            transparent 70%
+        ),
+        /* Softer secondary glow, upper left — bounced light */
+        radial-gradient(
+            ellipse 40% 40% at 15% 30%,
+            rgba(255, 210, 63, 0.06) 0%,
+            transparent 60%
+        ),
+        /* Chalkboard vertical gradient — darker at bottom, lighter at top */
+        linear-gradient(
+            180deg,
+            #1e3a2b 0%,
+            #16302a 40%,
+            #0f2418 100%
+        );
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+
+    background:
+        /* Chalk dust particles — tiny scattered dots */
+        radial-gradient(1px 1px at 12% 22%, rgba(244, 240, 229, 0.4) 100%, transparent),
+        radial-gradient(1px 1px at 28% 47%, rgba(244, 240, 229, 0.3) 100%, transparent),
+        radial-gradient(1px 1px at 45% 15%, rgba(244, 240, 229, 0.4) 100%, transparent),
+        radial-gradient(1px 1px at 62% 68%, rgba(244, 240, 229, 0.3) 100%, transparent),
+        radial-gradient(1px 1px at 78% 33%, rgba(244, 240, 229, 0.4) 100%, transparent),
+        radial-gradient(1px 1px at 88% 78%, rgba(244, 240, 229, 0.3) 100%, transparent),
+        radial-gradient(1px 1px at 35% 82%, rgba(244, 240, 229, 0.4) 100%, transparent),
+        radial-gradient(1px 1px at 52% 55%, rgba(244, 240, 229, 0.3) 100%, transparent),
+        radial-gradient(2px 2px at 20% 65%, rgba(244, 240, 229, 0.25) 100%, transparent),
+        radial-gradient(2px 2px at 70% 12%, rgba(244, 240, 229, 0.25) 100%, transparent),
+        /* Vignette — darken the edges for a "spotlight on the title" effect */
+        radial-gradient(
+            ellipse at center,
+            transparent 0%,
+            transparent 40%,
+            rgba(0, 0, 0, 0.35) 100%
+        );
+
+    background-size:
+        400px 400px, 400px 400px, 400px 400px, 400px 400px,
+        400px 400px, 400px 400px, 400px 400px, 400px 400px,
+        400px 400px, 400px 400px,
+        100% 100%;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+/* ---------- 3. LAYOUT ---------- */
+#screen {
+    width: 100%;
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: var(--space-7) var(--space-4);
+}
+
+/* ---------- 4. TITLE SCREEN ---------- */
+.title-screen {
+    text-align: center;
+    display: grid;
+    gap: var(--space-6);
+    justify-items: center;
+}
+
+.title-screen__header {
+    margin-bottom: var(--space-4);
+}
+
+.title-screen__welcome {
+    font-family: var(--font-body);
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--color-chalk-faint);
+    font-size: var(--size-small);
+    margin: 0 0 var(--space-3);
+}
+
+.title-screen__brand {
+    font-family: var(--font-title);
+    font-size: var(--size-brand);
+    color: var(--color-chalk);
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--space-3);
+    transform: rotate(-1.5deg);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.title-screen__subtitle {
+    font-family: var(--font-body);
+    font-size: var(--size-lead);
+    color: var(--color-chalk-dim);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.title-screen__art {
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.25);
+    border: 2px dashed var(--color-chalk-faint);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+}
+
+.title-screen__art-img {
+    max-height: 100%;
+}
+
+.title-screen__art-placeholder {
+    font-size: 3rem;
+    letter-spacing: 0.3em;
+    opacity: 0.6;
+}
+
+.title-screen__menu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 100%;
+    max-width: 320px;
+}
+
+.title-screen__footer {
+    color: var(--color-chalk-faint);
+    font-size: var(--size-small);
+    margin-top: var(--space-6);
+}
+
+/* ---------- 5. BUTTONS ---------- */
+.btn {
+    display: inline-block;
+    padding: var(--space-3) var(--space-5);
+    background: transparent;
+    color: var(--color-chalk);
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: var(--size-lead);
+    border: 2px solid var(--color-chalk-dim);
+    border-radius: var(--radius);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:hover,
+.btn:focus-visible {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--color-chalk);
+    outline: none;
+}
+
+.btn--primary {
+    background: var(--color-accent);
+    color: var(--color-bg-bottom);
+    border-color: var(--color-accent);
+}
+
+.btn--primary:hover,
+.btn--primary:focus-visible {
+    background: #ffdd66;
+    border-color: #ffdd66;
+    box-shadow: var(--shadow-md);
+}
+
+.btn--secondary {
+    font-size: var(--size-body);
+    padding: var(--space-2) var(--space-4);
+    color: var(--color-chalk-dim);
+    border-color: var(--color-chalk-faint);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 600px) {
+    #screen {
+        padding: var(--space-5) var(--space-3);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
