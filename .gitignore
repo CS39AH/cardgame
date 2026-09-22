@@ -1,0 +1,36 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node (if you ever add a build step)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json.bak
+
+# Environment / secrets
+.env
+.env.local
+*.key
+
+# Build output (if you ever add a build step)
+dist/
+build/
+.cache/
+
+# Logs
+*.log
+logs/
+
+# Backup files
+*.bak
+*.orig
+*~
