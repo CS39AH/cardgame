@@ -90,13 +90,23 @@ body::before {
             rgba(255, 210, 63, 0.06) 0%,
             transparent 60%
         ),
-        /* Chalkboard vertical gradient — darker at bottom, lighter at top */
+        /* Chalkboard green tint over the photo (see-through so the classroom shows) */
         linear-gradient(
             180deg,
-            #1e3a2b 0%,
-            #16302a 40%,
-            #0f2418 100%
-        );
+            rgba(30, 58, 43, 0.80) 0%,
+            rgba(22, 48, 42, 0.84) 40%,
+            rgba(15, 36, 24, 0.92) 100%
+        ),
+        /* The classroom photo, at the very bottom */
+        url('graphics/title/classroom-bg.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    /* Blur the whole scene; scale up slightly so blurred edges don't show */
+    filter: blur(5px);
+    transform: scale(1.05);
 }
 
 body::after {
