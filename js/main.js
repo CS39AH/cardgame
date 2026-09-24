@@ -10,6 +10,18 @@
 (function () {
     'use strict';
 
+    // ------- DEMO CARD -------
+
+    const demoSlot = document.getElementById('demo-card');
+    const demoCard = SC.getCard('substitute-teacher');
+
+    if (demoSlot && demoCard) {
+        demoSlot.appendChild(SC.renderCard(demoCard));
+        demoSlot.classList.add('card-slot--filled');
+    }
+
+    // ------- TITLE SCREEN BUTTONS -------
+
     const btnStart = document.getElementById('btn-start');
     const btnContinue = document.getElementById('btn-continue');
     const btnHow = document.getElementById('btn-how');
