@@ -90,13 +90,23 @@ body::before {
             rgba(255, 210, 63, 0.06) 0%,
             transparent 60%
         ),
-        /* Chalkboard vertical gradient — darker at bottom, lighter at top */
+        /* Chalkboard green tint over the photo (see-through so the classroom shows) */
         linear-gradient(
             180deg,
-            #1e3a2b 0%,
-            #16302a 40%,
-            #0f2418 100%
-        );
+            rgba(30, 58, 43, 0.80) 0%,
+            rgba(22, 48, 42, 0.84) 40%,
+            rgba(15, 36, 24, 0.92) 100%
+        ),
+        /* The classroom photo, at the very bottom */
+        url('graphics/title/classroom-bg.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    /* Blur the whole scene; scale up slightly so blurred edges don't show */
+    filter: blur(5px);
+    transform: scale(1.05);
 }
 
 body::after {
@@ -138,6 +148,12 @@ img {
     height: auto;
     display: block;
 }
+
+/* Make sure the hidden attribute always wins over .btn display rules */
+[hidden] {
+    display: none !important;
+}
+
 /* ---------- 3. LAYOUT ---------- */
 #screen {
     width: 100%;
@@ -185,29 +201,6 @@ img {
     margin: 0 auto;
 }
 
-.title-screen__art {
-    width: 100%;
-    max-width: 400px;
-    aspect-ratio: 16 / 9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.25);
-    border: 2px dashed var(--color-chalk-faint);
-    border-radius: var(--radius-lg);
-    padding: var(--space-4);
-}
-
-.title-screen__art-img {
-    max-height: 100%;
-}
-
-.title-screen__art-placeholder {
-    font-size: 3rem;
-    letter-spacing: 0.3em;
-    opacity: 0.6;
-}
-
 .title-screen__menu {
     display: flex;
     flex-direction: column;
@@ -220,6 +213,54 @@ img {
     color: var(--color-chalk-faint);
     font-size: var(--size-small);
     margin-top: var(--space-6);
+}
+
+/* ---------- 4b. CARD STAGE + ORBITING SUPPLIES ---------- */
+
+/* Holds the card slot and the orbit. Extra vertical padding
+   gives the orbit room so it doesn't run into the subtitle
+   or the buttons. */
+.card-stage {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-block: 4rem;
+}
+
+/* Empty placeholder where the demo card will go later */
+.card-slot {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 16 / 9;
+    border: 2px dashed var(--color-chalk-faint);
+    border-radius: var(--radius-lg);
+    background: rgba(0, 0, 0, 0.25);
+}
+
+/* Zero-size anchor at the exact center of the stage.
+   Every orbiting item is positioned relative to this point. */
+.orbit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.orbit__item {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    line-height: 1;
+    user-select: none;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
 }
 
 /* ---------- 5. BUTTONS ---------- */
@@ -266,10 +307,139 @@ img {
     border-color: var(--color-chalk-faint);
 }
 
+/* ---------- 6. CARDS ---------- */
+
+/* Once a card is in the slot, drop the dashed placeholder look */
+.card-slot--filled {
+    border: none;
+    background: transparent;
+}
+
+/* Base card: a 3x5 index card */
+.card {
+    --card-paper: #fbf7ea;
+    --card-ink:   #2a2a35;
+    --card-line:  rgba(90, 130, 200, 0.22);
+    --card-red:   rgba(217, 72, 72, 0.6);
+    --card-type:  var(--color-chalk-faint);
+
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 36% 1fr;
+    border-radius: var(--radius);
+    overflow: hidden;
+    color: var(--card-ink);
+    text-align: left;
+
+    background:
+        /* Red header line under the card name */
+        linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 3rem,
+            var(--card-red) 3rem,
+            var(--card-red) calc(3rem + 2px),
+            transparent calc(3rem + 2px)
+        ),
+        /* Faint blue ruled lines */
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 1.6rem,
+            var(--card-line) 1.6rem,
+            var(--card-line) calc(1.6rem + 1px)
+        ),
+        var(--card-paper);
+
+    box-shadow: var(--shadow-md);
+    transform: rotate(-2deg);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: rotate(0deg) translateY(-6px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* Type colors: each card type gets its own accent */
+.card--attack { --card-type: var(--color-danger); }
+.card--defense { --card-type: #4a7bd0; }
+.card--skill { --card-type: #3f9a3f; }
+
+/* Cost bubble — highlighter yellow circle in the corner */
+.card__cost {
+    position: absolute;
+    top: var(--space-2);
+    left: var(--space-2);
+    z-index: 2;
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--card-ink);
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: 1.25rem;
+    border: 2px solid var(--card-ink);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transform: rotate(-8deg);
+}
+
+/* Art panel — left side */
+.card__art {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(3rem, 9vw, 4.5rem);
+    background: rgba(0, 0, 0, 0.04);
+    border-right: 2px dashed rgba(42, 42, 53, 0.2);
+}
+
+/* Text body — right side */
+.card__body {
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    flex-direction: column;
+}
+
+.card__name {
+    font-family: var(--font-title);
+    font-size: clamp(1.25rem, 3.5vw, 1.6rem);
+    color: var(--card-ink);
+    line-height: 1.2;
+    margin: 0 0 var(--space-3);
+    min-height: 2rem;
+}
+
+.card__type {
+    font-family: var(--font-body);
+    font-size: var(--size-small);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--card-type);
+    margin: 0 0 var(--space-2);
+}
+
+.card__description {
+    font-family: var(--font-body);
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+    line-height: 1.6;
+    margin: 0;
+}
+
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 600px) {
     #screen {
         padding: var(--space-5) var(--space-3);
+    }
+
+    .card-stage {
+        padding-block: 3rem;
     }
 }
 
