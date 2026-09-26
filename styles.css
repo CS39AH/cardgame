@@ -367,10 +367,10 @@ h1, h2, h3 {
         linear-gradient(
             to bottom,
             transparent 0,
-            transparent 3rem,
-            var(--card-red) 3rem,
-            var(--card-red) calc(3rem + 2px),
-            transparent calc(3rem + 2px)
+            transparent var(--card-header-line, 3rem),
+            var(--card-red) var(--card-header-line, 3rem),
+            var(--card-red) calc(var(--card-header-line, 3rem) + 2px),
+            transparent calc(var(--card-header-line, 3rem) + 2px)
         ),
         /* Faint blue ruled lines */
         repeating-linear-gradient(
@@ -627,6 +627,152 @@ h1, h2, h3 {
     height: 2.6rem;
     font-size: 1.4rem;
 }
+
+/* ---------- 6b. HERO CARD (title screen) ---------- */
+
+/* Wrapper so the lanyard and clip can hang outside the card */
+.hero-badge {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Striped lanyard running up and fading into the dark */
+.hero-badge::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 6px);
+    width: 22px;
+    height: 4rem;
+    transform: translateX(-50%);
+    background: repeating-linear-gradient(
+        to bottom,
+        #1e5bb8 0,
+        #1e5bb8 10px,
+        #2a6fd6 10px,
+        #2a6fd6 20px
+    );
+    border-left: 2px solid rgba(0, 0, 0, 0.25);
+    border-right: 2px solid rgba(0, 0, 0, 0.25);
+    -webkit-mask-image: linear-gradient(to top, #000 55%, transparent);
+    mask-image: linear-gradient(to top, #000 55%, transparent);
+}
+
+/* Metal lanyard clip */
+.hero-badge::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -22px;
+    z-index: 5;
+    width: 26px;
+    height: 26px;
+    transform: translateX(-50%);
+    border-radius: 6px 6px 4px 4px;
+    background: linear-gradient(180deg, #f2f2f2 0%, #b9bec6 45%, #8d939c 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        0 2px 4px rgba(0, 0, 0, 0.45);
+}
+
+/* The badge itself: hangs straight, white laminate edge */
+.card--hero {
+    --card-header-line: 4.6rem;   /* red line sits lower, below the strip */
+
+    padding-top: 1.6rem;           /* room for the STAFF strip */
+    transform: none;
+    border-radius: 10px;
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.85),
+        0 0 0 4px rgba(0, 0, 0, 0.15),
+        0 10px 28px rgba(0, 0, 0, 0.55);
+}
+
+.card--hero:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.95),
+        0 0 0 4px rgba(0, 0, 0, 0.15),
+        0 18px 36px rgba(0, 0, 0, 0.6);
+}
+
+/* STAFF · SUBSTITUTE strip across the top */
+.card__badge-strip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    height: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, #c62828 0%, #9e1f1f 100%);
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+}
+
+/* Move the cost bubble below the strip */
+.card--hero .card__cost {
+    top: calc(1.6rem + var(--space-2));
+}
+
+/* Holographic foil: a rainbow sheen drifting across the card */
+.card--hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+        115deg,
+        rgba(255, 80, 160, 0.35),
+        rgba(255, 210, 80, 0.35),
+        rgba(80, 255, 190, 0.35),
+        rgba(80, 170, 255, 0.35),
+        rgba(190, 90, 255, 0.35),
+        rgba(255, 80, 160, 0.35)
+    );
+    background-size: 300% 100%;
+    mix-blend-mode: overlay;
+    opacity: 0.7;
+    animation: foil-shift 7s linear infinite;
+}
+
+.card--hero:hover::after {
+    opacity: 1;
+    animation-duration: 3s;
+}
+
+@keyframes foil-shift {
+    from { background-position: 0% 50%; }
+    to   { background-position: 150% 50%; }
+}
+
+/* Laminate gloss: shine on the top-left corner, softer on the bottom-right */
+.card--hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 28%),
+        linear-gradient(315deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 20%);
+}
+
+/* Reduced motion: keep the foil, stop it drifting */
+@media (prefers-reduced-motion: reduce) {
+    .card--hero::after {
+        animation: none;
+    }
+}
+
 /* ---------- 7. CARDS SCREEN ---------- */
 
 /* The Cards screen gets more width than the title screen */

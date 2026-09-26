@@ -16,6 +16,9 @@ SC.renderCard = function (card) {
     const rarity = (card.rarity || 'Common').toLowerCase();
 
     el.className = 'card card--' + card.type.toLowerCase() + ' card--' + rarity;
+        if (card.hero) {
+        el.classList.add('card--hero');
+    }
     el.dataset.cardId = card.id;
 
     // Cost bubble (top-left corner)
@@ -87,6 +90,20 @@ SC.renderCard = function (card) {
         sticker.title = card.rarity;
         sticker.setAttribute('aria-label', card.rarity + ' card');
         el.appendChild(sticker);
+    }
+
+    // Hero card: staff ID badge strip, wrapped so the lanyard and clip
+    // can hang outside the card's edges
+    if (card.hero) {
+        const strip = document.createElement('div');
+        strip.className = 'card__badge-strip';
+        strip.textContent = card.badgeText || 'Staff';
+        el.appendChild(strip);
+
+        const badge = document.createElement('div');
+        badge.className = 'hero-badge';
+        badge.appendChild(el);
+        return badge;
     }
 
     return el;
