@@ -40,14 +40,23 @@ window.SC = window.SC || {};
         return ctx;
     }
 
-    // Unlock audio on the player's first click or key press
+     // Unlock audio on the player's first click, tap, or key press.
+    // Phones only count a tap once the finger lifts, so we listen
+    // for several events and stop once audio is running.
+    const UNLOCK_EVENTS = ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown'];
+
     function unlock() {
-        getContext();
-        window.removeEventListener('pointerdown', unlock);
-        window.removeEventListener('keydown', unlock);
+        const ac = getContext();
+        if (ac && ac.state === 'running') {
+            UNLOCK_EVENTS.forEach(function (type) {
+                window.removeEventListener(type, unlock);
+            });
+        }
     }
-    window.addEventListener('pointerdown', unlock);
-    window.addEventListener('keydown', unlock);
+
+    UNLOCK_EVENTS.forEach(function (type) {
+        window.addEventListener(type, unlock);
+    });
 
     // One second of random static, reused by every sound
     function getNoise(ac) {
