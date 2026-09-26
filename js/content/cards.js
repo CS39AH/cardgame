@@ -89,9 +89,14 @@ SC.cards = [
         name: 'Substitute Teacher',
         cost: 1,
         type: 'Attack',
-        art: '🧑‍🏫',
+        art: '🧑‍🏫',                                  // fallback if the image is missing
+        image: 'graphics/cards/teacher.png',
+        imageAlt: 'The substitute teacher',
+        imageScale: 1.1,
         description: 'Deal 1000 damage.',
         demo: true,
+        hero: true,
+        badgeText: 'Staff · Substitute',
         effects: [
             { type: 'damage', amount: 1000 }
         ]
