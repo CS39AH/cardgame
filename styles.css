@@ -36,6 +36,10 @@
 
     --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+
+    /* Where the chalkboard is in the classroom photo (used by the zoom) */
+    --board-x: 64%;
+    --board-y: 28%;
 }
 
 /* ---------- 2. BASE ---------- */
@@ -101,12 +105,27 @@ body::before {
         url('graphics/title/classroom-bg.jpg');
 
     background-size: cover;
-    background-position: center;
     background-repeat: no-repeat;
+
+    /* Anchor the photo on its chalkboard, and zoom toward that same spot.
+       This keeps the zoom aimed at the chalkboard on every screen size. */
+    background-position: var(--board-x) var(--board-y);
+    transform-origin: var(--board-x) var(--board-y);
 
     /* Blur the whole scene; scale up slightly so blurred edges don't show */
     filter: blur(5px);
     transform: scale(1.05);
+
+    transition:
+        transform 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+        filter 0.9s ease;
+    will-change: transform;
+}
+
+/* Zoomed in on the chalkboard (Cards screen) */
+body.scene--board::before {
+    transform: scale(2.8);
+    filter: blur(9px);
 }
 
 body::after {
@@ -147,6 +166,14 @@ img {
     max-width: 100%;
     height: auto;
     display: block;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-title);
+    font-weight: 700;
+    color: var(--color-chalk);
+    line-height: 1.1;
+    margin: 0 0 var(--space-4);
 }
 
 /* Make sure the hidden attribute always wins over .btn display rules */
@@ -269,6 +296,8 @@ img {
     padding: var(--space-3) var(--space-5);
     background: transparent;
     color: var(--color-chalk);
+    text-decoration: none;
+    text-align: center;
     font-family: var(--font-title);
     font-weight: 700;
     font-size: var(--size-lead);
@@ -432,6 +461,202 @@ img {
     margin: 0;
 }
 
+/* ---------- 7. CARDS SCREEN ---------- */
+
+/* The Cards screen gets more width than the title screen */
+#screen[data-screen="cards"] {
+    max-width: 1100px;
+}
+
+.cards-screen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.cards-screen__back {
+    align-self: flex-start;
+    color: var(--color-chalk-dim);
+    font-size: var(--size-small);
+    text-decoration: none;
+}
+
+.cards-screen__back:hover {
+    color: var(--color-chalk);
+}
+
+/* ----- The chalkboard -----
+   border-image slices the photo into 9 pieces so the wood frame
+   and chalk tray are never cropped, no matter the screen size.
+
+   The four --slice numbers are the frame thickness in the ORIGINAL
+   image's pixels (top, right, bottom, left). If the wood looks cut
+   off, or wood shows up inside the slate, nudge these numbers.
+   --frame scales how thick the frame is drawn on screen. */
+.chalkboard {
+    --slice-top: 32;
+    --slice-right: 36;
+    --slice-bottom: 84;
+    --slice-left: 39;
+    --frame: 0.7;
+
+    border-style: solid;
+    border-width:
+        calc(var(--slice-top) * 1px * var(--frame))
+        calc(var(--slice-right) * 1px * var(--frame))
+        calc(var(--slice-bottom) * 1px * var(--frame))
+        calc(var(--slice-left) * 1px * var(--frame));
+
+    border-image-source: url('graphics/screens/chalkboard.jpg');
+    border-image-slice:
+        var(--slice-top) var(--slice-right) var(--slice-bottom) var(--slice-left) fill;
+    border-image-repeat: stretch;
+
+    padding: var(--space-6) var(--space-6) var(--space-5);
+    text-align: center;
+
+    /* Board casts a shadow on the wall behind it */
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.5));
+}
+
+/* "Cards" written in chalk */
+.chalkboard__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    color: rgba(244, 240, 229, 0.9);
+    text-shadow:
+        0 0 1px rgba(255, 255, 255, 0.6),
+        0 0 8px rgba(255, 255, 255, 0.15);
+    margin: 0 0 var(--space-2);
+    transform: rotate(-1.5deg);
+}
+
+.chalkboard__subtitle {
+    color: rgba(244, 240, 229, 0.65);
+    font-size: var(--size-small);
+    margin: 0;
+}
+
+/* Slots laid out on the slate: 3 on top, 2 centered below */
+.chalkboard__cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-6) var(--space-5);
+    margin-top: var(--space-6);
+    padding-bottom: var(--space-4);
+}
+
+/* Empty slot drawn in chalk */
+.board-slot {
+    width: min(100%, 280px);
+    flex: 0 0 auto;
+    border-color: rgba(244, 240, 229, 0.45);
+    background: rgba(255, 255, 255, 0.03);
+    transform: rotate(var(--tilt, 0deg));
+}
+
+/* A magnet holding each slot to the board */
+.board-slot::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    z-index: 2;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at 35% 30%,
+        rgba(255, 255, 255, 0.65) 0,
+        rgba(255, 255, 255, 0.65) 15%,
+        var(--magnet, #c62828) 45%
+    );
+    box-shadow:
+        inset 0 -3px 4px rgba(0, 0, 0, 0.35),
+        0 3px 5px rgba(0, 0, 0, 0.45);
+    transform: translateX(-50%);
+}
+
+/* Each slot gets its own tilt and magnet color */
+.board-slot:nth-child(1) { --tilt: -2deg;   --magnet: #c62828; }
+.board-slot:nth-child(2) { --tilt: 1.5deg;  --magnet: #1e5bb8; }
+.board-slot:nth-child(3) { --tilt: -1deg;   --magnet: #e0a800; }
+.board-slot:nth-child(4) { --tilt: 2deg;    --magnet: #2e7d32; }
+.board-slot:nth-child(5) { --tilt: -1.5deg; --magnet: #c62828; }
+
+/* ---------- 8. SCREEN TRANSITIONS ---------- */
+
+/* Whole-screen fade (used when leaving the title screen) */
+#screen {
+    transition: opacity 0.2s ease;
+}
+
+#screen.is-fading {
+    opacity: 0;
+}
+
+/* Title screen fades in whenever it appears */
+.title-screen {
+    animation: fade-in 0.35s ease both;
+}
+
+/* Chalkboard grows out of the classroom's chalkboard.
+   --from-x / --from-y are set by main.js so it starts right
+   where the chalkboard is in the photo. */
+/* The room starts zooming first; the board follows 0.4s later */
+.chalkboard {
+    animation: board-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.4s both;
+}
+
+/* Board content and the back link fade in last */
+.chalkboard > *,
+.cards-screen__back {
+    animation: fade-in 0.35s ease 0.95s both;
+}
+
+/* Leaving the Cards screen: board shrinks back into the room */
+.cards-screen--leaving .chalkboard {
+    animation: board-out 0.45s ease-in both;
+}
+
+.cards-screen--leaving .chalkboard > *,
+.cards-screen--leaving .cards-screen__back {
+    animation: fade-out 0.15s ease both;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes fade-out {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+@keyframes board-in {
+    from {
+        opacity: 0;
+        transform: translate(var(--from-x, 0px), var(--from-y, 0px)) scale(0.3);
+    }
+    to {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+}
+
+@keyframes board-out {
+    from {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate(var(--from-x, 0px), var(--from-y, 0px)) scale(0.3);
+    }
+}
+
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 600px) {
     #screen {
@@ -441,6 +666,15 @@ img {
     .card-stage {
         padding-block: 3rem;
     }
+
+    .chalkboard {
+        --frame: 0.45;
+        padding: var(--space-5) var(--space-3) var(--space-4);
+    }
+
+    .board-slot {
+        width: min(100%, 300px);
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -449,5 +683,6 @@ img {
     *::after {
         transition-duration: 0.01ms !important;
         animation-duration: 0.01ms !important;
+        animation-delay: 0s !important;
     }
 }

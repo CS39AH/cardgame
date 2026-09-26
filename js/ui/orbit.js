@@ -6,8 +6,13 @@
    of the orbit (the "back") are smaller and fainter, items
    at the bottom (the "front") are bigger and brighter.
 
+   The router calls SC.startOrbit() when the title screen
+   shows and SC.stopOrbit() when it leaves.
+
    To add or remove supplies, edit the SUPPLIES list.
    ========================================================= */
+
+window.SC = window.SC || {};
 
 (function () {
     'use strict';
@@ -36,40 +41,21 @@
     const GAP_Y = 55;           // how far past the card's top/bottom the orbit goes
     const EDGE_MARGIN = 30;     // keep items this far from the screen edge
 
-    // ------- SETUP -------
+    // ------- STATE -------
 
-    const orbit = document.getElementById('orbit');
-    const slot = document.getElementById('demo-card');
-
-    if (!orbit || !slot) {
-        return; // not on the title screen
-    }
-
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // Build one element per supply, spaced evenly around the ellipse.
-    // Each gets its own random wobble so they don't move in lockstep.
-    const items = SUPPLIES.map(function (emoji, i) {
-        const el = document.createElement('span');
-        el.className = 'orbit__item';
-        el.textContent = emoji;
-        orbit.appendChild(el);
-
-        return {
-            el: el,
-            startAngle: (i / SUPPLIES.length) * Math.PI * 2,
-            radiusJitter: 0.92 + Math.random() * 0.16,
-            bobPhase: Math.random() * Math.PI * 2,
-            tiltDir: Math.random() < 0.5 ? -1 : 1
-        };
-    });
+    let items = [];
+    let slot = null;
+    let radiusX = 0;
+    let radiusY = 0;
+    let frameId = null;
+    let reduceMotion = false;
 
     // ------- SIZING -------
 
-    let radiusX = 0;
-    let radiusY = 0;
-
     function measure() {
+        if (!slot) {
+            return;
+        }
         const rect = slot.getBoundingClientRect();
         const maxX = window.innerWidth / 2 - EDGE_MARGIN;
 
@@ -110,26 +96,66 @@
 
     function loop(timeMs) {
         draw(timeMs);
-        requestAnimationFrame(loop);
+        frameId = requestAnimationFrame(loop);
     }
 
-    // ------- START -------
-
-    measure();
-
-    window.addEventListener('resize', function () {
+    function onResize() {
         measure();
         if (reduceMotion) {
             draw(0);
         }
-    });
-
-    if (reduceMotion) {
-        // Users who prefer less motion get the supplies placed
-        // around the card, but standing still.
-        draw(0);
-    } else {
-        requestAnimationFrame(loop);
     }
+
+    // ------- PUBLIC -------
+
+    SC.startOrbit = function () {
+        SC.stopOrbit();
+
+        const orbit = document.getElementById('orbit');
+        slot = document.getElementById('demo-card');
+
+        if (!orbit || !slot) {
+            return; // not on the title screen
+        }
+
+        reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Build one element per supply, spaced evenly around the ellipse.
+        // Each gets its own random wobble so they don't move in lockstep.
+        orbit.innerHTML = '';
+        items = SUPPLIES.map(function (emoji, i) {
+            const el = document.createElement('span');
+            el.className = 'orbit__item';
+            el.textContent = emoji;
+            orbit.appendChild(el);
+
+            return {
+                el: el,
+                startAngle: (i / SUPPLIES.length) * Math.PI * 2,
+                radiusJitter: 0.92 + Math.random() * 0.16,
+                bobPhase: Math.random() * Math.PI * 2,
+                tiltDir: Math.random() < 0.5 ? -1 : 1
+            };
+        });
+
+        measure();
+        window.addEventListener('resize', onResize);
+
+        if (reduceMotion) {
+            draw(0);
+        } else {
+            frameId = requestAnimationFrame(loop);
+        }
+    };
+
+    SC.stopOrbit = function () {
+        if (frameId !== null) {
+            cancelAnimationFrame(frameId);
+            frameId = null;
+        }
+        window.removeEventListener('resize', onResize);
+        items = [];
+        slot = null;
+    };
 
 })();

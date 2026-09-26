@@ -19,9 +19,9 @@
         SUBSTITUTE CHAOS — SPA SHELL
         =============================================================
         Single HTML file. The <main id="screen"> container holds the
-        current screen (title, combat, reward, gameover, etc.).
-        js/main.js swaps in the matching screens/<name>.html fragment
-        based on game state.
+        current screen. The title screen lives here by default; other
+        screens are loaded from screens/<name>.html by js/main.js
+        based on the URL hash (#cards, #combat, etc.).
 
         TEAMMATES: Don't edit index.html without team agreement.
         Screen content goes in screens/<yourscreen>.html.
@@ -43,7 +43,7 @@
                 <!-- Orbiting school supplies (filled in by js/ui/orbit.js) -->
                 <div id="orbit" class="orbit" aria-hidden="true"></div>
 
-                <!-- Empty slot for the demo card (coming later) -->
+                <!-- Slot for the demo card -->
                 <div id="demo-card" class="card-slot"></div>
             </div>
 
@@ -51,6 +51,7 @@
                 <button id="btn-start" class="btn btn--primary">Start a New Day</button>
                 <button id="btn-continue" class="btn" hidden>Continue Your Day</button>
                 <button id="btn-how" class="btn btn--secondary">How to Play</button>
+                <a href="#cards" class="btn btn--secondary">Cards</a>
                 <button id="btn-credits" class="btn btn--secondary">Credits</button>
             </div>
 
