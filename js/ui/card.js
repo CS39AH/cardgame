@@ -12,7 +12,10 @@ window.SC = window.SC || {};
 
 SC.renderCard = function (card) {
     const el = document.createElement('article');
-    el.className = 'card card--' + card.type.toLowerCase();
+    // Rarity: cards without one count as common
+    const rarity = (card.rarity || 'Common').toLowerCase();
+
+    el.className = 'card card--' + card.type.toLowerCase() + ' card--' + rarity;
     el.dataset.cardId = card.id;
 
     // Cost bubble (top-left corner)
@@ -75,6 +78,16 @@ SC.renderCard = function (card) {
     el.appendChild(cost);
     el.appendChild(art);
     el.appendChild(body);
+
+    // Star sticker for anything above common
+    if (rarity !== 'common') {
+        const sticker = document.createElement('div');
+        sticker.className = 'card__rarity';
+        sticker.textContent = '★';
+        sticker.title = card.rarity;
+        sticker.setAttribute('aria-label', card.rarity + ' card');
+        el.appendChild(sticker);
+    }
 
     return el;
 };

@@ -6,7 +6,7 @@
    from screens/<name>.html.
 
      #          → title screen
-     #cards     → screens/cards.html (zooms into the chalkboard)
+     #cards     → screens/cards.html (zooms into the chalkboards)
 
    Each screen change runs in two phases:
      1. leave()  — play the current screen's exit animation
@@ -46,6 +46,9 @@
 
     let currentScreen = null;
     let routeId = 0;
+
+    // Pending card-slam sounds, so they can be cancelled
+    let dealTimers = [];
 
     // ------- ROUTER -------
 
@@ -107,13 +110,17 @@
             return wait(TIMING.titleFadeOut);
         }
 
-                if (from === 'cards') {
-            // Room zooms back out while the board shrinks into it
+        if (from === 'cards') {
+            // Room zooms back out while the boards shrink into it
             closeCardZoom();
+            clearDealTimers();
+            document.body.classList.remove('scene--board');
+            document.body.style.removeProperty('--pan');
+
             if (SC.playSound) {
                 SC.playSound('whoosh');
             }
-            document.body.classList.remove('scene--board');
+
             const section = SCREEN.querySelector('.cards-screen');
             if (section) {
                 section.classList.add('cards-screen--leaving');
@@ -210,41 +217,92 @@
     // ------- CARDS SCREEN -------
 
     function setupCards() {
-        const board = SCREEN.querySelector('.chalkboard');
-        if (!board) {
+        const viewport = SCREEN.querySelector('.board-viewport');
+        const track = SCREEN.querySelector('.board-track');
+        const tabs = SCREEN.querySelectorAll('.board-tab');
+
+        if (!viewport || !track) {
             return;
         }
 
-        // Pin real cards into the slots, in the order they appear in cards.js.
-        // Cards marked demo: true (title screen only) are skipped.
-        const slots = SCREEN.querySelectorAll('.board-slot');
+        // Every playable card (demo cards stay on the title screen only)
         const boardCards = SC.cards.filter(function (card) {
             return !card.demo;
         });
 
-        boardCards.slice(0, slots.length).forEach(function (card, i) {
-            const el = SC.renderCard(card);
+        function rarityOf(card) {
+            return (card.rarity || 'Common').toLowerCase();
+        }
 
-            // Click (or Enter/Space) picks the card up for a closer look
-            el.tabIndex = 0;
-            el.addEventListener('click', function () {
-                openCardZoom(card);
-            });
-            el.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    openCardZoom(card);
-                }
+        // Build one chalkboard per tab, in tab order (left to right)
+        const boards = [];
+
+        tabs.forEach(function (tab, index) {
+            const rarity = tab.dataset.rarity;
+            const label = tab.textContent;
+            const list = boardCards.filter(function (card) {
+                return rarityOf(card) === rarity;
             });
 
-            slots[i].appendChild(el);
-            slots[i].classList.add('card-slot--filled');
+            tab.textContent = label + ' (' + list.length + ')';
+            tab.addEventListener('click', function () {
+                showBoard(index, true);
+            });
+
+            const board = buildBoard(rarity, label, list);
+            boards.push(board);
+            track.appendChild(board);
         });
 
-        // Make the board grow out of the photo's chalkboard.
-        // Work out how far the photo's chalkboard is from the board's
+        // Slide the wall so the chosen board is in view.
+        // When animate is true, the cards slam onto the new board.
+        function showBoard(index, animate) {
+            track.style.setProperty('--board-index', index);
+
+            // Shift the room behind a little, like walking along the wall
+            document.body.style.setProperty('--pan', index);
+
+            tabs.forEach(function (tab, i) {
+                const active = i === index;
+                tab.classList.toggle('board-tab--active', active);
+                tab.setAttribute('aria-selected', active);
+            });
+
+            // Off-screen boards can't be clicked or tabbed into
+            boards.forEach(function (board, i) {
+                board.inert = i !== index;
+                board.classList.remove('is-dealing');
+            });
+
+            clearDealTimers();
+
+            if (!animate) {
+                return;
+            }
+
+            // Restart the slam animation on the new board
+            const board = boards[index];
+            void board.offsetWidth;
+            board.classList.add('is-dealing');
+
+            // A thud for each card as it lands (matches the CSS timing)
+            const landed = board.querySelectorAll('.card-slot--filled');
+            landed.forEach(function (slot, i) {
+                const landAt = 450 + i * 120 + 270;
+                dealTimers.push(setTimeout(function () {
+                    if (SC.playSound) {
+                        SC.playSound('slam');
+                    }
+                }, landAt));
+            });
+        }
+
+        showBoard(0, false);
+
+        // Make the boards grow out of the photo's chalkboard.
+        // Work out how far the photo's chalkboard is from the viewport's
         // center, and hand that to the CSS animation as its start point.
-        const rect = board.getBoundingClientRect();
+        const rect = viewport.getBoundingClientRect();
         const rootStyles = getComputedStyle(document.documentElement);
         const boardX = (parseFloat(rootStyles.getPropertyValue('--board-x')) || 50) / 100;
         const boardY = (parseFloat(rootStyles.getPropertyValue('--board-y')) || 50) / 100;
@@ -254,8 +312,77 @@
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
 
-        board.style.setProperty('--from-x', (targetX - centerX) + 'px');
-        board.style.setProperty('--from-y', (targetY - centerY) + 'px');
+        viewport.style.setProperty('--from-x', (targetX - centerX) + 'px');
+        viewport.style.setProperty('--from-y', (targetY - centerY) + 'px');
+    }
+
+    // One chalkboard: rarity name, card count, and the pinned card slots
+    function buildBoard(rarity, label, list) {
+        const board = document.createElement('div');
+        board.className = 'chalkboard';
+        board.dataset.rarity = rarity;
+        board.setAttribute('role', 'tabpanel');
+        board.setAttribute('aria-label', label + ' cards');
+
+        const title = document.createElement('h2');
+        title.className = 'chalkboard__title';
+        title.textContent = label;
+
+        const subtitle = document.createElement('p');
+        subtitle.className = 'chalkboard__subtitle';
+        subtitle.textContent = list.length === 0
+            ? 'No cards yet.'
+            : list.length + (list.length === 1 ? ' card' : ' cards');
+
+        const grid = document.createElement('div');
+        grid.className = 'chalkboard__cards';
+
+        // Always at least 5 slots; more rows if a tier has more cards
+        const slotCount = Math.max(5, list.length);
+        for (let i = 0; i < slotCount; i++) {
+            const slot = document.createElement('div');
+            slot.className = 'card-slot board-slot';
+
+            if (list[i]) {
+                slot.appendChild(makeBoardCard(list[i]));
+                slot.classList.add('card-slot--filled');
+
+                // Order the card lands in when the board is dealt
+                slot.style.setProperty('--deal-order', i);
+            }
+
+            grid.appendChild(slot);
+        }
+
+        board.appendChild(title);
+        board.appendChild(subtitle);
+        board.appendChild(grid);
+
+        return board;
+    }
+
+    // A card pinned on the board that can be picked up for a closer look
+    function makeBoardCard(card) {
+        const el = SC.renderCard(card);
+
+        // Click (or Enter/Space) picks the card up
+        el.tabIndex = 0;
+        el.addEventListener('click', function () {
+            openCardZoom(card);
+        });
+        el.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openCardZoom(card);
+            }
+        });
+
+        return el;
+    }
+
+    function clearDealTimers() {
+        dealTimers.forEach(clearTimeout);
+        dealTimers = [];
     }
 
     // ------- CARD PICK-UP VIEW -------
