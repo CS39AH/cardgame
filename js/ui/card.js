@@ -21,11 +21,36 @@ SC.renderCard = function (card) {
     cost.textContent = card.cost;
     cost.setAttribute('aria-label', 'Cost ' + card.cost);
 
-    // Art panel (left side)
+       // Art panel (left side) — image if the card has one, emoji otherwise
     const art = document.createElement('div');
     art.className = 'card__art';
-    art.textContent = card.art;
-    art.setAttribute('aria-hidden', 'true');
+
+    if (card.image) {
+        art.classList.add('card__art--image');
+
+        const img = document.createElement('img');
+        img.className = 'card__image';
+        img.src = card.image;
+        img.alt = card.imageAlt || card.name;
+        // Optional per-card art adjustments from cards.js
+        if (card.imageRotate) {
+            img.style.setProperty('--art-rotate', card.imageRotate + 'deg');
+        }
+        if (card.imageScale) {
+            img.style.setProperty('--art-scale', card.imageScale);
+        }
+
+        // If the image fails to load, fall back to the emoji
+        img.addEventListener('error', function () {
+            art.classList.remove('card__art--image');
+            art.textContent = card.art;
+        });
+
+        art.appendChild(img);
+    } else {
+        art.textContent = card.art;
+        art.setAttribute('aria-hidden', 'true');
+    }
 
     // Text body (right side)
     const body = document.createElement('div');
