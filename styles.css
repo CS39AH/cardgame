@@ -461,11 +461,28 @@ h1, h2, h3 {
     margin: 0;
 }
 
+/* Card art images */
+.card__art--image {
+    padding: 0;
+}
+
+.card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+
+    /* Per-card adjustments set in cards.js (imageRotate, imageScale) */
+    transform: rotate(var(--art-rotate, 0deg)) scale(var(--art-scale, 1));
+
+    /* Makes any white background in the image disappear into the
+       card paper. Harmless if the image is already transparent. */
+    mix-blend-mode: multiply;
+}
 /* ---------- 7. CARDS SCREEN ---------- */
 
 /* The Cards screen gets more width than the title screen */
 #screen[data-screen="cards"] {
-    max-width: 1100px;
+    max-width: 1300px;
 }
 
 .cards-screen {
@@ -549,7 +566,7 @@ h1, h2, h3 {
 
 /* Empty slot drawn in chalk */
 .board-slot {
-    width: min(100%, 280px);
+    width: min(100%, 340px);
     flex: 0 0 auto;
     border-color: rgba(244, 240, 229, 0.45);
     background: rgba(255, 255, 255, 0.03);
@@ -584,6 +601,108 @@ h1, h2, h3 {
 .board-slot:nth-child(3) { --tilt: -1deg;   --magnet: #e0a800; }
 .board-slot:nth-child(4) { --tilt: 2deg;    --magnet: #2e7d32; }
 .board-slot:nth-child(5) { --tilt: -1.5deg; --magnet: #c62828; }
+
+/* Cards pinned on the board: smaller text to fit the smaller slots.
+   The slot is already tilted, so the card itself sits straight. */
+.board-slot .card {
+    transform: none;
+}
+
+.board-slot .card:hover {
+    transform: translateY(-4px);
+}
+
+.board-slot .card__art {
+    font-size: 3.5rem;
+}
+
+.board-slot .card__body {
+    padding: var(--space-2) var(--space-3);
+}
+
+.board-slot .card__name {
+    font-size: 1.35rem;
+    min-height: 0;
+    margin-bottom: var(--space-2);
+}
+
+.board-slot .card__type {
+    font-size: 0..8rem;
+    margin-bottom: var(--space-1);
+}
+
+.board-slot .card__description {
+    font-size: 1rem;
+    line-height: 1.45;
+}
+
+.board-slot .card__cost {
+    width: 1.9rem;
+    height: 1.9rem;
+    font-size: 1.05rem;
+}
+
+/* Cards on the board can be clicked to pick them up */
+.board-slot .card {
+    cursor: zoom-in;
+}
+
+/* ----- Picked-up card: big view in the center of the screen ----- */
+.card-zoom {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: rgba(5, 15, 10, 0.7);
+    backdrop-filter: blur(3px);
+    cursor: zoom-out;
+    animation: fade-in 0.2s ease both;
+}
+
+.card-zoom__frame {
+    width: min(92vw, 600px);
+    aspect-ratio: 16 / 9;
+    animation: card-pop 0.25s cubic-bezier(0.2, 0.8, 0.2, 1.2) both;
+}
+
+.card-zoom__hint {
+    color: var(--color-chalk-dim);
+    font-size: var(--size-small);
+    margin: 0;
+}
+
+/* Bigger text to match the bigger card */
+.card-zoom .card__art {
+    font-size: 5rem;
+}
+
+.card-zoom .card__name {
+    font-size: 1.8rem;
+}
+
+.card-zoom .card__type {
+    font-size: 1rem;
+}
+
+.card-zoom .card__description {
+    font-size: 1.3rem;
+}
+
+.card-zoom .card__cost {
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 1.5rem;
+}
+
+@keyframes card-pop {
+    from { transform: scale(0.6); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
 
 /* ---------- 8. SCREEN TRANSITIONS ---------- */
 

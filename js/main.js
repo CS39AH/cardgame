@@ -101,7 +101,7 @@
 
     function leave(from) {
         if (from === 'title') {
-            // Step 1: title content fades out
+            // Title content fades out
             SC.stopOrbit();
             SCREEN.classList.add('is-fading');
             return wait(TIMING.titleFadeOut);
@@ -109,6 +109,7 @@
 
         if (from === 'cards') {
             // Room zooms back out while the board shrinks into it
+            closeCardZoom();
             document.body.classList.remove('scene--board');
             const section = SCREEN.querySelector('.cards-screen');
             if (section) {
@@ -129,7 +130,7 @@
             ? 'Substitute Chaos'
             : capitalize(name) + ' — Substitute Chaos';
 
-        // Step 2: zoom the room toward the chalkboard (only for Cards)
+        // Zoom the room toward the chalkboard (only for Cards)
         document.body.classList.toggle('scene--board', name === 'cards');
 
         window.scrollTo(0, 0);
@@ -201,14 +202,40 @@
     // ------- CARDS SCREEN -------
 
     function setupCards() {
-        // Step 3: make the board grow out of the photo's chalkboard.
-        // Work out how far the photo's chalkboard is from the board's
-        // center, and hand that to the CSS animation as its start point.
         const board = SCREEN.querySelector('.chalkboard');
         if (!board) {
             return;
         }
 
+        // Pin real cards into the slots, in the order they appear in cards.js.
+        // Cards marked demo: true (title screen only) are skipped.
+        const slots = SCREEN.querySelectorAll('.board-slot');
+        const boardCards = SC.cards.filter(function (card) {
+            return !card.demo;
+        });
+
+        boardCards.slice(0, slots.length).forEach(function (card, i) {
+            const el = SC.renderCard(card);
+
+            // Click (or Enter/Space) picks the card up for a closer look
+            el.tabIndex = 0;
+            el.addEventListener('click', function () {
+                openCardZoom(card);
+            });
+            el.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openCardZoom(card);
+                }
+            });
+
+            slots[i].appendChild(el);
+            slots[i].classList.add('card-slot--filled');
+        });
+
+        // Make the board grow out of the photo's chalkboard.
+        // Work out how far the photo's chalkboard is from the board's
+        // center, and hand that to the CSS animation as its start point.
         const rect = board.getBoundingClientRect();
         const rootStyles = getComputedStyle(document.documentElement);
         const boardX = (parseFloat(rootStyles.getPropertyValue('--board-x')) || 50) / 100;
@@ -221,6 +248,48 @@
 
         board.style.setProperty('--from-x', (targetX - centerX) + 'px');
         board.style.setProperty('--from-y', (targetY - centerY) + 'px');
+    }
+
+    // ------- CARD PICK-UP VIEW -------
+
+    function openCardZoom(card) {
+        closeCardZoom();
+
+        const overlay = document.createElement('div');
+        overlay.className = 'card-zoom';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-label', card.name);
+
+        const frame = document.createElement('div');
+        frame.className = 'card-zoom__frame';
+        frame.appendChild(SC.renderCard(card));
+
+        const hint = document.createElement('p');
+        hint.className = 'card-zoom__hint';
+        hint.textContent = 'Click anywhere to put it back';
+
+        overlay.appendChild(frame);
+        overlay.appendChild(hint);
+
+        // Click anywhere or press Escape to close
+        overlay.addEventListener('click', closeCardZoom);
+        document.addEventListener('keydown', onZoomKey);
+
+        SCREEN.appendChild(overlay);
+    }
+
+    function closeCardZoom() {
+        const overlay = document.querySelector('.card-zoom');
+        if (overlay) {
+            overlay.remove();
+        }
+        document.removeEventListener('keydown', onZoomKey);
+    }
+
+    function onZoomKey(e) {
+        if (e.key === 'Escape') {
+            closeCardZoom();
+        }
     }
 
     // ------- HELPERS -------
