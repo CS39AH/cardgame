@@ -124,7 +124,7 @@ body::before {
 
 /* Zoomed in on the chalkboard (Cards screen) */
 body.scene--board::before {
-    transform: scale(2.8);
+    transform: scale(2.8) translateX(calc(var(--pan, 0) * -3%));
     filter: blur(9px);
 }
 
@@ -396,6 +396,7 @@ h1, h2, h3 {
 .card--attack { --card-type: var(--color-danger); }
 .card--defense { --card-type: #4a7bd0; }
 .card--skill { --card-type: #3f9a3f; }
+.card--power { --card-type: #8a4fc7; }
 
 /* Cost bubble — highlighter yellow circle in the corner */
 .card__cost {
@@ -478,6 +479,154 @@ h1, h2, h3 {
        card paper. Harmless if the image is already transparent. */
     mix-blend-mode: multiply;
 }
+
+/* ----- Rarity ----- */
+
+/* Uncommon: green card stock, thin green outline, soft glow */
+.card--uncommon {
+    --card-paper: #eaf6e6;
+    --card-line:  rgba(70, 150, 70, 0.28);
+    --rarity-color: #3f9a3f;
+
+    box-shadow:
+        0 0 0 3px var(--rarity-color),
+        0 0 16px rgba(63, 154, 63, 0.45),
+        var(--shadow-md);
+}
+
+.card--uncommon:hover {
+    box-shadow:
+        0 0 0 3px var(--rarity-color),
+        0 0 40px rgba(63, 154, 63, 0.7),
+        0 14px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* Bigger glow in the pick-up view so it scales with the card */
+.card-zoom .card--uncommon {
+    box-shadow:
+        0 0 0 5px var(--rarity-color),
+        0 0 32px rgba(63, 154, 63, 0.55),
+        var(--shadow-md);
+}
+
+/* Rare: blue card stock, blue edge glow */
+.card--rare {
+    --card-paper: #e6f0fc;
+    --card-line:  rgba(60, 110, 200, 0.3);
+    --rarity-color: #3a78e0;
+
+    box-shadow:
+        0 0 0 4px var(--rarity-color),
+        0 0 28px rgba(58, 120, 224, 0.55),
+        var(--shadow-md);
+}
+
+.card--rare:hover {
+    box-shadow:
+        0 0 0 4px var(--rarity-color),
+        0 0 70px rgba(58, 120, 224, 0.8),
+        0 14px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* Bigger glow in the pick-up view so it scales with the card */
+.card-zoom .card--rare {
+    box-shadow:
+        0 0 0 6px var(--rarity-color),
+        0 0 56px rgba(58, 120, 224, 0.6),
+        var(--shadow-md);
+}
+
+/* Legendary: gold card stock, big gold glow, gold shine sweep */
+.card--legendary {
+    --card-paper: #fff4d6;
+    --card-line:  rgba(200, 150, 30, 0.3);
+    --rarity-color: #e0a800;
+
+    box-shadow:
+        0 0 0 4px var(--rarity-color),
+        0 0 34px rgba(255, 196, 0, 0.6),
+        var(--shadow-md);
+}
+
+.card--legendary:hover {
+    box-shadow:
+        0 0 0 4px var(--rarity-color),
+        0 0 80px rgba(255, 196, 0, 0.85),
+        0 14px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* Bigger glow in the pick-up view so it scales with the card */
+.card-zoom .card--legendary {
+    box-shadow:
+        0 0 0 6px var(--rarity-color),
+        0 0 68px rgba(255, 196, 0, 0.65),
+        var(--shadow-md);
+}
+
+/* A streak of gold light slides across the card every few seconds */
+.card--legendary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+        115deg,
+        transparent 35%,
+        rgba(255, 255, 255, 0.6) 48%,
+        rgba(255, 220, 120, 0.4) 52%,
+        transparent 65%
+    );
+    transform: translateX(-120%);
+    animation: legendary-shine 4s ease-in-out infinite;
+}
+
+@keyframes legendary-shine {
+    0%        { transform: translateX(-120%); }
+    35%, 100% { transform: translateX(120%); }
+}
+
+/* Reduced motion: keep the gold look, skip the shine */
+@media (prefers-reduced-motion: reduce) {
+    .card--legendary::after {
+        display: none;
+    }
+}
+
+/* Star sticker in the corner (uses each rarity's color) */
+.card__rarity {
+    position: absolute;
+    right: var(--space-2);
+    bottom: var(--space-2);
+    z-index: 2;
+    width: 1.9rem;
+    height: 1.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at 30% 25%,
+        rgba(255, 255, 255, 0.55) 0,
+        rgba(255, 255, 255, 0.55) 6%,
+        var(--rarity-color, #888) 35%
+    );
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1;
+    box-shadow:
+        inset 0 -2px 3px rgba(0, 0, 0, 0.3),
+        0 2px 4px rgba(0, 0, 0, 0.35);
+    transform: rotate(12deg);
+}
+
+/* Bigger sticker in the pick-up view */
+.card-zoom .card__rarity {
+    width: 2.6rem;
+    height: 2.6rem;
+    font-size: 1.4rem;
+}
 /* ---------- 7. CARDS SCREEN ---------- */
 
 /* The Cards screen gets more width than the title screen */
@@ -501,6 +650,49 @@ h1, h2, h3 {
 .cards-screen__back:hover {
     color: var(--color-chalk);
 }
+
+/* "Cards" title and tabs sit on the wall above the boards */
+.cards-screen__header {
+    text-align: center;
+}
+
+.cards-screen__title {
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    color: rgba(244, 240, 229, 0.92);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    margin: 0;
+    transform: rotate(-1.5deg);
+}
+
+/* The window the boards slide behind. Clips left/right only,
+   so the boards' shadows still show underneath. */
+.board-viewport {
+    --board-gap: 4rem;
+    overflow-x: clip;
+    padding-bottom: var(--space-5);
+}
+
+/* All four boards in a row; --board-index (set by main.js)
+   picks which one is in view */
+.board-track {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--board-gap);
+    transform: translateX(
+        calc(var(--board-index, 0) * -1 * (100% + var(--board-gap)))
+    );
+    transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.board-track .chalkboard {
+    flex: 0 0 100%;
+    min-width: 0;
+}
+
+/* Each board's name is written in its rarity color */
+.chalkboard[data-rarity="uncommon"]  .chalkboard__title { color: #9be09b; }
+.chalkboard[data-rarity="rare"]      .chalkboard__title { color: #9cc3ff; }
+.chalkboard[data-rarity="legendary"] .chalkboard__title { color: #ffd966; }
 
 /* ----- The chalkboard -----
    border-image slices the photo into 9 pieces so the wood frame
@@ -554,6 +746,101 @@ h1, h2, h3 {
     margin: 0;
 }
 
+/* Rarity tabs written in chalk across the board */
+.chalkboard__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2) var(--space-5);
+    margin-top: var(--space-5);
+}
+
+.board-tab {
+    --tab-color: rgba(244, 240, 229, 0.95);
+
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: var(--space-1) var(--space-2);
+    cursor: pointer;
+
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+    color: rgba(244, 240, 229, 0.5);
+
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Each tab lights up in its rarity color */
+.board-tab[data-rarity="uncommon"]  { --tab-color: #7fd07f; }
+.board-tab[data-rarity="rare"]      { --tab-color: #7fb0ff; }
+.board-tab[data-rarity="legendary"] { --tab-color: #ffd23f; }
+
+.board-tab:hover,
+.board-tab:focus-visible {
+    color: var(--tab-color);
+    outline: none;
+}
+
+/* ----- Cards slamming onto a board after a slide -----
+   Each card waits for the slide to finish, then drops in order.
+   "backwards" keeps each card hidden above the board until its
+   turn, then hands control back so hover still works after. */
+.chalkboard.is-dealing .board-slot .card {
+    animation: card-slam 0.45s cubic-bezier(0.3, 0, 0.5, 1) backwards;
+    animation-delay: calc(0.45s + var(--deal-order, 0) * 0.12s);
+}
+
+@keyframes card-slam {
+    0% {
+        opacity: 0;
+        transform: translateY(-140px) scale(1.25) rotate(-6deg);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+    }
+    75% {
+        transform: scale(1.04, 0.94);   /* squash on impact */
+    }
+    100% {
+        transform: none;
+    }
+}
+
+/* Puff of chalk dust behind each card as it lands */
+.chalkboard.is-dealing .card-slot--filled::after {
+    content: "";
+    position: absolute;
+    inset: -12%;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(244, 240, 229, 0.45) 0%,
+        rgba(244, 240, 229, 0.15) 45%,
+        transparent 70%
+    );
+    pointer-events: none;
+    opacity: 0;
+    animation: dust-puff 0.6s ease-out both;
+    animation-delay: calc(0.72s + var(--deal-order, 0) * 0.12s);
+}
+
+@keyframes dust-puff {
+    0%   { opacity: 0;    transform: scale(0.6); }
+    15%  { opacity: 0.9; }
+    100% { opacity: 0;    transform: scale(1.35); }
+}
+
+.board-tab--active {
+    color: var(--tab-color);
+    border-bottom-color: var(--tab-color);
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+}
+
+
 /* Slots laid out on the slate: 3 on top, 2 centered below */
 .chalkboard__cards {
     display: flex;
@@ -595,12 +882,12 @@ h1, h2, h3 {
     transform: translateX(-50%);
 }
 
-/* Each slot gets its own tilt and magnet color */
-.board-slot:nth-child(1) { --tilt: -2deg;   --magnet: #c62828; }
-.board-slot:nth-child(2) { --tilt: 1.5deg;  --magnet: #1e5bb8; }
-.board-slot:nth-child(3) { --tilt: -1deg;   --magnet: #e0a800; }
-.board-slot:nth-child(4) { --tilt: 2deg;    --magnet: #2e7d32; }
-.board-slot:nth-child(5) { --tilt: -1.5deg; --magnet: #c62828; }
+/* Each slot gets its own tilt and magnet color (pattern repeats every 5) */
+.board-slot:nth-child(5n + 1) { --tilt: -2deg;   --magnet: #c62828; }
+.board-slot:nth-child(5n + 2) { --tilt: 1.5deg;  --magnet: #1e5bb8; }
+.board-slot:nth-child(5n + 3) { --tilt: -1deg;   --magnet: #e0a800; }
+.board-slot:nth-child(5n + 4) { --tilt: 2deg;    --magnet: #2e7d32; }
+.board-slot:nth-child(5n + 5) { --tilt: -1.5deg; --magnet: #c62828; }
 
 /* Cards pinned on the board: smaller text to fit the smaller slots.
    The slot is already tilted, so the card itself sits straight. */
@@ -724,22 +1011,24 @@ h1, h2, h3 {
    --from-x / --from-y are set by main.js so it starts right
    where the chalkboard is in the photo. */
 /* The room starts zooming first; the board follows 0.4s later */
-.chalkboard {
+.board-viewport {
     animation: board-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.4s both;
 }
 
-/* Board content and the back link fade in last */
+/* Board content, header, and the back link fade in last */
 .chalkboard > *,
+.cards-screen__header,
 .cards-screen__back {
     animation: fade-in 0.35s ease 0.95s both;
 }
 
-/* Leaving the Cards screen: board shrinks back into the room */
-.cards-screen--leaving .chalkboard {
+/* Leaving the Cards screen: boards shrink back into the room */
+.cards-screen--leaving .board-viewport {
     animation: board-out 0.45s ease-in both;
 }
 
 .cards-screen--leaving .chalkboard > *,
+.cards-screen--leaving .cards-screen__header,
 .cards-screen--leaving .cards-screen__back {
     animation: fade-out 0.15s ease both;
 }

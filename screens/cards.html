@@ -1,27 +1,28 @@
 <!--
     SCREEN: Cards
-    Shows every card in the game, pinned to a chalkboard.
-    For now, just empty slots while the card designs are
-    being worked out.
+    A wall of chalkboards, one per rarity. The tabs slide
+    between them. The boards themselves are built by
+    setupCards() in js/main.js.
 -->
 
 <section class="cards-screen">
 
     <a href="#" class="cards-screen__back">← Back to Title</a>
 
-    <div class="chalkboard">
+    <header class="cards-screen__header">
+        <h1 class="cards-screen__title">Cards</h1>
 
-        <h1 class="chalkboard__title">Cards</h1>
-        <p class="chalkboard__subtitle">Every card in the game will show up here.</p>
-
-        <div class="chalkboard__cards">
-            <div class="card-slot board-slot"></div>
-            <div class="card-slot board-slot"></div>
-            <div class="card-slot board-slot"></div>
-            <div class="card-slot board-slot"></div>
-            <div class="card-slot board-slot"></div>
+        <div class="chalkboard__tabs" role="tablist" aria-label="Card rarity">
+            <button class="board-tab" role="tab" data-rarity="common">Common</button>
+            <button class="board-tab" role="tab" data-rarity="uncommon">Uncommon</button>
+            <button class="board-tab" role="tab" data-rarity="rare">Rare</button>
+            <button class="board-tab" role="tab" data-rarity="legendary">Legendary</button>
         </div>
+    </header>
 
+    <!-- The window you look through; the boards slide behind it -->
+    <div class="board-viewport">
+        <div class="board-track"></div>
     </div>
 
 </section>

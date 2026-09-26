@@ -99,13 +99,22 @@ window.SC = window.SC || {};
             stroke(ac, t,        0.28,  900, 2200, VOLUME);
             stroke(ac, t + 0.30, 0.32, 2000,  800, VOLUME * 0.8);
         },
-
+        
         // Stepping back from the board: one soft swoosh, high to low
         whoosh: function (ac) {
             const t = ac.currentTime + 0.02;
             stroke(ac, t, 0.45, 3000, 600, VOLUME * 0.7);
+        },
+
+        // A card slapped onto the chalkboard: low thud plus a tiny paper snap
+        slam: function (ac) {
+            const t = ac.currentTime + 0.01;
+            stroke(ac, t,  0.14,  420,  110, VOLUME * 1.3);
+            stroke(ac, t,  0.04, 3200, 2400, VOLUME * 0.35);
         }
-    };
+
+        
+  };
 
     // ------- PUBLIC -------
 
