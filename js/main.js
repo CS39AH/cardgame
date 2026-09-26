@@ -107,9 +107,12 @@
             return wait(TIMING.titleFadeOut);
         }
 
-        if (from === 'cards') {
+                if (from === 'cards') {
             // Room zooms back out while the board shrinks into it
             closeCardZoom();
+            if (SC.playSound) {
+                SC.playSound('whoosh');
+            }
             document.body.classList.remove('scene--board');
             const section = SCREEN.querySelector('.cards-screen');
             if (section) {
@@ -132,6 +135,11 @@
 
         // Zoom the room toward the chalkboard (only for Cards)
         document.body.classList.toggle('scene--board', name === 'cards');
+
+        // Eraser sound as the camera moves to the chalkboard
+        if (name === 'cards' && SC.playSound) {
+            SC.playSound('eraser');
+        }
 
         window.scrollTo(0, 0);
 
