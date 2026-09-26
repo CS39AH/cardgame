@@ -6,9 +6,13 @@
 
    Play a sound from anywhere with: SC.playSound('eraser')
 
-   Browsers block sound until the player has clicked or pressed
-   a key at least once, so the first click on the page "unlocks"
-   audio. Opening #cards directly from a bookmark stays silent.
+   Browsers block sound until the player has clicked, tapped,
+   or pressed a key at least once, so the first interaction
+   "unlocks" audio. Opening #cards directly from a bookmark
+   stays silent until the player taps something.
+
+   iPhone note: sounds are muted when the ring/silent switch
+   is set to silent.
    ========================================================= */
 
 window.SC = window.SC || {};
@@ -40,14 +44,26 @@ window.SC = window.SC || {};
         return ctx;
     }
 
-     // Unlock audio on the player's first click, tap, or key press.
+    // Unlock audio on the player's first click, tap, or key press.
     // Phones only count a tap once the finger lifts, so we listen
     // for several events and stop once audio is running.
     const UNLOCK_EVENTS = ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown'];
 
     function unlock() {
         const ac = getContext();
-        if (ac && ac.state === 'running') {
+        if (!ac) {
+            return;
+        }
+
+        // iPhones unlock most reliably when a sound actually starts
+        // during the tap, so play a tiny silent one right now.
+        const silent = ac.createBuffer(1, 1, ac.sampleRate);
+        const source = ac.createBufferSource();
+        source.buffer = silent;
+        source.connect(ac.destination);
+        source.start(0);
+
+        if (ac.state === 'running') {
             UNLOCK_EVENTS.forEach(function (type) {
                 window.removeEventListener(type, unlock);
             });
@@ -101,7 +117,7 @@ window.SC = window.SC || {};
 
     // ------- SOUNDS -------
 
-        const SOUNDS = {
+    const SOUNDS = {
         // Eraser on a chalkboard: one stroke across, one stroke back
         eraser: function (ac) {
             const t = ac.currentTime + 0.02;
@@ -122,11 +138,28 @@ window.SC = window.SC || {};
         if (!SC.soundEnabled || !SOUNDS[name]) {
             return;
         }
+
         const ac = getContext();
-        if (!ac || ac.state !== 'running') {
-            return; // audio not unlocked yet
+        if (!ac) {
+            return;
         }
-        SOUNDS[name](ac);
-    };
+
+        if (ac.state === 'running') {
+            SOUNDS[name](ac);
+            return;
+        }
+
+        // Audio is still waking up (common on the very first tap on phones).
+        // Wait for it instead of skipping the sound.
+        ac.resume()
+            .then(function () {
+                if (ac.state === 'running') {
+                    SOUNDS[name](ac);
+                }
+            })
+            .catch(function () {
+                // Browser refused, e.g. page opened with no tap yet. Stay silent.
+            });
+    }
 
 })();
