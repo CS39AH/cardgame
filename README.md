@@ -2,7 +2,7 @@
 
 A browser-based deck-building card game where you play a substitute teacher trying to survive the school day. Fight classroom supplies with other classroom supplies until the final bell rings.
 
-Built by [Erik Porter, Aaron Villalobos, Jonathan Chavez ] for CS39AH (AI as Software Development Teammate) at MSU Denver, Fall 2026.
+Built by [Erik Porter, Aaron Villalobos, Jonathan Chavez , Malachi Mooty] for CS39AH (AI as Software Development Teammate) at MSU Denver, Fall 2026.
 
 ## Play
 
