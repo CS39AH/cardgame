@@ -1,10 +1,10 @@
 ## Vision Statement
 
-- **For** casual gamers, students, and fans of deck-building games
+- **For** casual gamers, students, and fans of deck-building games[^deckbuilding]
 - **Who** want a quick, funny, strategic game they can play anywhere without installing, buying, or signing up for anything
-- **The** Substitute Chaos **is a** browser-based deck-building card game
-- **That** turns surviving a substitute teacher's worst day into a short, replayable run of tactical card battles against sentient school supplies
-- **Unlike** Slay the Spire and other deck builders, which require a purchase, and a download.
+- **The** Substitute Chaos **is a** browser-based[^browser] deck-building card game
+- **That** turns surviving a substitute teacher's worst day into a short, replayable run[^run] of tactical card battles[^battles] against sentient school supplies
+- **Unlike** Slay the Spire[^sts] and other deck builders, which require a purchase, and a download.
 - **Our product** is free, runs in any modern browser on desktop or phone, and wraps real deck-building strategy in a lighthearted school setting everyone recognizes
 
 [^deckbuilding]: **Deck-building game:** a card game where you start with a small, basic deck of cards and improve it as you play by adding stronger cards and removing weak ones. Building a good deck is the main strategy.
