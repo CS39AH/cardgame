@@ -676,6 +676,55 @@ h1, h2, h3 {
         0 2px 4px rgba(0, 0, 0, 0.45);
 }
 
+/* Teacher Selector */
+.teacher-selector__arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+
+    width: 52px;
+    height: 52px;
+
+    border: 2px solid rgba(255, 255, 255, 0.65);
+    border-radius: 50%;
+
+    background: rgba(15, 40, 30, 0.75);
+    color: #fff;
+
+    font-size: 2.2rem;
+    line-height: 1;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translateY(-50%);
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease;
+}
+
+.teacher-selector__arrow--prev {
+    left: 50%;
+    margin-left: -300px;
+}
+
+.teacher-selector__arrow--next {
+    left: 50%;
+    margin-left: 248px;
+}
+
+.teacher-selector__arrow:hover {
+    transform: translateY(-50%) scale(1.1);
+    background: rgba(255, 210, 65, 0.9);
+    color: #1c2a20;
+}
+
+.teacher-selector__arrow:active {
+    transform: translateY(-50%) scale(0.95);
+}
 /* The badge itself: hangs straight, white laminate edge */
 .card--hero {
     --card-header-line: 4.6rem;   /* red line sits lower, below the strip */

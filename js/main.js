@@ -199,14 +199,54 @@
     // ------- TITLE SCREEN -------
 
     function setupTitle() {
-        // Demo card
+       // Staff selector
         const demoSlot = document.getElementById('demo-card');
-        const demoCard = SC.getCard ? (SC.getCard('substitute-teacher') || SC.cards[0]) : null;
+        const btnTeacherPrev = document.getElementById('teacher-prev');
+        const btnTeacherNext = document.getElementById('teacher-next');
 
-        if (demoSlot && demoCard && SC.renderCard) {
-            demoSlot.appendChild(SC.renderCard(demoCard));
+        const teacherIds = [
+            'substitute-teacher',
+            'janitor',
+            'gym-teacher',
+            'lunch-lady',
+            'librarian',
+            'principal'
+        ];
+
+        let selectedTeacherIndex = 0;
+
+        function renderSelectedTeacher() {
+            const teacher = SC.getCard
+                ? SC.getCard(teacherIds[selectedTeacherIndex])
+                : null;
+
+            if (!demoSlot || !teacher || !SC.renderCard) {
+                return;
+            }
+
+            demoSlot.innerHTML = '';
+            demoSlot.appendChild(SC.renderCard(teacher));
             demoSlot.classList.add('card-slot--filled');
+
+            // Save the currently selected teacher on the element.
+            demoSlot.dataset.selectedTeacher = teacher.id;
         }
+
+        renderSelectedTeacher();
+
+        btnTeacherPrev.addEventListener('click', function () {
+            selectedTeacherIndex =
+                (selectedTeacherIndex - 1 + teacherIds.length) % teacherIds.length;
+
+            renderSelectedTeacher();
+        });
+
+        btnTeacherNext.addEventListener('click', function () {
+            selectedTeacherIndex =
+                (selectedTeacherIndex + 1) % teacherIds.length;
+
+            renderSelectedTeacher();
+        });
 
         // Orbiting supplies
         SC.startOrbit();
