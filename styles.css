@@ -1211,6 +1211,301 @@ h1, h2, h3 {
     }
 }
 
+/* ---------- 9. CREDITS SCREEN ---------- */
+
+#screen[data-screen="credits"] {
+    max-width: 820px;
+}
+
+.credits-screen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    animation: fade-in 0.35s ease both;
+}
+
+/* Brown clipboard with a metal clip at the top */
+.clipboard {
+    position: relative;
+    padding: 3.25rem 1.25rem 1.25rem;
+    background: linear-gradient(135deg, #8a5a2b 0%, #6e4520 60%, #5a3818 100%);
+    border-radius: 14px;
+    box-shadow:
+        inset 0 0 0 2px rgba(0, 0, 0, 0.25),
+        0 14px 30px rgba(0, 0, 0, 0.55);
+    transform: rotate(-0.8deg);
+}
+
+.clipboard::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    z-index: 2;
+    width: 150px;
+    height: 46px;
+    transform: translateX(-50%);
+    border-radius: 10px 10px 6px 6px;
+    background: linear-gradient(180deg, #f2f2f2 0%, #b9bec6 45%, #8d939c 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        0 3px 6px rgba(0, 0, 0, 0.45);
+}
+
+/* The attendance sheet: ruled paper with a red margin line */
+.attendance {
+    --paper: #fbf7ea;
+    --ink:   #2a2a35;
+    --line:  rgba(90, 130, 200, 0.22);
+    --red:   rgba(217, 72, 72, 0.6);
+
+    position: relative;
+    padding: var(--space-6) var(--space-5) var(--space-6) 4rem;
+    border-radius: 4px;
+    color: var(--ink);
+    text-align: left;
+    background:
+        linear-gradient(
+            to right,
+            transparent 3rem,
+            var(--red) 3rem,
+            var(--red) calc(3rem + 2px),
+            transparent calc(3rem + 2px)
+        ),
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 1.9rem,
+            var(--line) 1.9rem,
+            var(--line) calc(1.9rem + 1px)
+        ),
+        var(--paper);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.attendance__heading {
+    font-family: var(--font-title);
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    color: var(--ink);
+    margin: 0;
+}
+
+.attendance__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    font-size: var(--size-small);
+    color: #555;
+    margin: var(--space-2) 0 var(--space-5);
+}
+
+.attendance__meta strong {
+    color: var(--ink);
+}
+
+/* Roster table */
+.attendance__table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--space-6);
+}
+
+.attendance__table th {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #666;
+    text-align: left;
+    padding: var(--space-2);
+    border-bottom: 2px solid var(--ink);
+}
+
+.attendance__table td {
+    padding: var(--space-3) var(--space-2);
+    border-bottom: 1px dashed rgba(42, 42, 53, 0.25);
+    vertical-align: top;
+}
+
+.attendance__num {
+    width: 2rem;
+    color: #888;
+}
+
+.attendance__name {
+    font-family: var(--font-title);
+    font-size: 1.25rem;
+    white-space: nowrap;
+}
+
+.attendance__present {
+    width: 4rem;
+    text-align: center;
+}
+
+/* Red-pen check marks that pop in one at a time */
+.attendance__check {
+    display: inline-block;
+    font-family: var(--font-title);
+    font-size: 1.8rem;
+    line-height: 1;
+    color: #c62828;
+    transform: rotate(-8deg);
+
+    /* The delay for each check is set in main.js (CHECK_TIMING) */
+    animation: check-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1.4) both;
+}
+
+@keyframes check-in {
+    from {
+        opacity: 0;
+        transform: rotate(-8deg) scale(2.2);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(-8deg) scale(1);
+    }
+}
+
+/* Credit sections under the roster */
+.attendance__section {
+    margin-bottom: var(--space-5);
+}
+
+.attendance__section-title {
+    font-family: var(--font-title);
+    font-size: 1.4rem;
+    color: var(--ink);
+    margin: 0;
+}
+
+.attendance__section-subtitle {
+    font-size: var(--size-small);
+    color: #777;
+    margin: 0 0 var(--space-2);
+}
+
+.attendance__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.attendance__list li {
+    padding: var(--space-1) 0;
+    line-height: 1.6;
+}
+
+/* Teacher's signature in blue pen */
+.attendance__signature {
+    margin: var(--space-6) 0 0;
+    text-align: right;
+    font-size: var(--size-small);
+    color: #555;
+}
+
+.attendance__signature span {
+    display: inline-block;
+    margin-left: var(--space-2);
+    padding: 0 var(--space-4);
+    border-bottom: 1px solid var(--ink);
+    font-family: var(--font-title);
+    font-size: 1.6rem;
+    color: #1e5bb8;
+    transform: rotate(-4deg);
+}
+
+/* ---------- 10. MUSIC VOLUME ---------- */
+
+/* Speaker button with the slider hanging below it */
+.volume-control {
+    position: fixed;
+    top: var(--space-4);
+    right: var(--space-4);
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.volume-toggle {
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 50%;
+    border: 2px solid var(--color-chalk-faint);
+    background: rgba(10, 24, 16, 0.6);
+    color: var(--color-chalk);
+    font-size: 1.25rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.volume-toggle:hover,
+.volume-toggle:focus-visible,
+.volume-control.is-open .volume-toggle {
+    transform: scale(1.08);
+    border-color: var(--color-chalk);
+    outline: none;
+}
+
+/* The drop-down panel, hidden until the button is clicked */
+.volume-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    padding: var(--space-3) var(--space-2);
+    background: rgba(10, 24, 16, 0.85);
+    border: 2px solid var(--color-chalk-faint);
+    border-radius: 999px;
+    box-shadow: var(--shadow-md);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px) scaleY(0.6);
+    transform-origin: top center;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0s linear 0.2s;
+}
+
+.volume-control.is-open .volume-panel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0s;
+}
+
+.volume-panel__value,
+.volume-panel__label {
+    font-size: 0.75rem;
+    color: var(--color-chalk-dim);
+}
+
+/* Vertical slider: top is loudest */
+.volume-panel__slider {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 1.5rem;
+    height: 8rem;
+    margin: 0;
+    cursor: pointer;
+    accent-color: var(--color-accent);
+}
+
+
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 600px) {
     #screen {
@@ -1229,6 +1524,15 @@ h1, h2, h3 {
     .board-slot {
         width: min(100%, 300px);
     }
+
+    .attendance {
+        padding: var(--space-5) var(--space-3) var(--space-5) 3.5rem;
+    }
+
+    .attendance__name {
+        white-space: normal;
+    }
+
 }
 
 @media (prefers-reduced-motion: reduce) {

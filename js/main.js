@@ -23,17 +23,26 @@
 
     // ------- CONFIG -------
 
-    const SCREENS = ['cards'];
+    const SCREENS = ['cards', 'credits'];
 
     // Screen-specific setup that runs after a screen is swapped in
     const SCREEN_SETUP = {
-        cards: setupCards
+        cards: setupCards,
+        credits: setupCredits
     };
 
     // Exit animation lengths in ms (match the CSS)
     const TIMING = {
         titleFadeOut: 200,
         boardLeave: 450
+    };
+
+    // Credits check marks (ms). Change these to speed up or slow down
+    // the checks; the pen sounds follow automatically.
+    const CHECK_TIMING = {
+        first: 700,    // wait before the first check
+        gap: 550,      // time between each check
+        land: 250      // how far into its animation a check "hits" the paper
     };
 
     const SCREEN = document.getElementById('screen');
@@ -128,6 +137,18 @@
             return wait(TIMING.boardLeave);
         }
 
+        if (from === 'credits') {
+            clearDealTimers();
+
+            // Clipboard gets set down as the sheet fades out
+            if (SC.playSound) {
+                SC.playSound('clipboardDown');
+            }
+
+            SCREEN.classList.add('is-fading');
+            return wait(TIMING.titleFadeOut);
+        }
+
         return Promise.resolve(); // first page load, nothing to leave
     }
 
@@ -146,6 +167,11 @@
         // Eraser sound as the camera moves to the chalkboard
         if (name === 'cards' && SC.playSound) {
             SC.playSound('eraser');
+        }
+
+        // Paper shuffle and clip snap as the attendance sheet comes up
+        if (name === 'credits' && SC.playSound) {
+            SC.playSound('clipboard');
         }
 
         window.scrollTo(0, 0);
@@ -196,6 +222,7 @@
         }
 
         btnStart.addEventListener('click', function () {
+            SC.playSound('bell');
             console.log('New game — combat screen will load here.');
             // TODO: startNewGame();
         });
@@ -210,8 +237,29 @@
         });
 
         btnCredits.addEventListener('click', function () {
-            console.log('Credits — will become #credits.');
+            window.location.hash = 'credits';
         });
+
+        // Menu sounds: chalk tap on hover, chalk click on press.
+        // Start a New Day rings the bell instead of clicking.
+        const menuButtons = document.querySelectorAll('.title-screen__menu .btn');
+
+        menuButtons.forEach(function (button) {
+            button.addEventListener('pointerenter', function (e) {
+                if (e.pointerType === 'mouse') {
+                    SC.playSound('chalkTap', true);
+                }
+            });
+
+            if (button !== btnStart) {
+                button.addEventListener('click', function () {
+                    SC.playSound('chalkClick');
+                });
+            }
+        });
+
+        // Background music (starts on the player's first click or tap)
+        SC.startMusic();
     }
 
     // ------- CARDS SCREEN -------
@@ -384,8 +432,87 @@
         dealTimers.forEach(clearTimeout);
         dealTimers = [];
     }
+    // ------- CREDITS SCREEN -------
+
+    function setupCredits() {
+        const roster = SCREEN.querySelector('.attendance__roster');
+        const sectionsBox = SCREEN.querySelector('.attendance__sections');
+
+        if (!roster || !sectionsBox || !SC.credits) {
+            return;
+        }
+
+        // Roster: one row per teammate, with a red check that pops in
+        SC.credits.team.forEach(function (member, i) {
+            const row = document.createElement('tr');
+
+            row.appendChild(makeCell(String(i + 1), 'attendance__num'));
+            row.appendChild(makeCell(member.name, 'attendance__name'));
+            row.appendChild(makeCell(member.role, 'attendance__role'));
+
+            const present = makeCell('', 'attendance__present');
+            const check = document.createElement('span');
+            check.className = 'attendance__check';
+            check.textContent = '✓';
+            check.setAttribute('aria-label', 'Present');
+
+            // Each check waits its turn, then a pen scratch as it lands
+            const delay = CHECK_TIMING.first + i * CHECK_TIMING.gap;
+            check.style.animationDelay = delay + 'ms';
+
+            dealTimers.push(setTimeout(function () {
+                if (SC.playSound) {
+                    SC.playSound('penCheck');
+                }
+            }, delay + CHECK_TIMING.land));
+
+            present.appendChild(check);
+            row.appendChild(present);
+
+            roster.appendChild(row);
+        });
+
+        // Credit sections under the roster
+        SC.credits.sections.forEach(function (section) {
+            const box = document.createElement('div');
+            box.className = 'attendance__section';
+
+            const title = document.createElement('h2');
+            title.className = 'attendance__section-title';
+            title.textContent = section.title;
+
+            const subtitle = document.createElement('p');
+            subtitle.className = 'attendance__section-subtitle';
+            subtitle.textContent = section.subtitle;
+
+            const list = document.createElement('ul');
+            list.className = 'attendance__list';
+
+            section.items.forEach(function (item) {
+                const li = document.createElement('li');
+                const label = document.createElement('strong');
+                label.textContent = item.label + ': ';
+                li.appendChild(label);
+                li.appendChild(document.createTextNode(item.detail));
+                list.appendChild(li);
+            });
+
+            box.appendChild(title);
+            box.appendChild(subtitle);
+            box.appendChild(list);
+            sectionsBox.appendChild(box);
+        });
+    }
+
+    function makeCell(text, className) {
+        const cell = document.createElement('td');
+        cell.className = className;
+        cell.textContent = text;
+        return cell;
+    }
 
     // ------- CARD PICK-UP VIEW -------
+
 
     function openCardZoom(card) {
         closeCardZoom();
