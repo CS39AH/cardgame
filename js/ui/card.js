@@ -98,6 +98,11 @@ SC.renderCard = function (card) {
         const strip = document.createElement('div');
         strip.className = 'card__badge-strip';
         strip.textContent = card.badgeText || 'Staff';
+
+        if (card.badgeColor) {
+            strip.style.background = card.badgeColor;
+        }
+
         el.appendChild(strip);
 
         const badge = document.createElement('div');

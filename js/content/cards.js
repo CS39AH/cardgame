@@ -97,6 +97,7 @@ SC.cards = [
         demo: true,
         hero: true,
         badgeText: 'Staff · Substitute',
+        badgeColor: '#b92626',
         effects: [
             { type: 'damage', amount: 1000 }
         ]
@@ -115,6 +116,7 @@ SC.cards = [
         demo: true,
         hero: true,
         badgeText: 'Staff · Janitor',
+        badgeColor: '#4f6f81',
         effects: [
             { type: 'block', amount: 8 },
             { type: 'draw', amount: 1 }
@@ -134,6 +136,7 @@ SC.cards = [
         demo: true,
         hero: true,
         badgeText: 'Staff · Gym Teacher',
+        badgeColor: '#c9652b',
         effects: [
             { type: 'damage', amount: 10 },
             { type: 'block', amount: 6 }
@@ -153,6 +156,7 @@ SC.cards = [
         demo: true,
         hero: true,
         badgeText: 'Staff · Lunch Lady',
+        badgeColor: '#b8860b',
         effects: [
             { type: 'heal', amount: 10 },
             { type: 'draw', amount: 1 }
@@ -172,6 +176,7 @@ SC.cards = [
         demo: true,
         hero: true,
         badgeText: 'Staff · Librarian',
+        badgeColor: '#3f7d55',
         effects: [
             { type: 'block', amount: 12 },
             { type: 'draw', amount: 2 }
@@ -191,6 +196,7 @@ SC.cards = [
         demo: true,
         hero: true,
         badgeText: 'Staff · Principal',
+        badgeColor: '#7b4aa3',
         effects: [
             {
                 type: 'power',
