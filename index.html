@@ -28,6 +28,19 @@
         =============================================================
     -->
 
+    <!-- Music volume (wired up in js/audio.js). Outside #screen so it stays on every screen. -->
+    <div id="volume-control" class="volume-control">
+        <button id="volume-toggle" class="volume-toggle" type="button"
+                aria-label="Music volume" aria-expanded="false" aria-controls="volume-panel">🔉</button>
+
+        <div id="volume-panel" class="volume-panel">
+            <span id="music-volume-value" class="volume-panel__value">15%</span>
+            <input id="music-volume" class="volume-panel__slider" type="range"
+                   min="0" max="100" step="1" value="15" aria-label="Music volume">
+            <span class="volume-panel__label">Music</span>
+        </div>
+    </div>
+
     <main id="screen">
 
         <!-- Default screen: title (entry point) -->
@@ -64,6 +77,7 @@
     </main>
 
     <script src="js/content/cards.js"></script>
+    <script src="js/content/credits.js"></script>
     <script src="js/ui/card.js"></script>
     <script src="js/ui/orbit.js"></script>
     <script src="js/audio.js"></script>
