@@ -23,12 +23,13 @@
 
     // ------- CONFIG -------
 
-    const SCREENS = ['cards', 'credits'];
+    const SCREENS = ['cards', 'credits', 'map'];
 
     // Screen-specific setup that runs after a screen is swapped in
     const SCREEN_SETUP = {
         cards: setupCards,
-        credits: setupCredits
+        credits: setupCredits,
+        map: setupMap
     };
 
     // Exit animation lengths in ms (match the CSS)
@@ -196,6 +197,54 @@
         SCREEN.classList.remove('is-fading');
     }
 
+
+    /*
+     * setupMap()
+     * Runs after screens/map.html is loaded. Reads the player's save,
+     * draws the day's nodes, and handles what happens when one is clicked.
+     *
+     * Save format (localStorage key 'sc-save'):
+     *   { dayId: 'day-1', nodeIndex: 2, teacher: 'janitor' }
+     *   nodeIndex = number of nodes already finished (0 = at the first node)
+     */
+    function setupMap() {
+        const container = document.getElementById('day-path');
+        if (!container) return;   // screen didn't load; nothing to draw
+
+        const day = SC.days.current;
+
+        // Read the save. If there is none (or it's for a different day),
+        // start at the first node.
+        const save = JSON.parse(localStorage.getItem('sc-save') || 'null');
+        const nodeIndex = (save && save.dayId === day.id) ? save.nodeIndex : 0;
+
+        // Draw the map. The function below runs when the player clicks
+        // the current node.
+        SC.buildDayPath(container, day, nodeIndex, function (node, index) {
+            console.log('Encounter started:', node.id);
+
+            // TODO: open the real combat/event screen here, based on
+            // node.type. For now the node counts as finished immediately
+            // so the map flow can be tested end to end.
+            const nextIndex = index + 1;
+
+            // Last node finished: delete the save (so Continue disappears)
+            // and redraw the map in its "complete" state.
+            if (nextIndex >= day.nodes.length) {
+                console.log('Day complete!');
+                localStorage.removeItem('sc-save');
+                SC.buildDayPath(container, day, day.nodes.length, function () {});
+                return;
+            }
+
+            // Otherwise save the new progress (keeping the chosen teacher)
+            // and redraw the map.
+            localStorage.setItem('sc-save', JSON.stringify(
+                Object.assign({}, save, { dayId: day.id, nodeIndex: nextIndex })
+            ));
+            setupMap();
+        });
+    }
     // ------- TITLE SCREEN -------
 
     function setupTitle() {
@@ -261,15 +310,18 @@
             btnContinue.hidden = false;
         }
 
-        btnStart.addEventListener('click', function () {
+            btnStart.addEventListener('click', function () {
             SC.playSound('bell');
-            console.log('New game — combat screen will load here.');
-            // TODO: startNewGame();
+            localStorage.setItem('sc-save', JSON.stringify({
+                dayId: SC.days.current.id,
+                nodeIndex: 0,
+                teacher: demoSlot.dataset.selectedTeacher
+            }));
+            window.location.hash = 'map';
         });
 
         btnContinue.addEventListener('click', function () {
-            console.log('Continue — load save from localStorage.');
-            // TODO: loadSavedGame();
+            window.location.hash = 'map';
         });
 
         btnHow.addEventListener('click', function () {

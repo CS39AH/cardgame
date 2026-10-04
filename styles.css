@@ -1593,3 +1593,132 @@ h1, h2, h3 {
         animation-delay: 0s !important;
     }
 }
+
+/* ==========================================================
+   DAY MAP SCREEN  (screens/map.html)
+   Built by SC.buildDayPath() in js/ui/map.js.
+   Naming follows the rest of the file (block__element--modifier).
+   ========================================================== */
+
+/* --- Page layout: back link, header, then the row of nodes --- */
+.map-screen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    max-width: var(--content-max);
+    margin: 0 auto;
+}
+
+.map-screen__back {
+    align-self: flex-start;
+    color: var(--color-chalk-dim);
+    font-size: var(--size-small);
+    text-decoration: none;
+}
+
+.map-screen__header { text-align: center; }
+
+.map-screen__subtitle {
+    color: var(--color-chalk-dim);
+    font-size: var(--size-small);
+    margin-top: var(--space-2);
+}
+
+/* --- The path: a row of nodes that wraps onto new lines if needed --- */
+.day-path {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    padding: var(--space-6) 0;
+    margin: 0;
+}
+
+.day-node { display: flex; align-items: center; position: relative; }
+
+/* The connecting line drawn before every node except the first */
+.day-node:not(:first-child)::before {
+    content: '';
+    width: var(--space-6);
+    height: 3px;
+    background: var(--color-chalk-faint);
+    margin: 0 var(--space-2);
+}
+
+/* Line turns green once the node it leads into has been completed */
+.day-node--complete:not(:first-child)::before { background: var(--color-good); }
+
+/* --- The node button (default look = locked) --- */
+.day-node__button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    width: 84px;
+    padding: var(--space-3) var(--space-2);
+    background: rgba(244, 240, 229, 0.06);
+    border: 2px solid var(--color-chalk-faint);
+    border-radius: var(--radius-lg);
+    color: var(--color-chalk-dim);
+    font-family: var(--font-body);
+    font-size: var(--size-small);
+    cursor: not-allowed;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.day-node__icon { font-size: 1.75rem; line-height: 1; }
+.day-node__label { text-align: center; line-height: 1.2; }
+
+/* --- Node states (set by the day-node--<state> class in map.js) --- */
+
+/* Finished: green outline, slightly faded */
+.day-node--complete .day-node__button {
+    border-color: var(--color-good);
+    color: var(--color-chalk);
+    opacity: 0.85;
+}
+
+/* Next up: gold outline, clickable, lifts on hover/keyboard focus */
+.day-node--current .day-node__button {
+    border-color: var(--color-accent);
+    color: var(--color-chalk);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+}
+
+.day-node--current .day-node__button:hover,
+.day-node--current .day-node__button:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Not reachable yet: dimmed */
+.day-node--locked .day-node__button { opacity: 0.5; }
+
+/* --- Node types (set by the day-node--<type> class in map.js) --- */
+
+/* Boss node gets a red outline */
+.day-node--boss .day-node__button { border-color: var(--color-danger); }
+
+/* --- "Day complete" message, shown after the final node --- */
+.day-path--complete::after {
+    content: 'Day complete! Great work, sub.';
+    display: block;
+    width: 100%;
+    text-align: center;
+    color: var(--color-good);
+    font-family: var(--font-title);
+    margin-top: var(--space-4);
+}
+
+/* --- Small screens: stack the nodes vertically with a vertical line --- */
+@media (max-width: 600px) {
+    .day-path { flex-direction: column; }
+
+    .day-node:not(:first-child)::before {
+        width: 3px;
+        height: var(--space-6);
+        margin: var(--space-2) 0;
+    }
+}
