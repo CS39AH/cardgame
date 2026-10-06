@@ -1593,3 +1593,194 @@ h1, h2, h3 {
         animation-delay: 0s !important;
     }
 }
+
+/* ==========================================================
+   DAY MAP SCREEN  (screens/map.html)
+   The whiteboard picture is the background of .day-path. Each
+   node (.day-node) is an invisible oval placed over its station
+   using the x/y percentages in js/content/days.js. Nodes are
+   built by SC.buildDayPath() in js/ui/map.js.
+
+   Colors here are "marker" colors for the whiteboard:
+   blue = current, green = done, red = boss, gray = locked.
+   ========================================================== */
+
+/* --- Page layout: back link, heading, then the map --- */
+.map-screen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-width: 900px;       /* the image is 700px wide, so much larger looks soft */
+    margin: 0 auto;
+}
+
+.map-screen__back {
+    align-self: flex-start;
+    color: var(--color-chalk-dim);
+    font-size: var(--size-small);
+    text-decoration: none;
+}
+
+.map-screen__header { text-align: center; }
+
+.map-screen__subtitle {
+    color: var(--color-chalk-dim);
+    font-size: var(--size-small);
+    margin-top: var(--space-2);
+}
+
+/* --- The map: whiteboard sits directly on the classroom backdrop,
+   like the chalkboards on the Cards screen. aspect-ratio must match
+   the image (700 x 492) so the percentage positions line up. --- */
+.day-path {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 700 / 492;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* The picture lives on ::before so the drop shadow follows the board's
+   shape without also putting a shadow on the node buttons and tags. */
+.day-path::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('graphics/screens/day-map.png') center / 100% 100% no-repeat;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.5));   /* same shadow as .chalkboard */
+}
+
+/* --- One node: an invisible oval over a station on the board ---
+   left/top come from `pos` in days.js (set by map.js).
+   width/height are % of the whole map; the stations are ovals,
+   so they are sized separately instead of using aspect-ratio. */
+.day-node {
+    position: absolute;
+    width: 18%;
+    height: 31.3%;
+    transform: translate(-50%, -50%);   /* so left/top mark the oval's center */
+}
+
+.day-node__button {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    background: transparent;
+    border: 3px solid transparent;
+    border-radius: 50%;
+    color: #2b2b2b;
+    font-family: var(--font-body);
+    cursor: not-allowed;
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+/* The emoji is hidden because the drawing already shows each room */
+.day-node__icon { display: none; }
+
+/* Name tag that straddles the bottom edge of the oval.
+   max-width + wrapping keeps long names from overlapping their neighbors. */
+.day-node__label {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translate(-50%, -50%);
+    width: max-content;
+    max-width: 120%;
+    padding: 1px 6px;
+    background: #fff;
+    border: 1.5px solid #2b2b2b;
+    border-radius: 12px;
+    font-size: clamp(0.5rem, 1.1vw, 0.8rem);
+    line-height: 1.15;
+    text-align: center;
+    white-space: normal;
+}
+
+/* --- Node states (day-node--<state> is set in map.js) --- */
+
+/* Locked: grayed-out oval with a lock */
+.day-node--locked .day-node__button { background: rgba(225, 225, 225, 0.72); }
+
+.day-node--locked .day-node__button::after {
+    content: '🔒';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1rem, 3vw, 2rem);
+}
+
+/* Complete: green ring with a check mark in the corner */
+.day-node--complete .day-node__button { border-color: #2e9e4f; }
+
+.day-node--complete .day-node__button::after {
+    content: '✓';
+    position: absolute;
+    top: 4%;
+    right: 4%;
+    width: 1.6rem;
+    height: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2e9e4f;
+    color: #fff;
+    border-radius: 50%;
+    font-weight: 700;
+}
+
+/* Current: pulsing blue ring, clickable */
+.day-node--current .day-node__button {
+    border-color: #1f5fbf;
+    cursor: pointer;
+    animation: day-node-pulse 1.8s ease-in-out infinite;
+}
+
+.day-node--current .day-node__button:hover,
+.day-node--current .day-node__button:focus-visible {
+    transform: scale(1.04);
+}
+
+/* Boss node: red ring when it's the current one */
+.day-node--boss.day-node--current .day-node__button {
+    border-color: #d93025;
+    animation-name: day-node-pulse-boss;
+}
+
+@keyframes day-node-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(31, 95, 191, 0.5); }
+    50%      { box-shadow: 0 0 0 12px rgba(31, 95, 191, 0); }
+}
+
+@keyframes day-node-pulse-boss {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(217, 48, 37, 0.5); }
+    50%      { box-shadow: 0 0 0 12px rgba(217, 48, 37, 0); }
+}
+
+/* --- "Day complete" message in the empty lower-left of the board --- */
+.day-path--complete::after {
+    content: 'Day complete! Great work, sub.';
+    position: absolute;
+    left: 16%;
+    bottom: 20%;
+    width: 22%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: #2e9e4f;
+    font-family: var(--font-title);
+    font-size: clamp(0.7rem, 1.5vw, 1.2rem);
+}
+
+/* Respect users who turn off animations */
+@media (prefers-reduced-motion: reduce) {
+    .day-node--current .day-node__button { animation: none; }
+}
+
+/* Let the map screen use more width than other screens
+   (js/main.js sets data-screen="map" on #screen when it loads) */
+#screen[data-screen="map"] {
+    max-width: 900px;
+}

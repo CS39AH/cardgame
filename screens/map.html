@@ -1,0 +1,27 @@
+<!--
+    SCREEN: Day Map
+    The page the player sees after clicking "Start a New Day"
+    (or "Continue Your Day").
+
+    This file is only the empty frame: back link, heading, and an
+    empty list. The nodes themselves are built at runtime:
+      - setupMap() in js/main.js decides which nodes are done/current/locked
+      - SC.buildDayPath() in js/ui/map.js creates the buttons inside #day-path
+      - the nodes come from js/content/days.js
+    Styles are in styles.css under "Day Map Screen".
+-->
+
+<section class="map-screen">
+
+    <!-- href="#" returns to the title screen (same as the Cards screen) -->
+    <a href="#" class="map-screen__back">← Back to Title</a>
+
+    <header class="map-screen__header">
+        <h1 class="map-screen__title">Day 1: The Substitute Shift</h1>
+        <p class="map-screen__subtitle">Survive the day, one class at a time.</p>
+    </header>
+
+    <!-- Left empty on purpose: SC.buildDayPath() fills this in -->
+    <ol class="day-path" id="day-path"></ol>
+
+</section>
