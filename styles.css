@@ -593,6 +593,33 @@ h1, h2, h3 {
     }
 }
 
+/* Enemy: red card stock, thin red outline, soft glow */
+.card--enemy {
+    --card-paper: #af8884;
+    --card-line:  rgba(70, 150, 70, 0.28);
+    --rarity-color: #a82020;
+
+    box-shadow:
+        0 0 0 3px var(--rarity-color),
+        0 0 16px rgba(175, 28, 2, 0.45),
+        var(--shadow-md);
+}
+
+.card--enemy:hover {
+    box-shadow:
+        0 0 0 3px var(--rarity-color),
+        0 0 40px rgba(247, 10, 10, 0.7),
+        0 14px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* Bigger glow in the pick-up view so it scales with the card */
+.card-zoom .card--enemy {
+    box-shadow:
+        0 0 0 5px var(--rarity-color),
+        0 0 32px rgba(236, 3, 3, 0.836),
+        var(--shadow-md);
+}
+
 /* Star sticker in the corner (uses each rarity's color) */
 .card__rarity {
     position: absolute;

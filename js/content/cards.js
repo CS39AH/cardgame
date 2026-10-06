@@ -147,8 +147,8 @@ SC.cards = [
         id: 'lesson-plan',
         name: 'Lesson Plan',
         cost: 1,
-        type: 'Common',
-        rarity: 'Skill',
+        type: 'Skill',
+        rarity: 'Common',
         art: '📁',                                   // fallback if the image is missing
         image: 'graphics/cards/lesson_plan.png',
         imageAlt: 'A folder with the lesson plan left by the teacher',
@@ -156,6 +156,22 @@ SC.cards = [
         description: 'Take your discard pill and shuffle it into your deck.',
         effects: [
             {type: 'shuffle', amount: 'deck'}
+        ]
+    },
+
+        {
+        id: 'stapler-shot',
+        name: 'Stapler Shot',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🗜️',                                   // fallback if the image is missing
+        image: 'graphics/cards/stapler_shot.png',
+        imageAlt: 'A stapler shooting a staple.',
+        imageScale: 1.0,
+        description: 'Deal 2 damage',
+        effects: [
+            {type: 'damage', amount: 2}
         ]
     },
 
