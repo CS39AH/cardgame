@@ -53,7 +53,7 @@ SC.cards = [
         id: 'teachers-pet',
         name: "Teacher's Pet",
         cost: 1,
-        type: 'Attack',
+        type: 'Power',
         rarity: 'Uncommon',
         art: '🐹',                                    // fallback if the image is missing
         image: 'graphics/cards/teacherspet.png',
@@ -175,6 +175,68 @@ SC.cards = [
         ]
     },
 
+        {
+        id: 'pencil-sharpener',
+        name: 'Pencil Sharpener',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '🦈',                                   // fallback if the image is missing
+        image: 'graphics/cards/pencil_sharpener.png',
+        imageAlt: 'A pencil sharpener.',
+        imageScale: 1.0,
+        description: 'Increase all damage by 1',
+        effects: [
+            { type: 'power', trigger: 'Attacks', effect: { type: 'damage', amount: 1 } }
+        ]
+    },
+        {
+        id: 'scattered-pencils',
+        name: 'Scattered Pencils',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '✏️✏️✏️✏️',                                   // fallback if the image is missing
+        image: 'graphics/cards/scattered_pencils.png',
+        imageAlt: 'A collection of pencils.',
+        imageScale: 1.0,
+        description: 'Deal 2 damage 4 times',
+        effects: [
+            {type: 'damage', amount: 2},
+            {type: 'multiplier', amount: 4}
+        ]
+    },
+        {
+        id: 'eraser',
+        name: 'Eraser',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '❌',                                   // fallback if the image is missing
+        image: 'graphics/cards/eraser.png',
+        imageAlt: 'An Erasure.',
+        imageScale: 1.0,
+        description: 'gain 4 Relaxation',
+        effects: [
+            {type: 'block', amount: 4}
+        ]
+    },
+        {
+        id: 'bin-dump',
+        name: 'Bin Dump',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🗑️',                                   // fallback if the image is missing
+        image: 'graphics/cards/paper_bin.png',
+        imageAlt: 'A spilt over paper bin.',
+        imageScale: 1.0,
+        description: 'Deal 1 damage per card played by player',
+        effects: [
+            {type: 'damage', amount: 1},
+            {type: 'multiplier', amount: 'player discard pile size'}
+        ]
+    },
 
     {
         // Title screen showcase only. demo: true keeps it off the Cards board.
