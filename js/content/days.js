@@ -24,12 +24,12 @@ SC.days = {
             title: 'Day 1: The Substitute Shift',
             subtitle: 'Survive the day, one class at a time.',
             nodes: [
-                { id: 'homeroom',  label: 'Homeroom',           icon: '📝', type: 'combat' },
-                { id: 'hallway',   label: 'Hallway Patrol',     icon: '🚪', type: 'combat' },
-                { id: 'cafeteria', label: 'Cafeteria Duty',     icon: '🍎', type: 'rest'   },
-                { id: 'gym',       label: 'Gym Class',          icon: '🏀', type: 'combat' },
-                { id: 'library',   label: 'Library',            icon: '📚', type: 'event'  },
-                { id: 'principal', label: "Principal's Office", icon: '🏆', type: 'boss'   }  // final boss
+                { id: 'homeroom',  label: 'Homeroom',           icon: '📝', type: 'combat', pos: { x: 15.4, y: 28.3 } },
+                { id: 'hallway',   label: 'Hallway Patrol',     icon: '🚪', type: 'combat', pos: { x: 38.9, y: 28.3 } },
+                { id: 'cafeteria', label: 'Cafeteria Duty',     icon: '🍎', type: 'combat',   pos: { x: 62.6, y: 28.5 } },
+                { id: 'gym',       label: 'Gym Class',          icon: '🏀', type: 'combat', pos: { x: 39.1, y: 67.9 } },
+                { id: 'library',   label: 'Library',            icon: '📚', type: 'combat',  pos: { x: 63.6, y: 67.5 } },
+                { id: 'principal', label: "Principal's Office", icon: '🏆', type: 'combat',   pos: { x: 85.0, y: 66.6 } }
             ]
         }
     ]

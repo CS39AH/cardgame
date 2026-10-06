@@ -39,6 +39,13 @@ SC.buildDayPath = function (container, day, currentIndex, onAdvance) {
         const li = document.createElement('li');
         li.className = 'day-node day-node--' + state + ' day-node--' + node.type;
 
+            // Place the node over its station on the map artwork.
+        // node.pos = { x, y } are percentages of the map image's width/height.
+        if (node.pos) {
+            li.style.left = node.pos.x + '%';
+            li.style.top = node.pos.y + '%';
+        }
+
         // The clickable button. Only the "current" node is enabled.
         const btn = document.createElement('button');
         btn.type = 'button';
