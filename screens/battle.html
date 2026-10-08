@@ -1,0 +1,65 @@
+<!--
+    SCREEN: Battle
+    Layout only; js/ui/battle.js fills it in from the combat
+    state in js/engine/combat.js. Opened from How to Play or the day map.
+    data-level is the fight used if #battle is opened directly.
+-->
+
+<section class="battle-screen" data-level="tutorial">
+
+    <header class="battle__top">
+        <a href="#" class="cards-screen__back battle__back">← Back to Title</a>
+        <h1 class="battle__title"></h1>
+        <span class="battle__turn"></span>
+    </header>
+
+    <!-- Top half: the chalkboard -->
+    <div class="battle__side battle__side--enemy">
+        <p class="battle__side-label">Enemy</p>
+        <div class="battle__layout">
+            <div class="battle__enemy"></div>
+
+            <div class="battle__zones">
+                <div class="battle__field battle__field--enemy" data-empty="No enemy defenders"></div>
+                <div class="battle__powers battle__powers--enemy" data-empty="No powers"></div>
+            </div>
+
+            <div class="battle__intent"></div>
+        </div>
+    </div>
+
+    <!-- Bottom half: the teacher's desk -->
+    <div class="battle__side battle__side--player">
+        <p class="battle__side-label">Your Field</p>
+        <div class="battle__layout">
+            <div class="battle__hero"></div>
+
+            <div class="battle__zones">
+                <div class="battle__field battle__field--player" data-empty="No defenders. Attacks hit you directly."></div>
+                <div class="battle__powers battle__powers--player" data-empty="Play Power cards here"></div>
+            </div>
+
+            <button type="button" class="btn btn--primary battle__end-turn">End Turn</button>
+        </div>
+    </div>
+
+    <!-- Deck, hand, discard along the front edge of the desk -->
+    <div class="battle__hand-row">
+        <div class="pile pile--draw" title="Your deck">
+            <div class="pile__stack"></div>
+            <span class="pile__count">0</span>
+            <span class="pile__label">Deck</span>
+        </div>
+
+        <div class="battle__hand"></div>
+
+        <div class="pile pile--discard" title="Discard pile">
+            <div class="pile__stack"></div>
+            <span class="pile__count">0</span>
+            <span class="pile__label">Discard</span>
+        </div>
+    </div>
+
+    <p class="battle__log" aria-live="polite"></p>
+
+</section>

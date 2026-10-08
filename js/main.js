@@ -23,13 +23,14 @@
 
     // ------- CONFIG -------
 
-    const SCREENS = ['cards', 'credits', 'map'];
+    const SCREENS = ['cards', 'credits', 'map', 'battle'];
 
     // Screen-specific setup that runs after a screen is swapped in
     const SCREEN_SETUP = {
         cards: setupCards,
         credits: setupCredits,
-        map: setupMap
+        map: setupMap,
+        battle: function () { SC.setupBattle(); }
     };
 
     // Exit animation lengths in ms (match the CSS)
@@ -150,6 +151,11 @@
             return wait(TIMING.titleFadeOut);
         }
 
+        if (from === 'battle') {
+            SCREEN.classList.add('is-fading');
+            return wait(TIMING.titleFadeOut);
+        }
+
         return Promise.resolve(); // first page load, nothing to leave
     }
 
@@ -223,8 +229,16 @@
         SC.buildDayPath(container, day, nodeIndex, function (node, index) {
             console.log('Encounter started:', node.id);
 
-            // TODO: open the real combat/event screen here, based on
-            // node.type. For now the node counts as finished immediately
+            // Combat nodes that have a level in js/content/levels.js open
+            // the battle screen. Winning advances the map
+            // (see completeEncounter in js/ui/battle.js).
+            if (node.type === 'combat' && SC.levels && SC.levels[node.id]) {
+                SC.currentBattle = { levelId: node.id, nodeIndex: index };
+                window.location.hash = 'battle';
+                return;
+            }
+
+            // Nodes without a level yet still count as finished immediately
             // so the map flow can be tested end to end.
             const nextIndex = index + 1;
 
@@ -325,7 +339,12 @@
         });
 
         btnHow.addEventListener('click', function () {
-            console.log('How to play — will become #how.');
+            // Tutorial fight, using the teacher currently picked on this screen
+            SC.currentBattle = {
+                levelId: 'tutorial',
+                heroId: demoSlot ? demoSlot.dataset.selectedTeacher : null
+            };
+            window.location.hash = 'battle';
         });
 
         btnCredits.addEventListener('click', function () {
