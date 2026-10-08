@@ -390,6 +390,8 @@ window.SC = window.SC || {};
 
     // A floating copy of a card, centered on a point
     function makeGhost(cardNode, at, width) {
+        width = width * (SC.battleScale || 1);   // match the battle's zoom
+
         const ghost = document.createElement('div');
         ghost.className = 'fly-ghost';
         ghost.style.width = width + 'px';

@@ -1,35 +1,20 @@
 /* =========================================================
    SUBSTITUTE CHAOS — COMBAT ENGINE
    =========================================================
-   All the game rules and the game state. No drawing here;
-   js/ui/battle.js reads SC.combat.state and draws it.
+   All the fight rules. No drawing here; js/ui/battle.js
+   reads SC.combat.state and draws it.
 
-   Both sides work the same way:
-     side = { sanity, maxSanity, relaxation, field: [defenders] }
+   SC.combat.start(levelId, heroId)  start a fight
+   SC.combat.playCard(handIndex)     play a card, true if it worked
+   SC.combat.endTurn()               discard hand, enemy plays, next turn
 
-   THE DAMAGE RULE
-     1. Defenders on the target's field take hits first
-     2. Whatever's left hits the hero; Relaxation absorbs it first
-     3. Whatever's left after that comes off Sanity
+   Damage rule: defenders on the field take hits first, then
+   Relaxation, then Sanity. Relaxation lasts until your next turn.
 
-   Relaxation goes away at the start of its owner's next turn.
-
-   Effect types (matching js/content/cards.js):
-     damage      deal damage to the other side
-     multiplier  repeat the last damage (amount = total hits)
-     block       gain Relaxation
-     defender    put a defender on your field
-     energy      gain Coffee
-     draw        draw cards
-     heal        restore Sanity
-     shuffle     shuffle your discard pile back into your deck
-     confiscate  card is removed for the rest of the fight
-     power, status  not built yet (tonight's work)
-
-   Main functions:
-     SC.combat.start(levelId, heroId)
-     SC.combat.playCard(handIndex)
-     SC.combat.endTurn()
+   Power cards stay in play (side.powers) and react to triggers:
+     'playAttack'  owner played an Attack     (Teacher's Pet)
+     'Attacked'    owner is hit by an attack  (Track Record, amount is negative)
+     'Attacks'     owner's attacks get +amount (Pencil Sharpener)
    ========================================================= */
 
 window.SC = window.SC || {};
@@ -37,105 +22,102 @@ window.SC = window.SC || {};
 (function () {
     'use strict';
 
-    SC.combat = { state: null };
+    const combat = { state: null };
 
-    // ------- SETUP -------
+    // ------- START A FIGHT -------
 
-    SC.combat.start = function (levelId, heroId) {
-        const level = SC.levels[levelId];
-        const enemyData = SC.enemies[level.enemy];
+    combat.start = function (levelId, heroId) {
+        const level = SC.levels[levelId] || SC.levels.tutorial;
+        const enemyDef = SC.enemies[level.enemy];
 
-        const s = {
+        const state = {
             level: level,
             turn: 1,
-            result: null,   // 'win' or 'lose' when the fight ends
+            result: null,              // 'win' or 'lose' when it's over
 
             player: {
-                heroId: heroId || 'substitute-teacher',
+                heroId: heroId,
                 sanity: level.sanity,
                 maxSanity: level.sanity,
                 relaxation: 0,
                 energy: level.energy,
                 maxEnergy: level.energy,
-                field: []
+                field: [],             // defenders
+                powers: [],            // Power cards in play
+                status: {}
             },
 
             enemy: {
-                id: enemyData.id,
-                name: enemyData.name,
-                art: enemyData.art,
-                sanity: enemyData.sanity,
-                maxSanity: enemyData.sanity,
+                id: enemyDef.id,
+                name: enemyDef.name,
+                art: enemyDef.art,
+                sanity: enemyDef.sanity,
+                maxSanity: enemyDef.sanity,
                 relaxation: 0,
                 field: [],
-                deck: enemyData.deck.map(function (id) { return SC.getCard(id); }).filter(Boolean),
-                order: enemyData.order || 'inOrder',
-                cardsPerTurn: enemyData.cardsPerTurn || 1,
+                powers: [],
+                status: {},
+                deck: enemyDef.deck.map(copyCard).filter(Boolean),
+                order: enemyDef.order || 'inOrder',
+                cardsPerTurn: enemyDef.cardsPerTurn || 1,
                 deckIndex: 0,
-                next: []   // the cards it will play on its next turn (its intent)
+                next: []               // what it plays next turn (shown on screen)
             },
 
-            drawPile: shuffle(buildStartingDeck(level)),
+            drawPile: buildStartingDeck(level),
             hand: [],
             discard: [],
             confiscated: [],
             log: []
         };
 
-        SC.combat.state = s;
-        pickEnemyCards();
-        drawCards(level.handSize);
+        combat.state = state;
+
         addLog(level.intro || 'The fight begins!');
-        return s;
+        drawCards(level.handSize);
+        pickEnemyCards();
+
+        return state;
     };
 
-    // Guaranteed cards first, then random player cards to fill the deck.
-    // Hero/demo cards and Enemy cards are never in your deck.
+    // Tutorial: exact list in order. Real levels: random deck.
     function buildStartingDeck(level) {
+        if (level.startingDeck) {
+            const deck = level.startingDeck.map(copyCard).filter(Boolean);
+            return level.shuffleDeck === false ? deck : shuffle(deck);
+        }
+
+        // Random: guaranteed cards plus random fill from the pool
         const pool = SC.cards.filter(function (card) {
-            return !card.demo && card.rarity !== 'Enemy';
+            return !card.demo && !card.hero && card.rarity !== 'Enemy';
         });
 
-        const deck = (level.guaranteedCards || [])
-            .map(function (id) { return SC.getCard(id); })
-            .filter(Boolean);
-
-        while (deck.length < level.deckSize && pool.length > 0) {
-            deck.push(pool[Math.floor(Math.random() * pool.length)]);
+        const deck = (level.guaranteedCards || []).map(copyCard).filter(Boolean);
+        while (deck.length < (level.deckSize || 10) && pool.length) {
+            const pick = pool[Math.floor(Math.random() * pool.length)];
+            deck.push(copyCard(pick.id));
         }
-
-        return deck;
+        return shuffle(deck);
     }
 
-    // ------- PLAYER CARDS -------
-
-    function drawCards(count) {
-        const s = SC.combat.state;
-
-        for (let i = 0; i < count; i++) {
-            // Out of cards: shuffle the discard pile back into the deck
-            if (s.drawPile.length === 0) {
-                if (s.discard.length === 0) {
-                    return;
-                }
-                s.drawPile = shuffle(s.discard);
-                s.discard = [];
-                addLog('Reshuffled the discard pile.');
-            }
-            s.hand.push(s.drawPile.pop());
+    // Every card in a fight is its own copy, so two Red Pens are two objects
+    function copyCard(id) {
+        const card = SC.getCard(id);
+        if (!card) {
+            console.warn('Unknown card id:', id);
+            return null;
         }
+        return Object.assign({}, card);
     }
 
-    SC.combat.playCard = function (handIndex) {
-        const s = SC.combat.state;
-        if (!s || s.result) {
-            return false;
-        }
+    // ------- PLAYER ACTIONS -------
+
+    combat.playCard = function (handIndex) {
+        const s = combat.state;
+        if (!s || s.result) return false;
 
         const card = s.hand[handIndex];
-        if (!card) {
-            return false;
-        }
+        if (!card) return false;
 
         if (card.cost > s.player.energy) {
             addLog('Not enough Coffee for ' + card.name + '.');
@@ -144,237 +126,318 @@ window.SC = window.SC || {};
 
         s.player.energy -= card.cost;
         s.hand.splice(handIndex, 1);
+        addLog('You played ' + card.name + '.');
 
-        const outcome = resolveCard(card, 'player');
+        resolveCard(card, 'player');
 
-        if (outcome.confiscated) {
+        // Where the card goes after it's played
+        if (card.type === 'Power') {
+            s.player.powers.push(card);
+        } else if (hasEffect(card, 'confiscate')) {
             s.confiscated.push(card);
+            addLog(card.name + ' was confiscated.');
         } else {
             s.discard.push(card);
+        }
+
+        // Powers that react to you playing an Attack
+        if (isAttack(card) && card.type !== 'Power') {
+            firePowers('player', 'playAttack');
         }
 
         checkResult();
         return true;
     };
 
-    // ------- CARD EFFECTS (used by both sides) -------
+    combat.endTurn = function () {
+        const s = combat.state;
+        if (!s || s.result) return;
 
-    function resolveCard(card, ownerKey) {
-        const s = SC.combat.state;
-        const owner = s[ownerKey];
-        const foe = ownerKey === 'player' ? s.enemy : s.player;
-        const isPlayer = ownerKey === 'player';
-
-        let lastDamage = 0;
-        let confiscated = false;
-
-        (card.effects || []).forEach(function (effect) {
-            const amount = amountOf(effect.amount);
-
-            switch (effect.type) {
-                case 'damage':
-                    lastDamage = amount;
-                    hit(foe, amount);
-                    addLog(card.name + ' dealt ' + amount + ' damage.');
-                    break;
-
-                case 'multiplier':
-                    // "Deal 2 damage 4 times": damage already hit once, so hit (times - 1) more
-                    for (let i = 1; i < amount; i++) {
-                        hit(foe, lastDamage);
-                    }
-                    addLog(card.name + ' hit ' + amount + ' times.');
-                    break;
-
-                case 'block':
-                    owner.relaxation += amount;
-                    addLog(owner === s.player ? 'You gained ' + amount + ' Relaxation.'
-                                              : s.enemy.name + ' gained ' + amount + ' Relaxation.');
-                    break;
-
-                case 'defender':
-                    owner.field.push({
-                        name: effect.name || card.name,
-                        art: card.art,
-                        sanity: amount,
-                        maxSanity: amount
-                    });
-                    addLog((effect.name || card.name) + ' is guarding the field.');
-                    break;
-
-                case 'energy':
-                    if (isPlayer) {
-                        s.player.energy += amount;
-                        addLog('Gained ' + amount + ' Coffee.');
-                    }
-                    break;
-
-                case 'draw':
-                    if (isPlayer) {
-                        drawCards(amount);
-                    }
-                    break;
-
-                case 'heal':
-                    owner.sanity = Math.min(owner.maxSanity, owner.sanity + amount);
-                    addLog('Healed ' + amount + ' Sanity.');
-                    break;
-
-                case 'shuffle':
-                    if (isPlayer) {
-                        s.drawPile = shuffle(s.drawPile.concat(s.discard));
-                        s.discard = [];
-                        addLog('Shuffled the discard pile into the deck.');
-                    }
-                    break;
-
-                case 'confiscate':
-                    confiscated = true;
-                    break;
-
-                default:
-                    // power, status, and anything else not built yet
-                    addLog('(' + card.name + ': "' + effect.type + '" is not built yet)');
-            }
-        });
-
-        return { confiscated: confiscated };
-    }
-
-    // Amounts are usually numbers. A few cards use text,
-    // like Bin Dump's 'player discard pile size'.
-    function amountOf(value) {
-        if (typeof value === 'number') {
-            return value;
+        // Leftover hand goes to the discard pile
+        while (s.hand.length) {
+            s.discard.push(s.hand.shift());
         }
-        if (typeof value === 'string' && value.indexOf('discard') !== -1) {
-            return SC.combat.state.discard.length;
-        }
-        return 0;
-    }
-
-    // ------- THE DAMAGE RULE -------
-
-    function hit(target, amount) {
-        let left = amount;
-
-        // 1. Defenders take hits first (front of the field first)
-        while (left > 0 && target.field.length > 0) {
-            const defender = target.field[0];
-            const absorbed = Math.min(defender.sanity, left);
-            defender.sanity -= absorbed;
-            left -= absorbed;
-
-            if (defender.sanity <= 0) {
-                target.field.shift();
-                addLog(defender.name + ' was knocked off the field.');
-            }
-        }
-
-        // 2. Relaxation absorbs what's left
-        if (left > 0 && target.relaxation > 0) {
-            const absorbed = Math.min(target.relaxation, left);
-            target.relaxation -= absorbed;
-            left -= absorbed;
-        }
-
-        // 3. The rest comes off Sanity
-        if (left > 0) {
-            target.sanity = Math.max(0, target.sanity - left);
-        }
-    }
-
-    // ------- TURNS -------
-
-    SC.combat.endTurn = function () {
-        const s = SC.combat.state;
-        if (!s || s.result) {
-            return;
-        }
-
-        // Your unplayed cards go to the discard pile
-        s.discard = s.discard.concat(s.hand);
-        s.hand = [];
 
         enemyTurn();
         checkResult();
-        if (s.result) {
-            return;
-        }
+        if (s.result) return;
 
-        // Start of your next turn
-        s.turn++;
-        s.player.relaxation = 0;   // Relaxation lasts one turn
+        // Your next turn
+        s.turn += 1;
+        s.player.relaxation = 0;               // Relaxation lasts one turn
         if (s.level.refillEnergy) {
             s.player.energy = s.player.maxEnergy;
         }
         drawCards(s.level.handSize);
+        pickEnemyCards();
     };
 
+    // ------- ENEMY -------
+
     function enemyTurn() {
-        const s = SC.combat.state;
+        const s = combat.state;
         const enemy = s.enemy;
 
-        if (enemy.sanity <= 0) {
-            return;
-        }
-
-        enemy.relaxation = 0;   // enemy Relaxation also lasts one turn
+        enemy.relaxation = 0;                  // its Relaxation also lasts one turn
 
         enemy.next.forEach(function (card) {
-            if (s.player.sanity <= 0) {
-                return;
-            }
+            if (s.result) return;
             addLog(enemy.name + ' played ' + card.name + '.');
             resolveCard(card, 'enemy');
+
+            if (card.type === 'Power') {
+                enemy.powers.push(card);
+            }
+            if (isAttack(card) && card.type !== 'Power') {
+                firePowers('enemy', 'playAttack');
+            }
+            checkResult();
         });
 
-        pickEnemyCards();
+        enemy.next = [];
     }
 
-    // Decide what the enemy plays next turn, so the screen can show it
+    // Choose what the enemy plays next turn (shown as its intent)
     function pickEnemyCards() {
-        const enemy = SC.combat.state.enemy;
-        enemy.next = [];
+        const enemy = combat.state.enemy;
 
-        if (enemy.deck.length === 0) {
-            return;
-        }
+        // Powers it already has in play aren't played again
+        const playable = enemy.deck.filter(function (card) {
+            return !(card.type === 'Power' && enemy.powers.some(function (p) {
+                return p.id === card.id;
+            }));
+        });
+
+        enemy.next = [];
+        if (!playable.length) return;
 
         for (let i = 0; i < enemy.cardsPerTurn; i++) {
+            let card;
             if (enemy.order === 'random') {
-                enemy.next.push(enemy.deck[Math.floor(Math.random() * enemy.deck.length)]);
+                card = playable[Math.floor(Math.random() * playable.length)];
             } else {
-                enemy.next.push(enemy.deck[enemy.deckIndex % enemy.deck.length]);
-                enemy.deckIndex++;
+                card = playable[enemy.deckIndex % playable.length];
+                enemy.deckIndex += 1;
+            }
+            enemy.next.push(card);
+        }
+    }
+
+    // ------- CARD EFFECTS -------
+
+    // Runs every effect on a card for whoever played it
+    function resolveCard(card, who) {
+        const ctx = { lastDamage: 0 };
+        (card.effects || []).forEach(function (effect) {
+            resolveEffect(effect, who, card, ctx);
+        });
+    }
+
+    function resolveEffect(effect, who, card, ctx) {
+        const s = combat.state;
+        const owner = sideOf(who);
+        const foeWho = who === 'player' ? 'enemy' : 'player';
+        const amount = amountOf(effect.amount);
+
+        switch (effect.type) {
+            case 'damage': {
+                const total = Math.max(0, amount + attackBonus(who));
+                hit(foeWho, total);
+                ctx.lastDamage = total;
+                break;
+            }
+
+            case 'multiplier':
+                // "Deal 2 damage 3 times" = damage once, then repeat 2 more times
+                for (let i = 1; i < amount && !s.result; i++) {
+                    hit(foeWho, ctx.lastDamage);
+                }
+                break;
+
+            case 'block':
+                owner.relaxation += amount;
+                break;
+
+            case 'defender':
+                owner.field.push({
+                    name: effect.name || card.name,
+                    art: effect.art || card.art,
+                    sanity: amount,
+                    maxSanity: amount
+                });
+                addLog((who === 'player' ? 'You put' : s.enemy.name + ' put') +
+                    ' a ' + (effect.name || card.name) + ' on the field.');
+                break;
+
+            case 'energy':
+                if (who === 'player') {
+                    s.player.energy += amount;
+                }
+                break;
+
+            case 'draw':
+                if (who === 'player') {
+                    drawCards(amount);
+                }
+                break;
+
+            case 'heal':
+                owner.sanity = Math.min(owner.maxSanity, owner.sanity + amount);
+                break;
+
+            case 'shuffle':
+                if (who === 'player') {
+                    while (s.discard.length) {
+                        s.drawPile.push(s.discard.pop());
+                    }
+                    shuffle(s.drawPile);
+                    addLog('Shuffled your discard pile into your deck.');
+                }
+                break;
+
+            case 'status': {
+                // Tracked so the team can build it; no effect yet
+                const target = sideOf(foeWho);
+                target.status[effect.status] = (target.status[effect.status] || 0) + amount;
+                break;
+            }
+
+            case 'confiscate':   // handled in playCard
+            case 'power':        // passive; handled by firePowers
+                break;
+
+            default:
+                addLog('"' + effect.type + '" effects are not built yet.');
+        }
+    }
+
+    // Numbers on cards can also be words like 'player discard pile size'
+    function amountOf(amount) {
+        if (typeof amount === 'number') return amount;
+        if (amount === 'player discard pile size') return combat.state.discard.length;
+        return 0;
+    }
+
+    // ------- DAMAGE -------
+
+    // Defenders first, then Relaxation, then Sanity
+    function hit(targetWho, amount) {
+        const target = sideOf(targetWho);
+
+        // Powers like Track Record soften every hit
+        amount = Math.max(0, amount + powerTotal(targetWho, 'Attacked'));
+
+        // 1. Defenders, front one first
+        while (amount > 0 && target.field.length) {
+            const defender = target.field[0];
+            const taken = Math.min(defender.sanity, amount);
+            defender.sanity -= taken;
+            amount -= taken;
+
+            if (defender.sanity <= 0) {
+                target.field.shift();
+                addLog(defender.name + ' was knocked out.');
             }
         }
+
+        // 2. Relaxation
+        const blocked = Math.min(target.relaxation, amount);
+        target.relaxation -= blocked;
+        amount -= blocked;
+
+        // 3. Sanity
+        target.sanity = Math.max(0, target.sanity - amount);
+    }
+
+    // ------- POWERS -------
+
+    // Run the inner effect of every Power with this trigger
+    function firePowers(who, trigger) {
+        const side = sideOf(who);
+        side.powers.forEach(function (card) {
+            (card.effects || []).forEach(function (effect) {
+                if (effect.type === 'power' && effect.trigger === trigger && effect.effect) {
+                    resolveEffect(effect.effect, who, card, { lastDamage: 0 });
+                }
+            });
+        });
+    }
+
+    // Add up the numbers on Powers with this trigger (no effect run)
+    function powerTotal(who, trigger) {
+        let total = 0;
+        sideOf(who).powers.forEach(function (card) {
+            (card.effects || []).forEach(function (effect) {
+                if (effect.type === 'power' && effect.trigger === trigger && effect.effect) {
+                    total += amountOf(effect.effect.amount);
+                }
+            });
+        });
+        return total;
+    }
+
+    // Extra damage from Powers like Pencil Sharpener
+    function attackBonus(who) {
+        return powerTotal(who, 'Attacks');
+    }
+
+    // ------- DECK -------
+
+    function drawCards(count) {
+        const s = combat.state;
+        for (let i = 0; i < count; i++) {
+            if (!s.drawPile.length) {
+                if (!s.discard.length) return;     // nothing left anywhere
+                while (s.discard.length) {
+                    s.drawPile.push(s.discard.pop());
+                }
+                shuffle(s.drawPile);
+                addLog('Reshuffled the discard pile.');
+            }
+            s.hand.push(s.drawPile.shift());
+        }
+    }
+
+    function shuffle(list) {
+        for (let i = list.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
+        }
+        return list;
     }
 
     // ------- HELPERS -------
 
     function checkResult() {
-        const s = SC.combat.state;
+        const s = combat.state;
+        if (s.result) return;
+
         if (s.enemy.sanity <= 0) {
             s.result = 'win';
+            addLog(s.enemy.name + ' gave up!');
         } else if (s.player.sanity <= 0) {
             s.result = 'lose';
+            addLog('You ran out of Sanity.');
         }
+    }
+
+    function sideOf(who) {
+        return who === 'player' ? combat.state.player : combat.state.enemy;
+    }
+
+    function hasEffect(card, type) {
+        return (card.effects || []).some(function (e) { return e.type === type; });
+    }
+
+    function isAttack(card) {
+        return card.type === 'Attack' || hasEffect(card, 'damage');
     }
 
     function addLog(text) {
-        SC.combat.state.log.push(text);
+        combat.state.log.push(text);
     }
 
-    function shuffle(list) {
-        const copy = list.slice();
-        for (let i = copy.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            const temp = copy[i];
-            copy[i] = copy[j];
-            copy[j] = temp;
-        }
-        return copy;
-    }
-
+    SC.combat = combat;
 })();

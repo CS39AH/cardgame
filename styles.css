@@ -1812,18 +1812,35 @@ h1, h2, h3 {
     max-width: 900px;
 }
 
-/* ---------- BATTLE SCREEN ---------- */
+/* =========================================================
+   BATTLE SCREEN  (screens/battle.html, js/ui/battle.js)
+   The front of the classroom:
+     top    = chalkboard (enemy side)
+     bottom = teacher's desk (your side)
+     front  = deck pile, fanned hand, discard pile
+   battle.js zooms .battle-screen to fill the window.
+   Flying cards and hits come from js/ui/battle-fx.js.
+   ========================================================= */
 
+/* ----- Page: centered, battle.js scales it to fit ----- */
 #screen[data-screen="battle"] {
-    max-width: 1200px;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;          /* centers the battle, whatever its zoom */
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-2);
 }
 
 .battle-screen {
     display: grid;
     gap: var(--space-4);
+    flex: none;
+    margin: 0;
     animation: fade-in 0.35s ease both;
 }
 
+/* ----- Header: back link, title, turn ----- */
 .battle__top {
     display: flex;
     flex-wrap: wrap;
@@ -1843,78 +1860,206 @@ h1, h2, h3 {
     font-size: var(--size-small);
 }
 
-/* Enemy side and player side, outlined in chalk */
+/* ----- Both halves ----- */
 .battle__side {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-4);
-    border: 2px dashed rgba(244, 240, 229, 0.25);
-    border-radius: var(--radius-lg);
-    background: rgba(0, 0, 0, 0.2);
 }
 
 .battle__side-label {
-    margin: 0;
-    font-size: 0.75rem;
+    margin: 0 0 var(--space-2);
+    font-family: var(--font-title);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--color-chalk-faint);
 }
 
-/* Enemy with its next card beside it */
-.battle__enemy-row {
+/* [ card on the side ] [ defenders | powers ] [ intent / End Turn ] */
+.battle__layout {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-5);
+    width: 100%;
+}
+
+/* ----- Enemy half: the chalkboard -----
+   Same 9-slice trick as .chalkboard on the Cards screen */
+.battle__side--enemy {
+    --slice-top: 32;
+    --slice-right: 36;
+    --slice-bottom: 84;
+    --slice-left: 39;
+    --frame: 0.7;
+
+    position: relative;
+    z-index: 1;
+    border-style: solid;
+    border-width:
+        calc(var(--slice-top) * 1px * var(--frame))
+        calc(var(--slice-right) * 1px * var(--frame))
+        calc(var(--slice-bottom) * 1px * var(--frame))
+        calc(var(--slice-left) * 1px * var(--frame));
+    border-image-source: url('graphics/screens/chalkboard.jpg');
+    border-image-slice:
+        var(--slice-top) var(--slice-right) var(--slice-bottom) var(--slice-left) fill;
+    border-image-repeat: stretch;
+
+    padding: var(--space-4) var(--space-5) var(--space-3);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+    color: rgba(244, 240, 229, 0.9);
+}
+
+/* Words on the board look like chalk */
+.battle__side--enemy .battle__side-label,
+.battle__intent {
+    font-family: var(--font-title);
+    color: rgba(244, 240, 229, 0.9);
+    text-shadow:
+        0 0 1px rgba(255, 255, 255, 0.6),
+        0 0 8px rgba(255, 255, 255, 0.15);
+}
+
+/* ----- Player half: the teacher's desk -----
+   Layers, top to bottom: slight darkening, desk.jpg,
+   then CSS wood as a fallback if the photo is missing.
+   Bottom padding leaves room for the hand to overlap the edge. */
+.battle__side--player {
+    position: relative;
+    margin-top: var(--space-5);
+    padding: var(--space-5) var(--space-5) 4.5rem;
+    border-radius: 8px 8px 0 0;
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.25)),
+        url('graphics/screens/desk.jpg') center / cover,
+        repeating-linear-gradient(180deg,
+            rgba(60, 30, 10, 0.10) 0 2px,
+            transparent 2px 11px,
+            rgba(60, 30, 10, 0.06) 11px 12px,
+            transparent 12px 27px),
+        linear-gradient(180deg, #b07444 0%, #93582c 55%, #74431f 100%);
+
+    /* Rounded front edge of the desk + shadow */
+    border-top: 12px solid #c48a56;
+    box-shadow:
+        inset 0 6px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -20px 40px rgba(0, 0, 0, 0.25),
+        0 -4px 10px rgba(0, 0, 0, 0.35);
+    color: #fff8ec;
+}
+
+.battle__side--player .battle__side-label {
+    color: #fff3dc;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* ----- Defenders | Powers: one shared area per side ----- */
+.battle__zones {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    min-height: 10rem;
+}
+
+.battle__field,
+.battle__powers {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
+    align-content: center;
     align-items: center;
     justify-content: center;
-    gap: var(--space-5);
-}
-
-.battle__intent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     gap: var(--space-2);
+    min-height: 10rem;
+    padding: var(--space-5) var(--space-3) var(--space-3);
 }
 
-.battle__intent-label {
-    margin: 0;
+/* Small corner labels */
+.battle__field::after,
+.battle__powers::after {
+    position: absolute;
+    top: 0.35rem;
+    left: 0.7rem;
+    font-family: var(--font-title);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.battle__field::after  { content: 'Defenders'; }
+.battle__powers::after { content: 'Powers'; }
+
+/* Hint text when empty */
+.battle__field:empty::before,
+.battle__powers:empty::before {
+    content: attr(data-empty);
     font-size: var(--size-small);
-    color: var(--color-chalk-dim);
+    font-style: italic;
+    text-align: center;
 }
 
-.intent-slot {
+/* Desk: green blotter with a dashed divider */
+.battle__side--player .battle__zones {
+    border: 3px solid #3a2414;
+    border-radius: 6px;
+    background: radial-gradient(ellipse at center, #3f6b4a 0%, #2c4f37 100%);
+    box-shadow:
+        inset 0 2px 8px rgba(0, 0, 0, 0.5),
+        0 2px 0 rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.battle__side--player .battle__powers {
+    border-left: 2px dashed rgba(255, 255, 255, 0.25);
+}
+
+.battle__side--player .battle__field::after,
+.battle__side--player .battle__powers::after {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Board: chalk-drawn box with a chalk divider */
+.battle__side--enemy .battle__zones {
+    border: 2px dashed rgba(244, 240, 229, 0.35);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(244, 240, 229, 0.55);
+    font-family: var(--font-title);
+}
+
+.battle__side--enemy .battle__powers {
+    border-left: 2px dashed rgba(244, 240, 229, 0.3);
+}
+
+.battle__side--enemy .battle__field::after,
+.battle__side--enemy .battle__powers::after {
+    color: rgba(244, 240, 229, 0.8);
+}
+
+/* Power cards: small, grow on hover so you can read them */
+.power-slot {
+    position: relative;
     width: 400px;
     aspect-ratio: 16 / 9;
-    zoom: 0.45;
+    zoom: 0.42;
+    transition: transform 0.15s ease;
 }
 
-.intent-slot .card,
-.intent-slot .card:hover {
+.power-slot .card,
+.power-slot .card:hover {
     transform: none;
 }
 
-.battle__field {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-3);
-    width: 100%;
-    min-height: 7rem;
+.power-slot:hover {
+    z-index: 5;
+    transform: scale(1.5);
 }
 
-/* Hint text when a field is empty */
-.battle__field:empty::before {
-    content: attr(data-empty);
-    color: var(--color-chalk-faint);
-    font-size: var(--size-small);
-    font-style: italic;
-}
-
-/* The enemy and defenders */
+/* ----- Enemy and defender boxes ----- */
 .unit {
     width: 9.5rem;
     padding: var(--space-3);
@@ -1925,18 +2070,40 @@ h1, h2, h3 {
     box-shadow: var(--shadow-md);
 }
 
-.unit--enemy {
-    width: 11rem;
-    border: 3px solid var(--color-danger);
-}
-
 .unit--defender {
     border: 3px solid #4a7bd0;
+}
+
+/* Enemy: taped to the chalkboard, tilted */
+.unit--enemy {
+    position: relative;
+    width: 12rem;
+    padding: var(--space-4) var(--space-3) var(--space-3);
+    border: 3px solid var(--color-danger);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+    transform: rotate(5deg);
+}
+
+/* Strip of tape holding it to the board */
+.unit--enemy::before {
+    content: '';
+    position: absolute;
+    top: -0.7rem;
+    left: 50%;
+    width: 5rem;
+    height: 1.4rem;
+    transform: translateX(-50%) rotate(-4deg);
+    background: rgba(255, 250, 220, 0.75);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .unit__art {
     font-size: 2.5rem;
     line-height: 1;
+}
+
+.unit--enemy .unit__art {
+    font-size: 3.5rem;
 }
 
 .unit__name {
@@ -1973,32 +2140,153 @@ h1, h2, h3 {
     color: #1e5bb8;
 }
 
-/* Hero card, stats, and End Turn */
-.battle__player-row {
+/* ----- Enemy's next card(s), right side of the board ----- */
+.battle__intent {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: var(--space-5);
-    width: 100%;
+    gap: var(--space-2);
+    min-width: 11rem;
 }
 
-.battle__hero {
-    width: 400px;
-    aspect-ratio: 16 / 9;
-    zoom: 0.6;
-}
-
-.battle__stats {
-    display: grid;
-    gap: var(--space-1);
-    min-width: 12rem;
+.battle__intent-label {
+    margin: 0;
     font-size: var(--size-small);
     color: var(--color-chalk-dim);
 }
 
-.battle__stat strong {
-    color: var(--color-chalk);
+.intent-slot {
+    width: 400px;
+    aspect-ratio: 16 / 9;
+    zoom: 0.45;
+}
+
+.intent-slot .card,
+.intent-slot .card:hover {
+    transform: none;
+}
+
+/* ----- Your hero: lying on the desk, tilted -----
+   Stats replace the ability text (built in battle.js).
+   The foil holds still here: a moving foil on a tilted,
+   zoomed card makes Chrome draw it blurry. */
+.battle__hero {
+    width: 400px;
+    aspect-ratio: 16 / 9;
+    zoom: 0.75;
+}
+
+.battle__hero .hero-badge {
+    transform: rotate(-6deg);
+}
+
+.battle__hero .card--hero,
+.battle__hero .card--hero:hover {
+    transform: none;
+    transition: none;
+}
+
+.battle__hero .card--hero::after {
+    animation: none;
+    background-position: 40% 50%;
+}
+
+.battle__hero .card__cost {
+    display: none;
+}
+
+/* Blue glow while Relaxation is up */
+.battle__hero .card--hero.has-relaxation {
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.85),
+        0 0 0 6px rgba(80, 150, 255, 0.85),
+        0 0 24px rgba(80, 150, 255, 0.7),
+        0 10px 28px rgba(0, 0, 0, 0.55);
+}
+
+.hero-stats {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-body);
+    color: var(--card-ink);
+}
+
+/* Each row sits on one ruled line of the notecard */
+.hero-stats__row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 1.6rem;
+    transition: opacity 0.3s ease;
+}
+
+.hero-stats__row.is-zero {
+    opacity: 0.45;
+}
+
+.hero-stats__icon {
+    width: 1.4rem;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.hero-stats__label {
+    flex: 1;
+    font-size: 0.85rem;
+}
+
+/* Sanity bar */
+.hero-stats__bar {
+    flex: 1;
+    height: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.hero-stats__fill {
+    height: 100%;
+    background: #3fae4a;
+    transition: width 0.5s ease, background 0.3s ease;
+}
+
+.hero-stats__fill[data-level="mid"] { background: #e0a520; }
+.hero-stats__fill[data-level="low"] { background: var(--color-danger); }
+
+.hero-stats__sanity {
+    min-width: 3.2rem;
+    text-align: right;
+    font-size: 0.95rem;
+}
+
+.hero-stats__relax {
+    min-width: 1.5rem;
+    text-align: right;
+    font-size: 1rem;
+    color: #1e5bb8;
+}
+
+/* Coffee cups */
+.hero-stats__cups {
+    display: flex;
+    gap: 0.15rem;
+    font-size: 1.15rem;
+}
+
+.hero-stats__cup {
+    transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.hero-stats__cup.is-empty {
+    filter: grayscale(1);
+    opacity: 0.3;
+}
+
+/* ----- End Turn, right side of the desk ----- */
+.battle__end-turn {
+    align-self: center;
+    white-space: nowrap;
 }
 
 .battle__end-turn:disabled {
@@ -2006,274 +2294,8 @@ h1, h2, h3 {
     cursor: not-allowed;
 }
 
-/* The hand: full-size cards drawn at half size */
-.battle__hand {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-3);
-    min-height: 6rem;
-}
-
-.hand-slot {
-    width: 400px;
-    aspect-ratio: 16 / 9;
-    zoom: 0.5;
-    cursor: pointer;
-    transition: transform 0.15s ease;
-}
-
-.hand-slot:hover,
-.hand-slot:focus-visible {
-    transform: translateY(-16px);
-    outline: none;
-}
-
-.hand-slot .card,
-.hand-slot .card:hover {
-    transform: none;
-}
-
-.hand-slot.is-unaffordable {
-    opacity: 0.45;
-    cursor: not-allowed;
-}
-
-.battle__log {
-    margin: 0;
-    min-height: 1.5em;
-    text-align: center;
-    font-size: var(--size-small);
-    color: var(--color-chalk-dim);
-}
-
-/* Win / lose message */
-.battle__result {
-    position: fixed;
-    inset: 0;
-    z-index: 120;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-4);
-    background: rgba(5, 15, 10, 0.8);
-    text-align: center;
-    animation: fade-in 0.3s ease both;
-}
-
-.battle__result h2 {
-    margin: 0;
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    transform: rotate(-2deg);
-}
-
-/* =========================================================
-   BATTLE: FRONT OF THE CLASSROOM
-   Top half = the chalkboard (enemy side)
-   Bottom half = the teacher's desk (your side)
-   ========================================================= */
-
-/* Remove the dashed wireframe boxes */
-.battle-screen .battle__side {
-    border: none;
-    border-radius: 0;
-    background: none;
-    outline: none;
-}
-
-/* ----- Enemy side: the chalkboard -----
-   Same 9-slice trick as .chalkboard on the Cards screen */
-.battle-screen .battle__side--enemy {
-    --slice-top: 32;
-    --slice-right: 36;
-    --slice-bottom: 84;
-    --slice-left: 39;
-    --frame: 0.7;
-
-    border-style: solid;
-    border-width:
-        calc(var(--slice-top) * 1px * var(--frame))
-        calc(var(--slice-right) * 1px * var(--frame))
-        calc(var(--slice-bottom) * 1px * var(--frame))
-        calc(var(--slice-left) * 1px * var(--frame));
-    border-image-source: url('graphics/screens/chalkboard.jpg');
-    border-image-slice:
-        var(--slice-top) var(--slice-right) var(--slice-bottom) var(--slice-left) fill;
-    border-image-repeat: stretch;
-
-    padding: var(--space-4) var(--space-5) var(--space-3);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
-    color: rgba(244, 240, 229, 0.9);
-    position: relative;
-    z-index: 1;
-}
-
-/* Words on the board look like chalk */
-.battle-screen .battle__side--enemy .battle__label,
-.battle-screen .battle__side--enemy .battle__intent {
-    font-family: var(--font-title);
-    color: rgba(244, 240, 229, 0.9);
-    text-shadow:
-        0 0 1px rgba(255, 255, 255, 0.6),
-        0 0 8px rgba(255, 255, 255, 0.15);
-}
-
-/* Enemy field = a chalk-drawn spot on the board */
-.battle-screen .battle__field--enemy {
-    border: 2px dashed rgba(244, 240, 229, 0.35);
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.03);
-    color: rgba(244, 240, 229, 0.55);
-    font-family: var(--font-title);
-}
-
-/* ----- Player side: the teacher's desk -----
-   Layers, top to bottom:
-   1. desk.jpg (once you add it)
-   2. thin grain lines
-   3. warm wood color
-   If desk.jpg is missing, 2 and 3 still look like wood. */
-.battle-screen .battle__side--player {
-    position: relative;
-    margin-top: var(--space-5);
-    padding: var(--space-5) var(--space-5) 4.5rem;
-    border-radius: 8px 8px 0 0;
-    background:
-        linear-gradient(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.25)),
-        url('graphics/screens/desk.jpg') center / cover,
-        repeating-linear-gradient(180deg,
-            rgba(60, 30, 10, 0.10) 0 2px,
-            transparent 2px 11px,
-            rgba(60, 30, 10, 0.06) 11px 12px,
-            transparent 12px 27px),
-        linear-gradient(180deg, #b07444 0%, #93582c 55%, #74431f 100%);
-
-    /* Rounded front edge of the desk + shadow on the floor */
-    border-top: 12px solid #c48a56;
-    box-shadow:
-        inset 0 6px 0 rgba(255, 255, 255, 0.12),
-        inset 0 -20px 40px rgba(0, 0, 0, 0.25),
-        0 -4px 10px rgba(0, 0, 0, 0.35);
-    color: #fff8ec;
-}
-
-/* Your field = a green desk blotter where defenders sit */
-.battle-screen .battle__field--player {
-    border: 3px solid #3a2414;
-    border-radius: 6px;
-    background:
-        radial-gradient(ellipse at center, #3f6b4a 0%, #2c4f37 100%);
-    box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.5),
-        0 2px 0 rgba(255, 255, 255, 0.15);
-    color: rgba(255, 255, 255, 0.55);
-}
-
-/* Stats on a sticky note so they're readable on wood
-   (we'll replace this with real icons in step 3) */
-.battle-screen .battle__stats {
-    background: #fff6a8;
-    color: #3a2a12;
-    padding: var(--space-3) var(--space-4);
-    border-radius: 2px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
-    transform: rotate(-2deg);
-}
-
-/* Log line sits on the desk too */
-.battle-screen .battle__log {
-    color: #fff8ec;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-}
-
-/* Numbers on the sticky note need dark ink, not chalk */
-.battle-screen .battle__stat strong {
-    color: #1a1206;
-}
-
-/* Side labels: readable on the board and on the desk */
-.battle-screen .battle__label {
-    opacity: 1;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-}
-
-.battle-screen .battle__side--enemy .battle__label {
-    color: rgba(244, 240, 229, 0.9);
-}
-
-.battle-screen .battle__side--player .battle__label {
-    color: #fff3dc;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-}
-
-/* =========================================================
-   BATTLE: FANNED HAND
-   Cards overlap the front edge of the desk.
-   --i and --lift are set by fanHand() in battle.js
-   ========================================================= */
-.battle-screen .battle__hand {
-    flex-wrap: nowrap;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 0;
-    padding-bottom: var(--space-5);
-    min-height: 9rem;
-}
-
-.battle-screen .hand-slot {
-    --i: 0;
-    --lift: 0;
-    position: relative;
-    transform-origin: 50% 130%;
-    transform:
-        rotate(calc(var(--i) * 5deg))
-        translateY(calc(var(--lift) * 8px));
-    transition: transform 0.2s ease;
-    filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.45));
-}
-
-/* Overlap the cards (numbers are doubled because of zoom: 0.5) */
-.battle-screen .hand-slot + .hand-slot {
-    margin-left: -90px;
-}
-
-/* Hovered card straightens and comes to the front */
-.battle-screen .hand-slot:hover,
-.battle-screen .hand-slot:focus-visible {
-    z-index: 10;
-    transform: rotate(0deg) translateY(0);
-}
-
-/* The card itself pops up, so the slot stays under your mouse */
-.battle-screen .hand-slot .card {
-    transition: transform 0.2s ease;
-}
-
-.battle-screen .hand-slot:hover .card,
-.battle-screen .hand-slot:focus-visible .card {
-    transform: translateY(-90px) scale(1.2);
-}
-
-/* Cards you can't afford stay dim and don't pop up */
-.battle-screen .hand-slot.is-unaffordable:hover .card {
-    transform: translateY(-30px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .battle-screen .hand-slot,
-    .battle-screen .hand-slot .card {
-        transition: none;
-    }
-}
-
-/* =========================================================
-   BATTLE: DECK + DISCARD PILES
-   Left = draw pile (face down), right = discard pile
-   ========================================================= */
-.battle-screen .battle__hand-row {
+/* ----- Deck | fanned hand | discard, along the desk's front edge ----- */
+.battle__hand-row {
     position: relative;
     z-index: 5;
     display: grid;
@@ -2284,6 +2306,70 @@ h1, h2, h3 {
     margin-top: -4rem;
 }
 
+.battle__hand {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0;
+    padding-bottom: var(--space-5);
+    min-height: 9rem;
+}
+
+/* Full-size cards drawn at half size, fanned out.
+   --i and --lift are set by fanHand() in battle.js */
+.hand-slot {
+    --i: 0;
+    --lift: 0;
+    position: relative;
+    width: 400px;
+    aspect-ratio: 16 / 9;
+    zoom: 0.5;
+    cursor: pointer;
+    transform-origin: 50% 130%;
+    transform:
+        rotate(calc(var(--i) * 5deg))
+        translateY(calc(var(--lift) * 8px));
+    transition: transform 0.2s ease;
+    filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.45));
+}
+
+/* Overlap the cards (numbers are doubled because of zoom: 0.5) */
+.hand-slot + .hand-slot {
+    margin-left: -90px;
+}
+
+/* Hovered card straightens and comes to the front */
+.hand-slot:hover,
+.hand-slot:focus-visible {
+    z-index: 10;
+    transform: rotate(0deg) translateY(0);
+    outline: none;
+}
+
+/* The card itself pops up, so the slot stays under your mouse */
+.hand-slot .card,
+.hand-slot .card:hover {
+    transform: none;
+    transition: transform 0.2s ease;
+}
+
+.hand-slot:hover .card,
+.hand-slot:focus-visible .card {
+    transform: translateY(-90px) scale(1.2);
+}
+
+/* Cards you can't afford stay dim and barely pop up */
+.hand-slot.is-unaffordable {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.hand-slot.is-unaffordable:hover .card {
+    transform: translateY(-30px);
+}
+
+/* Deck and discard piles */
 .pile {
     position: relative;
     display: flex;
@@ -2359,9 +2445,38 @@ h1, h2, h3 {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
-/* =========================================================
-   BATTLE: EFFECTS (flying cards, hits, damage numbers)
-   ========================================================= */
+/* ----- Log line under the hand ----- */
+.battle__log {
+    margin: 0;
+    min-height: 1.5em;
+    text-align: center;
+    font-size: var(--size-small);
+    color: #fff8ec;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* ----- Win / lose message ----- */
+.battle__result {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    background: rgba(5, 15, 10, 0.8);
+    text-align: center;
+    animation: fade-in 0.3s ease both;
+}
+
+.battle__result h2 {
+    margin: 0;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    transform: rotate(-2deg);
+}
+
+/* ----- Effects (js/ui/battle-fx.js) ----- */
 
 /* A temporary copy of a card flying across the screen */
 .fly-ghost {
@@ -2401,7 +2516,7 @@ h1, h2, h3 {
     100% { transform: translateX(0);    filter: none; }
 }
 
-/* Floating "-6" */
+/* Floating "-6", "+15 🧠", "+5 😌" */
 .fx-damage {
     position: fixed;
     z-index: 115;
@@ -2414,13 +2529,6 @@ h1, h2, h3 {
     text-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .is-hit {
-        animation: none;
-    }
-}
-
-/* Healing and Relaxation numbers */
 .fx-heal {
     color: #5fd96a;
     -webkit-text-stroke: 2px #0b2a0e;
@@ -2447,4 +2555,27 @@ h1, h2, h3 {
     background: rgba(255, 240, 240, 0.85);
     white-space: nowrap;
     pointer-events: none;
+}
+
+/* ----- Phones / narrow screens: stack each half ----- */
+@media (max-width: 820px) {
+    .battle__layout {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .battle__zones {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hand-slot,
+    .hand-slot .card {
+        transition: none;
+    }
+
+    .is-hit {
+        animation: none;
+    }
 }
