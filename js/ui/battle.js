@@ -23,7 +23,7 @@ window.SC = window.SC || {};
     const RESULT_DELAY = 1400;
 
     // The battle is laid out at this width, then scaled up to fill the window
-    const BASE_WIDTH = 720;
+    const BASE_WIDTH = 960;
     const MAX_SCALE = 1.8;
 
     // ------- SETUP -------
@@ -84,6 +84,8 @@ window.SC = window.SC || {};
 
         root.style.zoom = scale;
         SC.battleScale = scale;          // battle-fx.js uses this to size flying cards
+
+        fanHand();                       // hand space may have changed
     }
 
     // Start (or restart) the fight from scratch
@@ -424,15 +426,31 @@ window.SC = window.SC || {};
     }
 
     // Spread the hand into a fan: middle card straight,
-    // outer cards tilted and dropped a little lower
+    // outer cards tilted and dropped a little lower.
+    // More cards = more overlap, so the hand never gets wider than its space.
     function fanHand() {
+        const hand = root.querySelector('.battle__hand');
         const slots = root.querySelectorAll('.battle__hand .hand-slot');
-        const mid = (slots.length - 1) / 2;
+        const count = slots.length;
+        const mid = (count - 1) / 2;
+
+        // Width the hand is allowed to use (undo the screen zoom to get layout pixels)
+        const zoom = parseFloat(root.style.zoom) || 1;
+        const room = hand.getBoundingClientRect().width / zoom;
+
+        const CARD = 200;        // a hand card is 400px at zoom 0.5
+        let overlap = 45;        // normal overlap
+        if (count > 1 && CARD * count - overlap * (count - 1) > room) {
+            overlap = (CARD * count - room) / (count - 1);
+        }
+        overlap = Math.min(overlap, 150);   // always show at least 50px of each card
 
         slots.forEach(function (slot, i) {
             const offset = i - mid;
             slot.style.setProperty('--i', offset);
             slot.style.setProperty('--lift', offset * offset);
+            // Margins on the slot are inside its zoom: 0.5, so double them
+            slot.style.marginLeft = i === 0 ? '0' : (-overlap * 2) + 'px';
         });
     }
 

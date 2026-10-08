@@ -2299,7 +2299,7 @@ h1, h2, h3 {
     position: relative;
     z-index: 5;
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: end;
     gap: var(--space-4);
     width: 100%;
@@ -2307,6 +2307,7 @@ h1, h2, h3 {
 }
 
 .battle__hand {
+    min-width: 0;
     display: flex;
     flex-wrap: nowrap;
     align-items: flex-end;
