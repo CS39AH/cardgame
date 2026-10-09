@@ -153,7 +153,7 @@ SC.cards = [
         image: 'graphics/cards/lesson_plan.png',
         imageAlt: 'A folder with the lesson plan left by the teacher',
         imageScale: 1.0,
-        description: 'Take your discard pill and shuffle it into your deck.',
+        description: 'Take your discard pile and shuffle it into your deck.',
         effects: [
             {type: 'shuffle', amount: 'deck'}
         ]

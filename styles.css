@@ -2580,3 +2580,132 @@ h1, h2, h3 {
         animation: none;
     }
 }
+/* =========================================================
+   TUTORIAL SCREEN  (screens/tutorial.html, js/ui/tutorial.js)
+   ========================================================= */
+
+#screen[data-screen="tutorial"] {
+    max-width: 900px;
+}
+
+.tutorial-screen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7);          /* space between sections */
+    text-align: center;
+    animation: fade-in 0.35s ease both;
+}
+
+.tutorial-screen section h2 {
+    margin-bottom: var(--space-5);
+}
+
+.tutorial-screen section p,
+.tutorial-screen section ul {
+    max-width: 60ch;
+    margin: 0 auto var(--space-4);
+}
+
+.tutorial-screen ul {
+    text-align: left;
+    padding-left: var(--space-5);
+}
+
+.tutorial-screen li + li {
+    margin-top: var(--space-3);
+}
+
+.tutorial__subtitle {
+    font-size: 0.6em;
+    color: var(--color-chalk-dim);
+}
+
+/* Every card slot needs a size, because .card fills its parent */
+.card-demo {
+    width: min(100%, 340px);
+    aspect-ratio: 16 / 9;
+    margin: var(--space-5) auto;
+}
+
+/* Card on one side, explanation on the other */
+.tutorial__example {
+    display: grid;
+    grid-template-columns: minmax(0, 340px) 1fr;
+    align-items: center;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+    text-align: left;
+}
+
+.tutorial__example .card-demo {
+    margin: 0;
+}
+
+.tutorial__example-text h3 {
+    margin-bottom: var(--space-2);
+}
+
+.tutorial__example-text p {
+    margin: 0;
+}
+
+/* Colored headings for each card type */
+.tutorial__example:nth-of-type(1) h3 { color: var(--color-danger); }
+.tutorial__example:nth-of-type(2) h3 { color: #7fb0ff; }
+.tutorial__example:nth-of-type(3) h3 { color: #7fd07f; }
+.tutorial__example:nth-of-type(4) h3 { color: #c79bff; }
+
+/* Buttons at the bottom */
+.tutorial__navigation {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+}
+
+/* kbd styled as a key cap */
+.tutorial-screen kbd {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--size-small);
+}
+
+/* ----- Hero card with stats, same look as the battle -----
+   Mirrors the .battle__hero rules, so the real stats panel
+   from battle.js draws correctly here too. */
+.card-demo--in-battle {
+    width: 400px;
+    max-width: none;
+    zoom: 0.75;
+    margin-top: var(--space-7);   /* room for the lanyard */
+}
+
+.card-demo--in-battle .hero-badge {
+    transform: rotate(-6deg);
+}
+
+.card-demo--in-battle .card--hero,
+.card-demo--in-battle .card--hero:hover {
+    transform: none;
+    transition: none;
+}
+
+.card-demo--in-battle .card--hero::after {
+    animation: none;
+    background-position: 40% 50%;
+}
+
+.card-demo--in-battle .card__cost {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .tutorial__example {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .card-demo--in-battle {
+        zoom: 0.6;
+    }
+}

@@ -331,14 +331,17 @@ window.SC = window.SC || {};
         });
     }
 
-    // Hero card shows your stats instead of an ability.
-    // Built the first time it's drawn, then updated every render.
+        // Battle wrapper: finds the hero card on the battle screen
     function updateHeroStats(state) {
         const card = root.querySelector('.battle__hero .card--hero');
         if (!card) return;
+        SC.updateHeroStats(card, state.player);
+    }
 
+    // Shared by the battle and the tutorial.
+    // card = a hero card element, p = { sanity, maxSanity, relaxation, energy, maxEnergy }
+    SC.updateHeroStats = function (card, p) {
         const stats = card.querySelector('.hero-stats') || buildHeroStats(card);
-        const p = state.player;
 
         // Sanity bar
         const pct = Math.max(0, Math.min(100, (p.sanity / p.maxSanity) * 100));
@@ -364,7 +367,7 @@ window.SC = window.SC || {};
             cups.appendChild(cup);
         }
         cups.title = 'Coffee: ' + p.energy + ' / ' + p.maxEnergy;
-    }
+    };
 
     // Swap the ability text for the three stat rows
     function buildHeroStats(card) {

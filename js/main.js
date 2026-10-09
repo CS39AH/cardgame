@@ -23,10 +23,11 @@
 
     // ------- CONFIG -------
 
-    const SCREENS = ['cards', 'credits', 'map', 'battle'];
+    const SCREENS = ['tutorial', 'cards', 'credits', 'map', 'battle'];
 
     // Screen-specific setup that runs after a screen is swapped in
     const SCREEN_SETUP = {
+        tutorial: function () { SC.initTutorial(); },   // NEW: draws the cards on the tutorial screen
         cards: setupCards,
         credits: setupCredits,
         map: setupMap,
@@ -156,8 +157,15 @@
             return wait(TIMING.titleFadeOut);
         }
 
+        // NEW: tutorial fades out like the other screens
+        if (from === 'tutorial') {
+            SCREEN.classList.add('is-fading');
+            return wait(TIMING.titleFadeOut);
+        }
+
         return Promise.resolve(); // first page load, nothing to leave
     }
+
 
     // ------- PHASE 2: ENTER -------
 
@@ -339,12 +347,9 @@
         });
 
         btnHow.addEventListener('click', function () {
-            // Tutorial fight, using the teacher currently picked on this screen
-            SC.currentBattle = {
-                levelId: 'tutorial',
-                heroId: demoSlot ? demoSlot.dataset.selectedTeacher : null
-            };
-            window.location.hash = 'battle';
+            // Show tutorial screen before going to practice fight
+            window.location.hash = 'tutorial';
+            return;
         });
 
         btnCredits.addEventListener('click', function () {
