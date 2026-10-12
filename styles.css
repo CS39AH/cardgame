@@ -2283,6 +2283,36 @@ h1, h2, h3 {
     opacity: 0.3;
 }
 
+/* ----- Teacher Ability ----- */
+.battle__teacher-ability {
+    align-self: center;
+    white-space: nowrap;
+
+    background: rgba(30, 58, 43, 0.9);
+    color: var(--color-chalk);
+    border-color: var(--color-accent);
+
+    box-shadow:
+        0 0 0 1px rgba(255, 210, 63, 0.2),
+        var(--shadow-sm);
+}
+
+.battle__teacher-ability:hover,
+.battle__teacher-ability:focus-visible {
+    background: rgba(40, 78, 56, 0.95);
+    border-color: var(--color-accent);
+    box-shadow:
+        0 0 10px rgba(255, 210, 63, 0.35),
+        var(--shadow-md);
+}
+
+.battle__teacher-ability:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 /* ----- End Turn, right side of the desk ----- */
 .battle__end-turn {
     align-self: center;

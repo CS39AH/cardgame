@@ -347,6 +347,12 @@
         });
 
         btnHow.addEventListener('click', function () {
+            // Remember the selected teacher for the tutorial fight
+            SC.currentBattle = {
+                levelId: 'tutorial',
+                heroId: demoSlot.dataset.selectedTeacher
+            };
+
             // Show tutorial screen before going to practice fight
             window.location.hash = 'tutorial';
             return;
