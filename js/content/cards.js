@@ -159,6 +159,41 @@ SC.cards = [
         ]
     },
 
+        {
+        id: 'computeroffate',
+        name: "Computer of Fate",
+        cost: 2,
+        type: 'Attack',
+        rarity: 'rare',
+        art: 'Computer',                                    // fallback if the image is missing
+        image: 'graphics/cards/computeroffate.png',
+        imageAlt: 'retro computer',
+        imageScale: 1.8,
+        description: 'Whenever you play an Attack card, computer of fate deals 3 damage.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 3 } }
+        ]
+    },
+
+        
+        {
+        id: 'clock of doom',
+        name: "Clock of Doom",
+        cost: 2,
+        type: 'Defense',
+        rarity: 'rare',
+        art: 'Clock',                                    // fallback if the image is missing
+        image: 'graphics/cards/clockofdoom.png',
+        imageAlt: 'retro clock',
+        imageScale: 1.8,
+        description: 'Heal 15 Sanity. Gain 15 Relaxation. Confiscated.',
+        effects: [
+            { type: 'heal', amount: 15 },
+            { type: 'block', amount: 15 },
+            { type: 'confiscate' } 
+        ]
+    },
+
 
     {
         // Title screen showcase only. demo: true keeps it off the Cards board.
