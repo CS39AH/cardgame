@@ -48,6 +48,13 @@ window.SC = window.SC || {};
         backLink.href = fromMap() ? '#map' : '#';
         backLink.textContent = fromMap() ? '← Back to Map' : '← Back to Title';
 
+        // Teacher Ability Button Listener.
+
+        root.querySelector('.battle__teacher-ability').addEventListener('click', function () {
+            SC.combat.useTeacherAbility();
+            render();
+        });
+
         root.querySelector('.battle__end-turn').addEventListener('click', function () {
             SC.battleFx.mark('endTurn');
             SC.combat.endTurn();
@@ -184,6 +191,26 @@ window.SC = window.SC || {};
         root.querySelector('.battle__log').textContent = s.log[s.log.length - 1] || '';
 
         root.querySelector('.battle__end-turn').disabled = Boolean(s.result);
+
+        const teacherAbilityButton = root.querySelector('.battle__teacher-ability');
+        const teacher = SC.getCard(s.player.heroId);
+        const abilityCost = teacher ? teacher.cost : 0;
+        const notEnoughCoffee = s.player.energy < abilityCost;
+
+        teacherAbilityButton.disabled = Boolean(
+            s.result ||
+            s.teacherAbilityUsed ||
+            notEnoughCoffee
+        );
+
+        if (s.teacherAbilityUsed) {
+            teacherAbilityButton.textContent = 'Ability Used';
+        } else if (notEnoughCoffee) {
+            teacherAbilityButton.textContent = 'Not Enough Coffee';
+        } else {
+            teacherAbilityButton.textContent =
+                'Use Teacher Ability ☕ ' + abilityCost;
+        }
 
         updateHeroStats(s);
         renderPowers(s);
@@ -331,14 +358,17 @@ window.SC = window.SC || {};
         });
     }
 
-    // Hero card shows your stats instead of an ability.
-    // Built the first time it's drawn, then updated every render.
+        // Battle wrapper: finds the hero card on the battle screen
     function updateHeroStats(state) {
         const card = root.querySelector('.battle__hero .card--hero');
         if (!card) return;
+        SC.updateHeroStats(card, state.player);
+    }
 
+    // Shared by the battle and the tutorial.
+    // card = a hero card element, p = { sanity, maxSanity, relaxation, energy, maxEnergy }
+    SC.updateHeroStats = function (card, p) {
         const stats = card.querySelector('.hero-stats') || buildHeroStats(card);
-        const p = state.player;
 
         // Sanity bar
         const pct = Math.max(0, Math.min(100, (p.sanity / p.maxSanity) * 100));
@@ -364,7 +394,7 @@ window.SC = window.SC || {};
             cups.appendChild(cup);
         }
         cups.title = 'Coffee: ' + p.energy + ' / ' + p.maxEnergy;
-    }
+    };
 
     // Swap the ability text for the three stat rows
     function buildHeroStats(card) {

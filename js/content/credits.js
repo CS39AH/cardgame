@@ -15,7 +15,7 @@ SC.credits = {
         { name: 'Aaron Villalobos',   role: 'What they worked on' },
         { name: 'Jonathan Chavez',   role: 'What they worked on' },
         { name: 'Landry Vewenda',   role: 'What they worked on' },
-        { name: 'Malachi Mooty',   role: 'What they worked on' }
+        { name: 'Malachi Mooty',   role: 'Card developement and written tutorial' }
     ],
 
     // Sections listed under the roster
