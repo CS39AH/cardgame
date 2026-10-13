@@ -60,7 +60,8 @@ window.SC = window.SC || {};
                 status: {},
                 deck: enemyDef.deck.map(copyCard).filter(Boolean),
                 order: enemyDef.order || 'inOrder',
-                cardsPerTurn: enemyDef.cardsPerTurn || 1,
+                energy: enemyDef.energy || 3,      // its own Coffee each turn
+                maxEnergy: enemyDef.energy || 3,
                 deckIndex: 0,
                 next: []               // what it plays next turn (shown on screen)
             },
@@ -233,30 +234,58 @@ window.SC = window.SC || {};
         enemy.next = [];
     }
 
-    // Choose what the enemy plays next turn (shown as its intent)
+    // Choose what the enemy plays next turn (shown as its intent).
+    // The enemy has its own Coffee (maxEnergy, 3 by default). It keeps
+    // adding cards until the next one costs more than it has left.
     function pickEnemyCards() {
         const enemy = combat.state.enemy;
-
-        // Powers it already has in play aren't played again
-        const playable = enemy.deck.filter(function (card) {
-            return !(card.type === 'Power' && enemy.powers.some(function (p) {
-                return p.id === card.id;
-            }));
-        });
+        let coffee = enemy.maxEnergy;
 
         enemy.next = [];
-        if (!playable.length) return;
 
-        for (let i = 0; i < enemy.cardsPerTurn; i++) {
+        // A Power already in play (or already picked this turn) isn't played again
+        function canPlay(card) {
+            if (card.type !== 'Power') return true;
+            return !enemy.powers.concat(enemy.next).some(function (p) {
+                return p.id === card.id;
+            });
+        }
+
+        // "tries" is just a safety limit so a bad deck can never loop forever
+        for (let tries = 0; tries < 20; tries++) {
+            const playable = enemy.deck.filter(canPlay);
+            if (!playable.length) break;
+
             let card;
+
             if (enemy.order === 'random') {
-                card = playable[Math.floor(Math.random() * playable.length)];
+                const affordable = playable.filter(function (c) {
+                    return c.cost <= coffee;
+                });
+                if (!affordable.length) break;
+                card = affordable[Math.floor(Math.random() * affordable.length)];
             } else {
-                card = playable[enemy.deckIndex % playable.length];
+                card = enemy.deck[enemy.deckIndex % enemy.deck.length];
+
+                // Skip a Power that's already out, or a card it could never
+                // afford, so the enemy never gets stuck on it
+                if (!canPlay(card) || card.cost > enemy.maxEnergy) {
+                    enemy.deckIndex += 1;
+                    continue;
+                }
+
+                // Can't afford the next card: stop and save it for next turn
+                if (card.cost > coffee) break;
+
                 enemy.deckIndex += 1;
             }
+
             enemy.next.push(card);
+            coffee -= card.cost;
         }
+
+        // Coffee left over after next turn's plan (shown on screen)
+        enemy.energy = coffee;
     }
 
     // ------- CARD EFFECTS -------

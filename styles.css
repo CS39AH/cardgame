@@ -2166,6 +2166,19 @@ h1, h2, h3 {
     transform: none;
 }
 
+/* Several cards planned: overlap them so the board doesn't stretch */
+.intent-slot {
+    position: relative;
+}
+
+.intent-slot + .intent-slot {
+    margin-top: -150px;          /* doubled because of zoom: 0.45 */
+}
+
+.intent-slot:hover {
+    z-index: 5;
+}
+
 /* ----- Your hero: lying on the desk, tilted -----
    Stats replace the ability text (built in battle.js).
    The foil holds still here: a moving foil on a tilted,
