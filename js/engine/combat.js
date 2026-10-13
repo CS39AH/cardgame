@@ -34,6 +34,7 @@ window.SC = window.SC || {};
             level: level,
             turn: 1,
             result: null,              // 'win' or 'lose' when it's over
+            teacherAbilityUsed: false,      
 
             player: {
                 heroId: heroId,
@@ -144,6 +145,41 @@ window.SC = window.SC || {};
         if (isAttack(card) && card.type !== 'Power') {
             firePowers('player', 'playAttack');
         }
+
+        checkResult();
+        return true;
+    };
+
+    combat.useTeacherAbility = function () {    // Teacher Ability Function.
+        const s = combat.state;
+
+        if (!s || s.result || s.teacherAbilityUsed) {
+            return false;
+        }
+
+        const teacher = SC.getCard(s.player.heroId);
+
+        if (!teacher) {
+            return false;
+        }
+
+        // Teacher abilities cost Coffee.
+        if (s.player.energy < teacher.cost) {
+            addLog('Not enough Coffee to use ' + teacher.name + "'s ability.");
+            return false;
+        }
+
+        s.player.energy -= teacher.cost;
+
+        addLog('You used ' + teacher.name + "'s ability.");
+
+        if (teacher.type === 'Power') {
+            s.player.powers.push(teacher);
+        } else {
+            resolveCard(teacher, 'player');
+        }
+
+        s.teacherAbilityUsed = true;
 
         checkResult();
         return true;
