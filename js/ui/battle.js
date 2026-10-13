@@ -233,7 +233,8 @@ window.SC = window.SC || {};
         if (s.enemy.sanity > 0 && s.enemy.next && s.enemy.next.length > 0) {
             const label = document.createElement('p');
             label.className = 'battle__intent-label';
-            label.textContent = 'Next turn it plays:';
+            const spent = s.enemy.maxEnergy - s.enemy.energy;
+            label.textContent = 'Next turn it plays (☕ ' + spent + '/' + s.enemy.maxEnergy + '):';
             intentBox.appendChild(label);
 
             s.enemy.next.forEach(function (card) {
