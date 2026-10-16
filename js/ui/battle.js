@@ -209,6 +209,7 @@ window.SC = window.SC || {};
 
         // Latest log line
         root.querySelector('.battle__log').textContent = s.log[s.log.length - 1] || '';
+        renderHint(s);
 
         root.querySelector('.battle__end-turn').disabled = Boolean(s.result);
 
@@ -240,7 +241,52 @@ window.SC = window.SC || {};
 
         showResult(s.result);
     }
+    // Tutorial hints: only levels with a `hints` entry get a Hints button
+    function renderHint(s) {
+        const hints = s.level.hints;
+        let button = root.querySelector('.battle__hint-toggle');
+        let panel = root.querySelector('.battle__hint');
 
+        // Level has no hints: make sure nothing is left over
+        if (!hints) {
+            if (button) button.remove();
+            if (panel) panel.remove();
+            return;
+        }
+
+        // Already built for this fight
+        if (button) return;
+
+        button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'btn btn--secondary battle__hint-toggle';
+        button.textContent = '💡 Hints';
+        button.setAttribute('aria-expanded', 'false');
+
+        panel = document.createElement('div');
+        panel.className = 'battle__hint';
+        panel.hidden = true;
+
+        const list = document.createElement('ul');
+        list.className = 'battle__hint-list';
+        Object.values(hints).forEach(function (text) {
+            const item = document.createElement('li');
+            item.textContent = text;
+            list.appendChild(item);
+        });
+        panel.appendChild(list);
+
+        button.addEventListener('click', function () {
+            panel.hidden = !panel.hidden;
+            button.setAttribute('aria-expanded', String(!panel.hidden));
+            button.textContent = panel.hidden ? '💡 Hints' : '💡 Hide Hints';
+            fitToScreen();      // the battle's height changed, so re-fit it
+        });
+
+        const header = root.querySelector('.battle__top');
+        header.appendChild(button);
+        header.after(panel);
+    }
     // Enemy, plus the card(s) it will play next
     function renderEnemy(s) {
         const enemyBox = root.querySelector('.battle__enemy');

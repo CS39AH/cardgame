@@ -1860,6 +1860,32 @@ h1, h2, h3 {
     font-size: var(--size-small);
 }
 
+/* ----- Tutorial hints (only levels with `hints` in levels.js) ----- */
+.battle__hint-toggle {
+    white-space: nowrap;
+}
+
+.battle__hint {
+    padding: var(--space-3) var(--space-5);
+    background: #fff8d6;
+    color: #2a2a35;
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    transform: rotate(-0.5deg);
+}
+
+.battle__hint-list {
+    margin: 0;
+    padding-left: var(--space-4);
+    font-size: var(--size-small);
+    text-align: left;
+}
+
+.battle__hint-list li + li {
+    margin-top: var(--space-2);
+}
+
 /* ----- Both halves ----- */
 .battle__side {
     display: flex;

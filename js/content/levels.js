@@ -31,7 +31,14 @@ SC.levels = {
             'morning-coffee'
         ],
         shuffleDeck: false,
-        enemy: 'class-clown-tutorial'
+        enemy: 'class-clown-tutorial',
+        hints: {
+            1: 'Each card has a cost shown in the upper left hand corner.',
+            2: 'You and your opponent have energy, ☕, that rests to the default amount at the start of your turn.',
+            3: 'Keep your sanity above 0 to survive the day.',
+            4: 'Utilize relaxation to protect your sanity.',
+            5: 'Power cards are useful for buffing your cards and sometimes nerfing the enemies cards.'
+        }
     },
     'homeroom-boss': {
         id: 'homeroom-boss',
