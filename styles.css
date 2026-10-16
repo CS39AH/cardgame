@@ -1136,7 +1136,7 @@ h1, h2, h3 {
 }
 
 .board-slot .card__type {
-    font-size: 0..8rem;
+    font-size: 0.8rem;
     margin-bottom: var(--space-1);
 }
 
@@ -2520,6 +2520,39 @@ h1, h2, h3 {
     transform: rotate(-2deg);
 }
 
+/* ----- Reward picker: choose 1 of 3 cards after a win ----- */
+.battle__rewards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-5);
+    max-width: 100%;
+    margin: var(--space-4) 0;
+}
+
+/* Same size trick as .hand-slot: a full-size card drawn smaller */
+.reward-slot {
+    position: relative;
+    width: 400px;
+    aspect-ratio: 16 / 9;
+    zoom: 0.6;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.45));
+}
+
+/* The slot lifts on hover, so the card itself stays still */
+.reward-slot .card,
+.reward-slot .card:hover {
+    transform: none;
+}
+
+.reward-slot:hover,
+.reward-slot:focus-visible {
+    transform: translateY(-10px) scale(1.06);
+    outline: none;
+}
+
 /* ----- Effects (js/ui/battle-fx.js) ----- */
 
 /* A temporary copy of a card flying across the screen */
@@ -2614,6 +2647,7 @@ h1, h2, h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .reward-slot,
     .hand-slot,
     .hand-slot .card {
         transition: none;

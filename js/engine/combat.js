@@ -26,23 +26,34 @@ window.SC = window.SC || {};
 
     // ------- START A FIGHT -------
 
-    combat.start = function (levelId, heroId) {
+    combat.start = function (levelId, heroId, deckIds) {
         const level = SC.levels[levelId] || SC.levels.tutorial;
         const enemyDef = SC.enemies[level.enemy];
+        const hero = SC.getCard(heroId);
+
+        // Enemy deck: turn the ID list into card copies, shuffle if the enemy asks for it
+        const enemyDeck = (enemyDef.startingDeck || [])
+            .map(function (c) { return typeof c === 'string' ? copyCard(c) : c; })
+            .filter(Boolean);
+
+        if (enemyDef.shuffleEnemyDeck) {
+            shuffle(enemyDeck);
+        }
 
         const state = {
             level: level,
             turn: 1,
             result: null,              // 'win' or 'lose' when it's over
-            teacherAbilityUsed: false,      
+            teacherAbilityUsed: false,
+            teacherId: heroId,   
 
             player: {
                 heroId: heroId,
-                sanity: level.sanity,
-                maxSanity: level.sanity,
+                sanity: hero?.startingSanity ?? level.sanity,
+                maxSanity: hero?.startingSanity ?? level.sanity,
                 relaxation: 0,
-                energy: level.energy,
-                maxEnergy: level.energy,
+                energy: hero?.startingEnergy ?? level.energy,
+                maxEnergy: hero?.startingEnergy ?? level.energy,
                 field: [],             // defenders
                 powers: [],            // Power cards in play
                 status: {}
@@ -58,7 +69,7 @@ window.SC = window.SC || {};
                 field: [],
                 powers: [],
                 status: {},
-                deck: enemyDef.deck.map(copyCard).filter(Boolean),
+                deck: enemyDeck,
                 order: enemyDef.order || 'inOrder',
                 energy: enemyDef.energy || 3,      // its own Coffee each turn
                 maxEnergy: enemyDef.energy || 3,
@@ -66,7 +77,7 @@ window.SC = window.SC || {};
                 next: []               // what it plays next turn (shown on screen)
             },
 
-            drawPile: buildStartingDeck(level),
+            drawPile: buildStartingDeck(level, hero ,deckIds),
             hand: [],
             discard: [],
             confiscated: [],
@@ -81,15 +92,26 @@ window.SC = window.SC || {};
 
         return state;
     };
-
+    
+    function buildEnemyStartingDeck(enemyDef) {
+        if (enemyDef.startingDeck && enemyDef.startingDeck.length) {
+            const deck = enemyDef.startingDeck.map(copyCard).filter(Boolean);
+            return enemyDef.shuffleEnemyDeck === false ? deck : shuffle(deck);
+        }
+        // Empty default — enemy will fill its own cards as needed
+        return [];
+    }
     // Tutorial: exact list in order. Real levels: random deck.
-    function buildStartingDeck(level) {
-        if (level.startingDeck) {
-            const deck = level.startingDeck.map(copyCard).filter(Boolean);
+    function buildStartingDeck(level, hero, deckIds) {
+        // Order of priority: the level's own list, then the teacher's deck
+        const list = level.startingDeck || deckIds || (hero && hero.startingDeck);
+
+        if (list) {
+            const deck = list.map(copyCard).filter(Boolean);
             return level.shuffleDeck === false ? deck : shuffle(deck);
         }
 
-        // Random: guaranteed cards plus random fill from the pool
+        // Last resort: random deck from the card pool (code unchanged)
         const pool = SC.cards.filter(function (card) {
             return !card.demo && !card.hero && card.rarity !== 'Enemy';
         });
@@ -503,6 +525,14 @@ window.SC = window.SC || {};
     function addLog(text) {
         combat.state.log.push(text);
     }
-
+    // Reward options: random, no repeats within one set of choices
+    combat.rewardChoices = function (count) {
+        const pool = SC.cards.filter(function (card) {
+            return !card.demo && !card.hero && card.rarity !== 'Enemy';
+        });
+        return shuffle(pool.slice()).slice(0, count).map(function (card) {
+            return Object.assign({}, card);
+        });
+    };
     SC.combat = combat;
 })();

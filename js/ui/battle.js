@@ -107,7 +107,7 @@ window.SC = window.SC || {};
         // Clear the hero so render() builds a fresh one
         root.querySelector('.battle__hero').innerHTML = '';
 
-        SC.combat.start(levelId, chosenTeacher());
+        SC.combat.start(levelId, chosenTeacher(), savedDeck());
         SC.battleFx.reset(SC.combat.state);
         render();
     }
@@ -133,7 +133,7 @@ window.SC = window.SC || {};
 
     // Won the fight. Tutorial: back to the title.
     // Map fight: move the map forward one node and go back to it.
-    function completeEncounter() {
+    function completeEncounter(rewardId) {
         if (!fromMap()) {
             SC.currentBattle = null;
             window.location.hash = '';
@@ -141,23 +141,24 @@ window.SC = window.SC || {};
         }
 
         const battle = SC.currentBattle;
+        const day = SC.days && SC.days.current;
 
-        if (battle && SC.days && SC.days.current) {
-            const day = SC.days.current;
-            let save = null;
-            try {
-                save = JSON.parse(localStorage.getItem('sc-save') || 'null');
-            } catch (e) {
-                save = null;
-            }
+        if (battle && day) {
+            const save = readSave() || {};
+            const hero = SC.getCard(save.teacher);
+            const deck = (save.playerDeck || (hero && hero.startingDeck) || []).slice();
+            if (rewardId) deck.push(rewardId);
 
             const nextIndex = battle.nodeIndex + 1;
-
             if (nextIndex >= day.nodes.length) {
                 localStorage.removeItem('sc-save');
             } else {
                 localStorage.setItem('sc-save', JSON.stringify(
-                    Object.assign({}, save, { dayId: day.id, nodeIndex: nextIndex })
+                    Object.assign({}, save, {
+                        dayId: day.id,
+                        nodeIndex: nextIndex,
+                        playerDeck: deck
+                    })
                 ));
             }
         }
@@ -165,7 +166,26 @@ window.SC = window.SC || {};
         SC.currentBattle = null;
         window.location.hash = 'map';
     }
+    function readSave() {
+        try {
+            return JSON.parse(localStorage.getItem('sc-save') || 'null');
+        } catch (e) {
+            return null;
+        }
+    }
 
+    // Deck saved after earlier fights (null = use the teacher's starting deck)
+    function savedDeck() {
+        if (!fromMap()) return null;
+        const save = readSave();
+        return (save && save.playerDeck) || null;
+    }
+
+    function isFinalNode() {
+        const day = SC.days && SC.days.current;
+        return Boolean(day && SC.currentBattle &&
+            SC.currentBattle.nodeIndex + 1 >= day.nodes.length);
+    }
     // ------- DRAWING -------
 
     function render() {
@@ -486,7 +506,43 @@ window.SC = window.SC || {};
     }
 
     // ------- WIN / LOSE -------
+    function showRewards() {
+        const box = root.querySelector('.battle__result');
+        box.innerHTML = '';
 
+        const title = document.createElement('h2');
+        title.textContent = 'Choose a Card';
+        box.appendChild(title);
+
+        const text = document.createElement('p');
+        text.textContent = 'Pick one to add to your deck.';
+        box.appendChild(text);
+
+        const row = document.createElement('div');
+        row.className = 'battle__rewards';
+
+        SC.combat.rewardChoices(3).forEach(function (card) {
+            const slot = document.createElement('div');
+            slot.className = 'reward-slot';
+            slot.tabIndex = 0;
+            slot.setAttribute('role', 'button');
+            slot.setAttribute('aria-label', 'Add ' + card.name + ' to your deck');
+            slot.appendChild(SC.renderCard(card));
+
+            function pick() { completeEncounter(card.id); }
+            slot.addEventListener('click', pick);
+            slot.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    pick();
+                }
+            });
+
+            row.appendChild(slot);
+        });
+
+        box.appendChild(row);
+    }
     // Waits a moment so the final hit animates, then shows the message
     function showResult(result) {
         if (!result || root.querySelector('.battle__result')) {
@@ -517,13 +573,22 @@ window.SC = window.SC || {};
             box.appendChild(text);
 
             if (won) {
+                const reward = fromMap() && !isFinalNode();
+
                 const next = document.createElement('button');
                 next.type = 'button';
                 next.className = 'btn btn--primary';
-                next.textContent = fromMap() ? 'Back to the Map' : 'Back to Title';
-                next.addEventListener('click', completeEncounter);
+                next.textContent = !fromMap() ? 'Back to Title'
+                    : reward ? 'Choose a Reward' : 'Back to the Map';
+                next.addEventListener('click', function () {
+                    if (reward) {
+                        showRewards();
+                    } else {
+                        completeEncounter();
+                    }
+                });
                 box.appendChild(next);
-            } else {
+                } else {
                 const retry = document.createElement('button');
                 retry.type = 'button';
                 retry.className = 'btn btn--primary';

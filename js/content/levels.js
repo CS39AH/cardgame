@@ -31,6 +31,17 @@ SC.levels = {
             'morning-coffee'
         ],
         shuffleDeck: false,
+        enemy: 'class-clown-tutorial'
+    },
+    'homeroom-boss': {
+        id: 'homeroom-boss',
+        name: 'Disruption in class',
+        intro: 'Of course you have to deal with a rowdy student.',
+        winText: "They have been sent to detention. Class is over!",
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
         enemy: 'class-clown'
     }
 };
