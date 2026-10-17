@@ -62,6 +62,14 @@ SC.levels = {
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'cafeteria-enemy'
+        enemy: 'cafeteria-enemy',
+
+        bonusCards: [
+            'fresh-fruits',
+            'chocolate-milk',
+            'protective-apron',
+            'serving-spoon',
+            'clean-tray'
+        ]
     }
 };

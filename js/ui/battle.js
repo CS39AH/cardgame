@@ -38,6 +38,9 @@ window.SC = window.SC || {};
         levelId = (SC.currentBattle && SC.currentBattle.levelId)
             || root.dataset.level
             || 'tutorial';
+            
+        // Apply cafeteria styling only during Cafeteria Duty.
+        root.classList.toggle('battle-screen--cafeteria', levelId === 'cafeteria');
 
         if (SC.stopMusic) {
             SC.stopMusic();

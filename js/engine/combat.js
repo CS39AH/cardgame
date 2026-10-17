@@ -106,9 +106,10 @@ window.SC = window.SC || {};
     function buildStartingDeck(level, hero, deckIds) {
         // Order of priority: the level's own list, then the teacher's deck
         const list = level.startingDeck || deckIds || (hero && hero.startingDeck);
+        const bonusCards = (level.bonusCards || []).map(copyCard).filter(Boolean);
 
         if (list) {
-            const deck = list.map(copyCard).filter(Boolean);
+            const deck = list.map(copyCard).filter(Boolean).concat(bonusCards);
             return level.shuffleDeck === false ? deck : shuffle(deck);
         }
 
@@ -122,7 +123,7 @@ window.SC = window.SC || {};
             const pick = pool[Math.floor(Math.random() * pool.length)];
             deck.push(copyCard(pick.id));
         }
-        return shuffle(deck);
+        return shuffle(deck.concat(bonusCards));
     }
 
     // Every card in a fight is its own copy, so two Red Pens are two objects
