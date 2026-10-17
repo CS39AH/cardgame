@@ -287,7 +287,7 @@ SC.cards = [
         hero: true,
         startingSanity: 30,
         startingEnergy: 3,
-        StartDeck: [
+        startingDeck: [
             'red-pen-markup',
             'backpack-wall',
             'morning-coffee',
@@ -321,7 +321,7 @@ SC.cards = [
         hero: true,
         startingSanity: 40,
         startingEnergy: 3,
-        StartDeck: [
+        startingDeck: [
             'red-pen-markup',
             'backpack-wall',
             'morning-coffee',
@@ -355,7 +355,7 @@ SC.cards = [
         hero: true,
         startingSanity: 30,
         startingEnergy: 4,
-        StartDeck: [
+        startingDeck: [
             'red-pen-markup',
             'backpack-wall',
             'morning-coffee',
@@ -389,7 +389,7 @@ SC.cards = [
         hero: true,
         startingSanity: 30,
         startingEnergy: 3,
-        StartDeck: [
+        startingDeck: [
             'red-pen-markup',
             'backpack-wall',
             'morning-coffee',
@@ -423,7 +423,7 @@ SC.cards = [
         hero: true,
         startingSanity: 30,
         startingEnergy: 3,
-        StartDeck: [
+        startingDeck: [
             'red-pen-markup',
             'backpack-wall',
             'morning-coffee',
