@@ -57,6 +57,7 @@ SC.enemies = {
         id: 'cafeteria-enemy',
         name: 'Living Burnt Pizza',
         art: '🍕',
+        image: 'graphics/cards/cafeteria/burnt_pizza.png',
         sanity: 80,
         energy: 3,
         order: 'inOrder',

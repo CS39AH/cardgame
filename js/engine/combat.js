@@ -63,6 +63,7 @@ window.SC = window.SC || {};
                 id: enemyDef.id,
                 name: enemyDef.name,
                 art: enemyDef.art,
+                image: enemyDef.image || null,
                 sanity: enemyDef.sanity,
                 maxSanity: enemyDef.sanity,
                 relaxation: 0,

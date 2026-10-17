@@ -2132,6 +2132,15 @@ h1, h2, h3 {
     font-size: 3.5rem;
 }
 
+.unit__art img {
+    display: block;
+    width: 90px;
+    height: 90px;
+    max-width: 100%;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
 .unit__name {
     margin: var(--space-1) 0;
     font-family: var(--font-title);

@@ -160,12 +160,13 @@ SC.cards = [
     },
    
     {   // Cafeteria related cards.
-        id: 'fresh-fruit',
-        name: 'Fresh Fruit',
+        id: 'fresh-fruits',
+        name: 'Fresh Fruits',
         cost: 1,
         type: 'Skill',
         rarity: 'Common',
         art: '🍎',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/fresh_fruits.png',
         description: 'Recover 4 Sanity. Gain 1 Coffee.',
         effects: [
             { type: 'heal', amount: 4 },
@@ -179,6 +180,7 @@ SC.cards = [
         type: 'Skill',
         rarity: 'Common',
         art: '🥛',                                   // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/chocolate_milk.png',
         description: 'Gain 2 Coffee. Draw 1 card.',
         effects: [
             { type: 'energy', amount: 2 },
@@ -192,6 +194,7 @@ SC.cards = [
         type: 'Power',
         rarity: 'Uncommon',
         art: '🥼',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/protective_apron.png',
         description: 'Whenever you play a Defense card, gain 2 Relaxation.',
         effects: [
             {
@@ -211,6 +214,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Uncommon',
         art: '🥄',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/serving_spoon.png',
         description: 'Deal 6 damage. Heal for half the Sanity damage dealt.',
         effects: [
             { type: 'damage', amount: 6 },
@@ -224,6 +228,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Common',
         art: '🍽️',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/clean_tray.png',
         description: 'Place a 6 Sanity defender. While active, your attacks deal +1 damage.',
         effects: [
             {
@@ -323,6 +328,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Enemy',
         art: '🍅',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/rotten_produce.png',
         description: 'Deal 1 damage twice.',
         effects: [
             { type: 'damage', amount: 1 },
@@ -336,6 +342,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Enemy',
         art: '🍽️',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/dirty_tray.png',
         description: 'Gain 5 Relaxation.',
         effects: [
             { type: 'block', amount: 5 }
@@ -348,6 +355,7 @@ SC.cards = [
         type: 'Power',
         rarity: 'Enemy',
         art: '🧽',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/dirty_rag.png',
         description: 'All future attacks deal +1 damage.',
         effects: [
             {
@@ -367,6 +375,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Enemy',
         art: '🥘',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/vengeful_leftovers.png',
         description: 'Deal 6 damage. Recover 4 Sanity.',
         effects: [
             { type: 'damage', amount: 6 },
@@ -380,6 +389,7 @@ SC.cards = [
         type: 'Skill',
         rarity: 'Enemy',
         art: '🥛',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/spoiled_milk.png',
         description: 'Reduce the player\'s Coffee by 1 next turn.',
         effects: [
             { type: 'reduceNextTurnEnergy', amount: 1 }
