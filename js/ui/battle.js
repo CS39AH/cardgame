@@ -38,6 +38,9 @@ window.SC = window.SC || {};
         levelId = (SC.currentBattle && SC.currentBattle.levelId)
             || root.dataset.level
             || 'tutorial';
+            
+        // Apply cafeteria styling only during Cafeteria Duty.
+        root.classList.toggle('battle-screen--cafeteria', levelId === 'cafeteria');
 
         if (SC.stopMusic) {
             SC.stopMusic();
@@ -371,10 +374,25 @@ window.SC = window.SC || {};
 
         const el = document.createElement('div');
         el.className = 'unit ' + extraClass;
-
+       
         const art = document.createElement('div');
         art.className = 'unit__art';
-        art.textContent = unit.art || '🛡️';
+
+        if (unit.image) {
+            const img = document.createElement('img');
+            img.src = unit.image;
+            img.alt = unit.name || 'Enemy artwork';
+
+            // Use the emoji if the image cannot load.
+            img.onerror = function () {
+                art.textContent = unit.art || '🛡️';
+            };
+
+            art.appendChild(img);
+        } else {
+            art.textContent = unit.art || '🛡️';
+        }
+
         el.appendChild(art);
 
         const name = document.createElement('p');

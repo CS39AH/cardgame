@@ -158,6 +158,89 @@ SC.cards = [
             {type: 'shuffle', amount: 'deck'}
         ]
     },
+   
+    {   // Cafeteria related cards.
+        id: 'fresh-fruits',
+        name: 'Fresh Fruits',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '🍎',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/fresh_fruits.png',
+        description: 'Recover 4 Sanity. Gain 1 Coffee.',
+        effects: [
+            { type: 'heal', amount: 4 },
+            { type: 'energy', amount: 1 }
+        ]
+    },
+    {
+        id: 'chocolate-milk',
+        name: 'Chocolate Milk',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '🥛',                                   // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/chocolate_milk.png',
+        description: 'Gain 2 Coffee. Draw 1 card.',
+        effects: [
+            { type: 'energy', amount: 2 },
+            { type: 'draw', amount: 1 }
+        ]
+    },
+    {
+        id: 'protective-apron',
+        name: 'Protective Apron',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Uncommon',
+        art: '🥼',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/protective_apron.png',
+        description: 'Whenever you play a Defense card, gain 2 Relaxation.',
+        effects: [
+            {
+                type: 'power',
+                trigger: 'playDefense',
+                effect: {
+                    type: 'block',
+                    amount: 2
+                }
+            }
+        ]
+    },
+    {
+        id: 'serving-spoon',
+        name: 'Serving Spoon',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Uncommon',
+        art: '🥄',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/serving_spoon.png',
+        description: 'Deal 6 damage. Heal for half the Sanity damage dealt.',
+        effects: [
+            { type: 'damage', amount: 6 },
+            { type: 'lifesteal', fraction: 0.5 }
+        ]
+    },
+    {
+        id: 'clean-tray',
+        name: 'Clean Tray',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Common',
+        art: '🍽️',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/clean_tray.png',
+        description: 'Place a 6 Sanity defender. While active, your attacks deal +1 damage.',
+        effects: [
+            {
+                type: 'defender',
+                amount: 6,
+                name: 'Clean Tray',
+                art: '🍽️',
+                attackBonus: 1
+            }
+        ]
+    },
+
 
         {
         id: 'stapler-shot',
@@ -237,6 +320,83 @@ SC.cards = [
             {type: 'multiplier', amount: 'player discard pile size'}
         ]
     },
+
+    {   // Cafeteria related enemy cards.
+        id: 'rotten-produce',
+        name: 'Rotten Produce',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🍅',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/rotten_produce.png',
+        description: 'Deal 1 damage twice.',
+        effects: [
+            { type: 'damage', amount: 1 },
+            { type: 'multiplier', amount: 2 }
+        ]
+    },
+    {
+        id: 'dirty-tray',
+        name: 'Dirty Tray',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🍽️',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/dirty_tray.png',
+        description: 'Gain 5 Relaxation.',
+        effects: [
+            { type: 'block', amount: 5 }
+        ]
+    },
+    {
+        id: 'dirty-rag',
+        name: 'Dirty Rag',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '🧽',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/dirty_rag.png',
+        description: 'All future attacks deal +1 damage.',
+        effects: [
+            {
+                type: 'power',
+                trigger: 'Attacks',
+                effect: {
+                    type: 'damage',
+                    amount: 1
+                }
+            }
+        ]
+    },
+    {
+        id: 'vengeful-leftovers',
+        name: 'Vengeful Leftovers',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🥘',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/vengeful_leftovers.png',
+        description: 'Deal 6 damage. Recover 4 Sanity.',
+        effects: [
+            { type: 'damage', amount: 6 },
+            { type: 'heal', amount: 4 }
+        ]
+    },  
+    {
+        id: 'spoiled-milk',
+        name: 'Spoiled Milk',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Enemy',
+        art: '🥛',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/spoiled_milk.png',
+        description: 'Reduce the player\'s Coffee by 1 next turn.',
+        effects: [
+            { type: 'reduceNextTurnEnergy', amount: 1 }
+        ]
+    },
+
+
 
     {
         // Title screen showcase only. demo: true keeps it off the Cards board.

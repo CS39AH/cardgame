@@ -50,5 +50,26 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'class-clown'
+    },
+
+
+    cafeteria: {
+        id: 'cafeteria',
+        name: 'Cafeteria Duty',
+        intro: 'The lunch rush is getting out of control!',
+        winText: 'The cafeteria is finally under control!',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'cafeteria-enemy',
+
+        bonusCards: [
+            'fresh-fruits',
+            'chocolate-milk',
+            'protective-apron',
+            'serving-spoon',
+            'clean-tray'
+        ]
     }
 };

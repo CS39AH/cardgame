@@ -52,4 +52,23 @@ SC.enemies = {
             'eraser'
         ]
     },
+
+    'cafeteria-enemy': {
+        id: 'cafeteria-enemy',
+        name: 'Living Burnt Pizza',
+        art: '🍕',
+        image: 'graphics/cards/cafeteria/burnt_pizza.png',
+        sanity: 80,
+        energy: 3,
+        order: 'inOrder',
+        
+        startingDeck: [
+            'rotten-produce',
+            'dirty-tray',
+            'dirty-rag',
+            'vengeful-leftovers',
+            'spoiled-milk'
+        ]
+
+    }
 };
