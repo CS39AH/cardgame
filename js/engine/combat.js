@@ -168,6 +168,11 @@ window.SC = window.SC || {};
         if (isAttack(card) && card.type !== 'Power') {
             firePowers('player', 'playAttack');
         }
+        
+        // Powers that react to you playing a Defense card
+        if (card.type === 'Defense') {
+            firePowers('player', 'playDefense');
+        }
 
         checkResult();
         return true;
@@ -227,6 +232,13 @@ window.SC = window.SC || {};
         if (s.level.refillEnergy) {
             s.player.energy = s.player.maxEnergy;
         }
+        
+        // Apply Spoiled Milk's Coffee penalty.
+        const energyPenalty = s.player.status.nextTurnEnergyPenalty || 0;
+
+        s.player.energy = Math.max(0, s.player.energy - energyPenalty);
+        s.player.status.nextTurnEnergyPenalty = 0;
+
         drawCards(s.level.handSize);
         pickEnemyCards();
     };
@@ -327,9 +339,10 @@ window.SC = window.SC || {};
         const amount = amountOf(effect.amount);
 
         switch (effect.type) {
+            
             case 'damage': {
                 const total = Math.max(0, amount + attackBonus(who));
-                hit(foeWho, total);
+                ctx.lastSanityDamage = hit(foeWho, total);
                 ctx.lastDamage = total;
                 break;
             }
@@ -341,6 +354,17 @@ window.SC = window.SC || {};
                 }
                 break;
 
+            case 'lifesteal': {
+                const damageDealt = ctx.lastSanityDamage || 0;
+                const healing = Math.floor(damageDealt * effect.fraction);
+
+                owner.sanity = Math.min(
+                    owner.maxSanity,
+                    owner.sanity + healing
+                );
+                break;
+            }
+
             case 'block':
                 owner.relaxation += amount;
                 break;
@@ -350,7 +374,8 @@ window.SC = window.SC || {};
                     name: effect.name || card.name,
                     art: effect.art || card.art,
                     sanity: amount,
-                    maxSanity: amount
+                    maxSanity: amount,
+                    attackBonus: effect.attackBonus || 0
                 });
                 addLog((who === 'player' ? 'You put' : s.enemy.name + ' put') +
                     ' a ' + (effect.name || card.name) + ' on the field.');
@@ -361,6 +386,14 @@ window.SC = window.SC || {};
                     s.player.energy += amount;
                 }
                 break;
+       
+            case 'reduceNextTurnEnergy':
+                if (who === 'enemy') {
+                    s.player.status.nextTurnEnergyPenalty =
+                        (s.player.status.nextTurnEnergyPenalty || 0) + amount;
+                }
+                break;
+
 
             case 'draw':
                 if (who === 'player') {
@@ -432,8 +465,13 @@ window.SC = window.SC || {};
         target.relaxation -= blocked;
         amount -= blocked;
 
+        
         // 3. Sanity
+        const sanityBefore = target.sanity;
         target.sanity = Math.max(0, target.sanity - amount);
+
+        // Return the actual Sanity damage dealt.
+        return sanityBefore - target.sanity;
     }
 
     // ------- POWERS -------
@@ -463,10 +501,22 @@ window.SC = window.SC || {};
         return total;
     }
 
-    // Extra damage from Powers like Pencil Sharpener
+    // Extra damage from Powers like Pencil Sharpener  
     function attackBonus(who) {
-        return powerTotal(who, 'Attacks');
+        const powerBonus = powerTotal(who, 'Attacks');
+
+        // Check if the player has an active Clean Tray defender.
+        const hasCleanTray = who === 'player' &&
+            sideOf(who).field.some(function (defender) {
+                return defender.name === 'Clean Tray' &&
+                    defender.sanity > 0 &&
+                    defender.attackBonus > 0;
+            });
+
+        // Multiple Clean Trays do not stack their bonuses.
+        return powerBonus + (hasCleanTray ? 1 : 0);
     }
+
 
     // ------- DECK -------
 
