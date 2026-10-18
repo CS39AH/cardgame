@@ -28,6 +28,7 @@ window.SC = window.SC || {};
     const MUSIC_FADE_MS = 1500;                // music fade-in time
     const MUSIC_SRC = 'audio/mainmenumusic.mp3';
     const MUSIC_VOLUME_KEY = 'sc-music-volume'; // remembers the slider setting
+    const SFX_VOLUME_KEY = 'sc-sfx-volume';     // remembers the sound effects slider
 
     SC.soundEnabled = true;
 
@@ -80,6 +81,28 @@ window.SC = window.SC || {};
         window.addEventListener(type, unlock);
     });
 
+    // Every sound effect plays through this one volume knob,
+    // which the Sounds slider turns up and down.
+    let sfxBus = null;
+    let sfxVolume = 1;
+    try {
+        const savedSfx = parseFloat(localStorage.getItem(SFX_VOLUME_KEY));
+        if (!isNaN(savedSfx)) {
+            sfxVolume = Math.min(Math.max(savedSfx, 0), 1);
+        }
+    } catch (e) {
+        // Storage blocked. Use full volume.
+    }
+
+    function getSfxBus(ac) {
+        if (!sfxBus) {
+            sfxBus = ac.createGain();
+            sfxBus.gain.value = sfxVolume;
+            sfxBus.connect(ac.destination);
+        }
+        return sfxBus;
+    }
+
     // One second of random static, reused by the scratchy sounds
     function getNoise(ac) {
         if (noiseBuffer) {
@@ -114,7 +137,7 @@ window.SC = window.SC || {};
 
         source.connect(filter);
         filter.connect(gain);
-        gain.connect(ac.destination);
+        gain.connect(getSfxBus(ac));
 
         // Start at a random spot in the static so each play sounds slightly different
         source.start(start, Math.random() * 0.5);
@@ -133,7 +156,7 @@ window.SC = window.SC || {};
         gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
 
         osc.connect(gain);
-        gain.connect(ac.destination);
+        gain.connect(getSfxBus(ac));
 
         osc.start(start);
         osc.stop(start + duration + 0.05);
@@ -408,6 +431,22 @@ window.SC = window.SC || {};
             SC.setMusicVolume(volumeSlider.value / 100);
         });
 
+        // Sounds slider: changes the sound effects volume and plays a
+        // quick chalk tap so you can hear the new level
+        const sfxSlider = document.getElementById('sfx-volume');
+        let lastPreview = 0;
+        if (sfxSlider) {
+            sfxSlider.addEventListener('input', function () {
+                SC.setSfxVolume(sfxSlider.value / 100);
+
+                const now = Date.now();
+                if (now - lastPreview > 120) {
+                    lastPreview = now;
+                    SC.playSound('chalkClick');
+                }
+            });
+        }
+
         // Close when clicking anywhere else, or pressing Escape
         document.addEventListener('click', function (e) {
             if (!volumeControl.contains(e.target)) {
@@ -421,6 +460,39 @@ window.SC = window.SC || {};
         });
     }
 
+    // ------- SOUND EFFECTS VOLUME SLIDER -------
+
+    function updateSfxUI() {
+        const percent = Math.round(sfxVolume * 100);
+        const slider = document.getElementById('sfx-volume');
+        const label = document.getElementById('sfx-volume-value');
+
+        if (slider) {
+            slider.value = percent;
+            slider.setAttribute('aria-valuetext', percent + '%');
+        }
+        if (label) {
+            label.textContent = percent + '%';
+        }
+    }
+
+    SC.setSfxVolume = function (value) {
+        sfxVolume = Math.min(Math.max(value, 0), 1);
+
+        if (sfxBus) {
+            sfxBus.gain.value = sfxVolume;
+        }
+
+        try {
+            localStorage.setItem(SFX_VOLUME_KEY, String(sfxVolume));
+        } catch (e) {
+            // Storage blocked. The setting just won't be remembered.
+        }
+
+        updateSfxUI();
+    };
+
     updateVolumeUI();
+    updateSfxUI();
 
 })();

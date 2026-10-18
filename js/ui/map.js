@@ -20,6 +20,10 @@
 
 window.SC = window.SC || {};
 
+// TEMPORARY: every location can be played in any order while the team
+// builds the levels. Set this back to false to lock them again.
+SC.UNLOCK_ALL_NODES = true;
+
 SC.buildDayPath = function (container, day, currentIndex, onAdvance) {
     // Clear any previous nodes so this function can safely be called again
     // to refresh the map after progress changes.
@@ -33,6 +37,11 @@ SC.buildDayPath = function (container, day, currentIndex, onAdvance) {
         let state = 'locked';
         if (index < currentIndex) state = 'complete';
         else if (index === currentIndex) state = 'current';
+
+        // Unlocked for testing: locked nodes become "open" (playable, no lock),
+        // and finished nodes can be replayed
+        if (SC.UNLOCK_ALL_NODES && state === 'locked') state = 'open';
+        const playable = state === 'current' || SC.UNLOCK_ALL_NODES;
 
         // <li> wrapper. The classes drive all the styling:
         //   day-node--<state> (complete/current/locked) and day-node--<type> (combat/boss/...)
@@ -50,7 +59,7 @@ SC.buildDayPath = function (container, day, currentIndex, onAdvance) {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'day-node__button';
-        btn.disabled = state !== 'current';
+        btn.disabled = !playable;
 
         // Screen readers announce the state, e.g. "Gym Class (locked)"
         const stateLabel = state === 'locked' ? ' (locked)' : state === 'complete' ? ' (completed)' : '';
@@ -73,7 +82,7 @@ SC.buildDayPath = function (container, day, currentIndex, onAdvance) {
 
         // Only the current node reacts to clicks. { once: true } prevents
         // double-clicking from advancing the player two nodes at once.
-        if (state === 'current') {
+        if (playable) {
             btn.addEventListener('click', function () {
                 onAdvance(node, index);
             }, { once: true });
