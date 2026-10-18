@@ -297,7 +297,9 @@ window.SC = window.SC || {};
         const startTime = performance.now();
 
         function step(now) {
-            const progress = Math.min((now - startTime) / ms, 1);
+            // Clamp to 0–1: the first animation frame can arrive a hair
+            // before startTime, which made the volume slightly negative
+            const progress = Math.min(Math.max((now - startTime) / ms, 0), 1);
             music.volume = from + (target - from) * progress;
             if (progress < 1) {
                 fadeFrame = requestAnimationFrame(step);
