@@ -396,7 +396,136 @@ SC.cards = [
         ]
     },
 
+    
 
+    
+
+    // ---------- GYM CLASS: player bonus cards ----------
+    {
+        id: 'basketball-pass',
+        name: 'Basketball Pass',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Common',
+        art: '🏀',
+        description: 'Deal 4 damage. Draw 1 card.',
+        effects: [
+            { type: 'damage', amount: 4 },
+            { type: 'draw', amount: 1 }
+        ]
+    },
+    {
+        id: 'sports-drink',
+        name: 'Sports Drink',
+        cost: 0,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '🧃',
+        description: 'Gain 1 Coffee. Recover 2 Sanity.',
+        effects: [
+            { type: 'energy', amount: 1 },
+            { type: 'heal', amount: 2 }
+        ]
+    },
+    {
+        id: 'stacked-mats',
+        name: 'Stacked Mats',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Common',
+        art: '🟦',
+        description: 'Place a 10 Sanity defender.',
+        effects: [
+            { type: 'defender', amount: 10, name: 'Stacked Mats', art: '🟦' }
+        ]
+    },
+    {
+        id: 'running-shoes',
+        name: 'Running Shoes',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '👟',
+        description: 'Draw 2 cards.',
+        effects: [
+            { type: 'draw', amount: 2 }
+        ]
+    },
+    {
+        id: 'team-spirit',
+        name: 'Team Spirit',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Uncommon',
+        art: '📣',
+        description: 'Whenever you play an Attack card, gain 2 Relaxation.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'block', amount: 2 } }
+        ]
+    },
+
+    // ---------- GYM CLASS: enemy cards ----------
+    {
+        id: 'dodgeball-barrage',
+        name: 'Dodgeball Barrage',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🔴',
+        description: 'Deal 2 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 2 },
+            { type: 'multiplier', amount: 3 }
+        ]
+    },
+    {
+        id: 'medicine-ball',
+        name: 'Medicine Ball',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🏐',
+        description: 'Deal 7 damage.',
+        effects: [
+            { type: 'damage', amount: 7 }
+        ]
+    },
+    {
+        id: 'bleacher-wall',
+        name: 'Bleacher Wall',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🪜',
+        description: 'Place a 6 Sanity defender.',
+        effects: [
+            { type: 'defender', amount: 6, name: 'Bleachers', art: '🪜' }
+        ]
+    },
+    {
+        id: 'padded-walls',
+        name: 'Padded Walls',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '🧱',
+        description: 'Take 1 less damage from every hit.',
+        effects: [
+            { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -1 } }
+        ]
+    },
+    {
+        id: 'water-break',
+        name: 'Water Break',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Enemy',
+        art: '💧',
+        description: 'Recover 5 Sanity.',
+        effects: [
+            { type: 'heal', amount: 5 }
+        ]
+    },
 
     {
         // Title screen showcase only. demo: true keeps it off the Cards board.
@@ -473,7 +602,7 @@ SC.cards = [
         cost: 1,
         type: 'Attack',
         art: '🏀',
-        image: 'graphics/cards/gym-teacher.png',
+        image: 'graphics/cards/gym-teacher.jpg',
         imageAlt: 'The gym teacher',
         imageScale: 1.1,
         description: 'Deal 10 damage. Gain 6 Relaxation.',

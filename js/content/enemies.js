@@ -70,5 +70,25 @@ SC.enemies = {
             'spoiled-milk'
         ]
 
+    },
+
+    'gym-enemy': {
+        id: 'gym-enemy',
+        name: 'The PACER Test',
+        art: '⏱️',
+        image: 'graphics/cards/pacer_test.jpg',
+        sanity: 60,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'dodgeball-barrage',   // 2 Coffee: deal 2, three times
+            'dodgeball-barrage',
+            'medicine-ball',       // 2 Coffee: deal 7
+            'medicine-ball',
+            'bleacher-wall',       // 1 Coffee: 6 Sanity defender
+            'padded-walls',        // 2 Coffee: Power, takes 1 less per hit
+            'water-break'          // 1 Coffee: recover 5 Sanity
+        ]
     }
 };

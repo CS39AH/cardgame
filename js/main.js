@@ -390,10 +390,15 @@
         const viewport = SCREEN.querySelector('.board-viewport');
         const track = SCREEN.querySelector('.board-track');
         const tabs = SCREEN.querySelectorAll('.board-tab');
+        const prevBtn = SCREEN.querySelector('.board-arrow--prev');
+        const nextBtn = SCREEN.querySelector('.board-arrow--next');
 
         if (!viewport || !track) {
             return;
         }
+
+        // How many cards fit on one chalkboard before it gets a second page
+        const CARDS_PER_PAGE = 6;
 
         // Every playable card (demo cards stay on the title screen only)
         const boardCards = SC.cards.filter(function (card) {
@@ -404,39 +409,81 @@
             return (card.rarity || 'Common').toLowerCase();
         }
 
-        // Build one chalkboard per tab, in tab order (left to right)
+        // Every page of every rarity is its own chalkboard, left to right:
+        // [Common 1] [Common 2] [Common 3] [Uncommon 1] [Rare 1] ...
         const boards = [];
+        const tabOfBoard = [];      // board index -> which tab it belongs to
+        const firstBoardOf = [];    // tab index -> its first board
 
-        tabs.forEach(function (tab, index) {
+        tabs.forEach(function (tab, tabIndex) {
             const rarity = tab.dataset.rarity;
             const label = tab.textContent;
             const list = boardCards.filter(function (card) {
                 return rarityOf(card) === rarity;
             });
 
+            const pages = Math.max(1, Math.ceil(list.length / CARDS_PER_PAGE));
+            firstBoardOf[tabIndex] = boards.length;
+
+            for (let page = 0; page < pages; page++) {
+                const pageCards = list.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE);
+                const board = buildBoard(rarity, label, pageCards, list.length, page, pages);
+                boards.push(board);
+                tabOfBoard.push(tabIndex);
+                track.appendChild(board);
+            }
+
             tab.textContent = label + ' (' + list.length + ')';
             tab.addEventListener('click', function () {
-                showBoard(index, true);
+                showBoard(firstBoardOf[tabIndex], true);
             });
-
-            const board = buildBoard(rarity, label, list);
-            boards.push(board);
-            track.appendChild(board);
         });
+        let current = 0;
+
+        // Show or hide an arrow (hidden arrows can't be clicked or tabbed to)
+        function setArrow(btn, show) {
+            if (!btn) return;
+            btn.style.visibility = show ? '' : 'hidden';
+            btn.disabled = !show;
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function () {
+                showBoard(current - 1, true);
+            });
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function () {
+                showBoard(current + 1, true);
+            });
+        }
 
         // Slide the wall so the chosen board is in view.
         // When animate is true, the cards slam onto the new board.
         function showBoard(index, animate) {
+            if (index < 0 || index >= boards.length) {
+                return;
+            }
+            current = index;
+
             track.style.setProperty('--board-index', index);
 
             // Shift the room behind a little, like walking along the wall
-            document.body.style.setProperty('--pan', index);
+            // (one step per rarity, so lots of pages don't pan off the photo)
+            document.body.style.setProperty('--pan', tabOfBoard[index]);
 
+            // Light up the tab this page belongs to
             tabs.forEach(function (tab, i) {
-                const active = i === index;
+                const active = i === tabOfBoard[index];
                 tab.classList.toggle('board-tab--active', active);
                 tab.setAttribute('aria-selected', active);
             });
+
+            // Arrows only flip pages within the same rarity.
+            // First page has no left arrow, last page has no right arrow.
+            const tab = tabOfBoard[index];
+            setArrow(prevBtn, tabOfBoard[index - 1] === tab);
+            setArrow(nextBtn, tabOfBoard[index + 1] === tab);
 
             // Off-screen boards can't be clicked or tabbed into
             boards.forEach(function (board, i) {
@@ -448,6 +495,10 @@
 
             if (!animate) {
                 return;
+            }
+
+            if (SC.playSound) {
+                SC.playSound('whoosh');
             }
 
             // Restart the slam animation on the new board
@@ -486,13 +537,14 @@
         viewport.style.setProperty('--from-y', (targetY - centerY) + 'px');
     }
 
-    // One chalkboard: rarity name, card count, and the pinned card slots
-    function buildBoard(rarity, label, list) {
+    // One chalkboard page: rarity name, card count, page number,
+    // and 6 pinned card slots (empty slots are drawn in chalk)
+    function buildBoard(rarity, label, pageCards, total, page, pages) {
         const board = document.createElement('div');
         board.className = 'chalkboard';
         board.dataset.rarity = rarity;
         board.setAttribute('role', 'tabpanel');
-        board.setAttribute('aria-label', label + ' cards');
+        board.setAttribute('aria-label', label + ' cards, page ' + (page + 1) + ' of ' + pages);
 
         const title = document.createElement('h2');
         title.className = 'chalkboard__title';
@@ -500,21 +552,25 @@
 
         const subtitle = document.createElement('p');
         subtitle.className = 'chalkboard__subtitle';
-        subtitle.textContent = list.length === 0
-            ? 'No cards yet.'
-            : list.length + (list.length === 1 ? ' card' : ' cards');
+        if (total === 0) {
+            subtitle.textContent = 'No cards yet.';
+        } else {
+            subtitle.textContent = total + (total === 1 ? ' card' : ' cards');
+            if (pages > 1) {
+                subtitle.textContent += '  ·  Page ' + (page + 1) + ' of ' + pages;
+            }
+        }
 
         const grid = document.createElement('div');
         grid.className = 'chalkboard__cards';
 
-        // Always at least 5 slots; more rows if a tier has more cards
-        const slotCount = Math.max(5, list.length);
-        for (let i = 0; i < slotCount; i++) {
+        // Always 6 slots so every page is the same size
+        for (let i = 0; i < 6; i++) {
             const slot = document.createElement('div');
             slot.className = 'card-slot board-slot';
 
-            if (list[i]) {
-                slot.appendChild(makeBoardCard(list[i]));
+            if (pageCards[i]) {
+                slot.appendChild(makeBoardCard(pageCards[i]));
                 slot.classList.add('card-slot--filled');
 
                 // Order the card lands in when the board is dealt
@@ -661,6 +717,9 @@
 
         SCREEN.appendChild(overlay);
     }
+
+    // Let other screens (like the battle) open the same big card view
+    SC.openCardZoom = openCardZoom;
 
     function closeCardZoom() {
         const overlay = document.querySelector('.card-zoom');

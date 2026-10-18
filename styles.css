@@ -2931,3 +2931,232 @@ h1, h2, h3 {
         zoom: 0.6;
     }
 }
+/* =========================================================
+   GYM CLASS LEVEL
+   battle.js adds .battle-screen--gym during the gym fight
+   ========================================================= */
+
+/* Enemy side: padded gym wall instead of the chalkboard */
+.battle-screen--gym .battle__side--enemy {
+    border-image: none;
+    border: 6px solid #1d3f73;
+    border-radius: 12px;
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.30)),
+        repeating-linear-gradient(90deg,
+            #2f5fa8 0 118px,
+            #234b88 118px 122px);
+    /* Yellow stripe painted along the bottom of the wall */
+    box-shadow:
+        inset 0 -14px 0 #f2b33d,
+        0 6px 16px rgba(0, 0, 0, 0.45);
+}
+
+.battle-screen--gym .battle__side--enemy .battle__side-label,
+.battle-screen--gym .battle__side--enemy .battle__intent {
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+}
+
+.battle-screen--gym .battle__side--enemy .battle__zones {
+    border-color: rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* Player side: hardwood court floor */
+.battle-screen--gym .battle__side--player {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.18)),
+        repeating-linear-gradient(90deg,
+            rgba(120, 70, 20, 0.18) 0 2px,
+            transparent 2px 60px),
+        repeating-linear-gradient(180deg,
+            rgba(255, 255, 255, 0.05) 0 1px,
+            transparent 1px 14px),
+        linear-gradient(180deg, #e2a865 0%, #cf9250 100%);
+    border-top: 10px solid #f4f1ea;      /* white boundary line */
+}
+
+/* Defenders | Powers: painted key area with white lines */
+.battle-screen--gym .battle__side--player .battle__zones {
+    background: rgba(200, 70, 40, 0.55);
+    border: 4px solid #f7f3ea;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.battle-screen--gym .battle__side--player .battle__powers {
+    border-left: 4px solid #f7f3ea;
+}
+
+.battle-screen--gym .battle__side--player .battle__field::after,
+.battle-screen--gym .battle__side--player .battle__powers::after {
+    color: #ffffff;
+}
+
+/* =========================================================
+   CARDS SCREEN: PAGE ARROWS
+   Each rarity holds 6 cards per chalkboard; extra cards go on
+   the next board. The arrows slide to the previous/next board.
+   ========================================================= */
+.board-stage {
+    position: relative;
+}
+
+.board-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0 6px;
+    border: 2px solid rgba(244, 240, 229, 0.65);
+    border-radius: 50%;
+    background: rgba(15, 40, 30, 0.8);
+    color: #f4f0e5;
+    font-family: var(--font-title);
+    font-size: 2.6rem;
+    line-height: 1;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: transform 0.15s ease, background 0.15s ease, opacity 0.2s ease;
+    animation: fade-in 0.35s ease 0.95s both;
+}
+
+.board-arrow--prev { left: -72px; }
+.board-arrow--next { right: -72px; }
+
+.board-arrow:hover:not(:disabled),
+.board-arrow:focus-visible {
+    transform: translateY(-50%) scale(1.1);
+    background: rgba(255, 210, 65, 0.9);
+    color: #1c2a20;
+    outline: none;
+}
+
+.board-arrow:disabled {
+    opacity: 0.25;
+    cursor: default;
+}
+
+.cards-screen--leaving .board-arrow {
+    animation: fade-out 0.15s ease both;
+}
+
+/* Narrow screens: arrows sit just inside the board edges */
+@media (max-width: 1450px) {
+    .board-arrow--prev { left: 6px; }
+    .board-arrow--next { right: 6px; }
+}
+/* =========================================================
+   VOLUME PANEL: Music and Sounds sliders side by side
+   ========================================================= */
+.volume-panel {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-3);
+    border-radius: 28px;
+}
+
+.volume-panel__group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 2.6rem;
+}
+
+/* Wider panel: line it up with the right edge so it stays on screen */
+.volume-control {
+    align-items: flex-end;
+}
+
+/* =========================================================
+   DAY MAP: unlocked nodes (temporary, see SC.UNLOCK_ALL_NODES in map.js)
+   ========================================================= */
+.day-node--open .day-node__button {
+    border-color: rgba(31, 95, 191, 0.45);
+    cursor: pointer;
+}
+
+.day-node--open .day-node__button:hover,
+.day-node--open .day-node__button:focus-visible {
+    border-color: #1f5fbf;
+    transform: scale(1.04);
+}
+
+/* Finished nodes can be replayed while everything is unlocked */
+.day-node--complete .day-node__button:not(:disabled) {
+    cursor: pointer;
+}
+
+.day-node--complete .day-node__button:not(:disabled):hover {
+    transform: scale(1.04);
+}
+
+/* Gym: bigger enemy card so the PACER Test picture is easy to see */
+.battle-screen--gym .unit--enemy {
+    width: 15rem;
+    padding: var(--space-4) var(--space-4) var(--space-3);
+}
+
+.battle-screen--gym .unit--enemy .unit__art img {
+    width: 150px;
+    height: 150px;
+}
+
+/* =========================================================
+   BATTLE: LOOK AT A CARD
+   🔍 on hand cards (or right-click) opens the big card view.
+   Enemy's next cards and Power cards open it with a click.
+   ========================================================= */
+.card-view-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 5;
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 3px solid #2a2a35;
+    border-radius: 50%;
+    background: #fffbe8;
+    font-size: 26px;
+    line-height: 1;
+    cursor: zoom-in;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+/* Shows up when you hover or tab to a hand card */
+.hand-slot:hover .card-view-btn,
+.hand-slot:focus-within .card-view-btn {
+    opacity: 1;
+}
+
+.card-view-btn:hover,
+.card-view-btn:focus-visible {
+    transform: scale(1.15);
+    background: #ffd23f;
+    outline: none;
+}
+
+/* Hide it on the flying copies and in the big view */
+.fly-ghost .card-view-btn,
+.card-zoom .card-view-btn {
+    display: none;
+}
+
+/* Enemy intent cards and Power cards: click to look */
+.intent-slot.is-viewable,
+.power-slot.is-viewable {
+    cursor: zoom-in;
+}

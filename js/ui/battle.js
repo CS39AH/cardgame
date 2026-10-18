@@ -17,7 +17,7 @@ window.SC = window.SC || {};
 
     let root = null;
     let levelId = 'tutorial';
-    let resultTimer = null;
+    let resultTimer = null;    
 
     // How long the win/lose message waits so the last hit can play out
     const RESULT_DELAY = 1400;
@@ -41,6 +41,7 @@ window.SC = window.SC || {};
             
         // Apply cafeteria styling only during Cafeteria Duty.
         root.classList.toggle('battle-screen--cafeteria', levelId === 'cafeteria');
+        root.classList.toggle('battle-screen--gym', levelId === 'gym');
 
         if (SC.stopMusic) {
             SC.stopMusic();
@@ -110,7 +111,7 @@ window.SC = window.SC || {};
         // Clear the hero so render() builds a fresh one
         root.querySelector('.battle__hero').innerHTML = '';
 
-        SC.combat.start(levelId, chosenTeacher(), savedDeck());
+        SC.combat.start(levelId, heroForLevel(), savedDeck());
         SC.battleFx.reset(SC.combat.state);
         render();
     }
@@ -122,6 +123,13 @@ window.SC = window.SC || {};
 
     // The teacher picked on the title screen. How to Play passes it in
     // directly; map fights read it from the save made by Start a New Day.
+    // A level can set its own teacher (hero: 'gym-teacher' in levels.js).
+    // Otherwise use the teacher picked on the title screen.
+    function heroForLevel() {
+        const level = SC.levels && SC.levels[levelId];
+        return (level && level.hero) || chosenTeacher();
+    }
+
     function chosenTeacher() {
         if (SC.currentBattle && SC.currentBattle.heroId) {
             return SC.currentBattle.heroId;
@@ -308,8 +316,12 @@ window.SC = window.SC || {};
 
             s.enemy.next.forEach(function (card) {
                 const slot = document.createElement('div');
-                slot.className = 'intent-slot';
+                slot.className = 'intent-slot is-viewable';
+                slot.title = 'Click to look at ' + card.name;
                 slot.appendChild(SC.renderCard(card));
+                slot.addEventListener('click', function () {
+                    viewCard(card);
+                });
                 intentBox.appendChild(slot);
             });
         }
@@ -343,9 +355,18 @@ window.SC = window.SC || {};
                 slot.classList.add('is-unaffordable');
             }
 
-            slot.appendChild(SC.renderCard(card));
+            const cardEl = SC.renderCard(card);
+            cardEl.appendChild(makeViewButton(card));
+            slot.appendChild(cardEl);
+
             slot.addEventListener('click', function () {
                 play(i);
+            });
+
+            // Right-click also picks the card up instead of playing it
+            slot.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+                viewCard(card);
             });
             slot.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -356,6 +377,35 @@ window.SC = window.SC || {};
 
             handBox.appendChild(slot);
         });
+    }
+
+    // ------- LOOKING AT A CARD -------
+    // Opens the same big "picked up" view as the Cards screen.
+    // Playing still works the normal way; this only looks.
+    function viewCard(card) {
+        if (SC.openCardZoom) {
+            SC.openCardZoom(card);
+        }
+    }
+
+    // Small magnifying glass in the corner of each hand card
+    function makeViewButton(card) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'card-view-btn';
+        btn.textContent = '🔍';
+        btn.title = 'Look at ' + card.name;
+        btn.setAttribute('aria-label', 'Look at ' + card.name);
+
+        // Stop the click from also playing the card
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            viewCard(card);
+        });
+        btn.addEventListener('keydown', function (e) {
+            e.stopPropagation();
+        });
+        return btn;
     }
 
     // Defenders on a field
@@ -436,9 +486,12 @@ window.SC = window.SC || {};
         zone.innerHTML = '';
         powers.forEach(function (card) {
             const slot = document.createElement('div');
-            slot.className = 'power-slot';
+            slot.className = 'power-slot is-viewable';
             slot.title = card.name + ': ' + card.description;
             slot.appendChild(SC.renderCard(card));
+            slot.addEventListener('click', function () {
+                viewCard(card);
+            });
             zone.appendChild(slot);
         });
     }
