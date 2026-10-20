@@ -577,14 +577,45 @@ window.SC = window.SC || {};
     function addLog(text) {
         combat.state.log.push(text);
     }
-    // Reward options: random, no repeats within one set of choices
-    combat.rewardChoices = function (count) {
-        const pool = SC.cards.filter(function (card) {
-            return !card.demo && !card.hero && card.rarity !== 'Enemy';
-        });
-        return shuffle(pool.slice()).slice(0, count).map(function (card) {
-            return Object.assign({}, card);
-        });
-    };
+// Boss reward tables: boss id -> the specific cards offered after defeating them
+combat.bossRewards = {
+    'class-clown':   ['pencil-of-destiny', 'track-record', 'golden-apple'],
+    'cafeteria-enemy':    ['fresh-fruits', 'chocolate-milk', 'serving-spoon'],
+    'gym-enemy':   ['team-spirit', 'basketball-pass', 'stacked-mats']
+};
+
+// Boss rewards: fixed cards for a given boss
+combat.bossRewardChoices = function (bossId) {
+    const ids = combat.bossRewards[bossId];
+    if (!ids) return null;
+
+    const cards = ids.map(function (id) {
+        return SC.cards.find(function (card) { return card.id === id; });
+    }).filter(Boolean); // drops any ID that doesn't match a card
+
+    if (cards.length !== ids.length) {
+        console.warn('bossRewards for "' + bossId + '" references missing card IDs');
+    }
+
+    return cards.map(function (card) {
+        return Object.assign({}, card);
+    });
+};
+
+// Reward options: boss gets specific cards, everything else is random
+// with no repeats within one set of choices
+combat.rewardChoices = function (count, bossId) {
+    if (bossId) {
+        const bossCards = combat.bossRewardChoices(bossId);
+        if (bossCards && bossCards.length) return bossCards;
+    }
+
+    const pool = SC.cards.filter(function (card) {
+        return !card.demo && !card.hero && card.rarity !== 'Enemy';
+    });
+    return shuffle(pool.slice()).slice(0, count).map(function (card) {
+        return Object.assign({}, card);
+    });
+};
     SC.combat = combat;
 })();

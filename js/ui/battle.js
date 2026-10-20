@@ -638,7 +638,7 @@ window.SC = window.SC || {};
         const row = document.createElement('div');
         row.className = 'battle__rewards';
 
-        SC.combat.rewardChoices(3).forEach(function (card) {
+        SC.combat.rewardChoices(3, SC.combat.state.enemy.id).forEach(function (card) {
             const slot = document.createElement('div');
             slot.className = 'reward-slot';
             slot.tabIndex = 0;
