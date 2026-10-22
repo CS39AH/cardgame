@@ -48,6 +48,37 @@ SC.cards = [
             { type: 'confiscate' }
         ]
     },
+    {
+        id: 'yard-stick',
+        name: "Yard Stick",
+        cost: 2,
+        type: 'Power',
+        rarity: 'Legendary',
+        art: '📏',                                    // fallback if the image is missing
+        image: 'graphics/cards/yard-stick.png',
+        imageAlt: 'a yard stick in the room',
+        imageScale: 1.0,
+        description: 'Whenever you play an Attack card, the Yard Stick deals 3 more damage.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 3 } }
+        ]
+    },
+    {
+        id: 'dismissal-bell',
+        name: "Dismissal Bell",
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Legendary',
+        art: '🔔',                                    // fallback if the image is missing
+        image: 'graphics/cards/dismissal-bell.png',
+        imageAlt: 'a dismissal bell for the class',
+        imageScale: 1.0,
+        description: 'Bell rings causing 5 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 5},
+            { type: 'multiplier', amount: 3}
+        ]
+    },
 
         {
         id: 'teachers-pet',
@@ -531,34 +562,35 @@ SC.cards = [
         // Title screen showcase only. demo: true keeps it off the Cards board.
         id: 'substitute-teacher',
         name: 'Substitute Teacher',
-        cost: 3,
+        cost: 2,
         type: 'Attack',
         art: '🧑‍🏫',                                  // fallback if the image is missing
         image: 'graphics/cards/teacher.png',
         imageAlt: 'The substitute teacher',
         imageScale: 1.1,
-        description: 'Deal 10 damage.',
+        description: 'Deal 20 damage.',
         demo: true,
         hero: true,
         startingSanity: 30,
         startingEnergy: 3,
         startingDeck: [
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee',
+            'pencil-of-destiny',
             'teachers-pet',
             'red-pen-markup',
-            'desk-key',
-            'coffee-refill',
-            'red-pen-markup',
-            'backpack-wall',
             'morning-coffee',
-            'lesson-plan'
+            'worksheets',
+            'desk-key',
+            'lesson-plan',
+            'track-record',
+            'backpack-wall',
+            'backpack-wall',
+            'coffee-refill'
+
         ],
         badgeText: 'Staff · Substitute',
         badgeColor: '#b92626',
         effects: [
-            { type: 'damage', amount: 10 }
+            { type: 'damage', amount: 20 }
         ]
     },
 
@@ -611,16 +643,17 @@ SC.cards = [
         startingSanity: 40,
         startingEnergy: 3,
         startingDeck: [
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee',
-            'teachers-pet',
-            'red-pen-markup',
-            'desk-key',
-            'coffee-refill',
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee'
+            'team-spirit',
+            'running-shoes',
+            'stacked-mats',
+            'sports-drink',
+            'basketball-pass',
+            'basketball-pass',
+            'basketball-pass',
+            'sports-drink',
+            'sports-drink',
+            'stacked-mats'
+
         ],
         badgeText: 'Staff · Gym Teacher',
         badgeColor: '#c9652b',
@@ -645,16 +678,16 @@ SC.cards = [
         startingSanity: 30,
         startingEnergy: 4,
         startingDeck: [
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee',
-            'teachers-pet',
-            'red-pen-markup',
-            'desk-key',
-            'coffee-refill',
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee'
+            'fresh-fruits',
+            'fresh-fruits',
+            'chocolate-milk',
+            'chocolate-milk',
+            'protective-apron',
+            'serving-spoon',
+            'serving-spoon',
+            'serving-spoon',
+            'clean-tray',
+            'clean-tray'
         ],
         badgeText: 'Staff · Lunch Lady',
         badgeColor: '#b8860b',
