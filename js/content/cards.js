@@ -562,13 +562,13 @@ SC.cards = [
         // Title screen showcase only. demo: true keeps it off the Cards board.
         id: 'substitute-teacher',
         name: 'Substitute Teacher',
-        cost: 1,
+        cost: 3,
         type: 'Attack',
         art: '🧑‍🏫',                                  // fallback if the image is missing
         image: 'graphics/cards/teacher.png',
         imageAlt: 'The substitute teacher',
         imageScale: 1.1,
-        description: 'Deal 1000 damage.',
+        description: 'Deal 10 damage.',
         demo: true,
         hero: true,
         startingSanity: 30,
@@ -589,7 +589,7 @@ SC.cards = [
         badgeText: 'Staff · Substitute',
         badgeColor: '#b92626',
         effects: [
-            { type: 'damage', amount: 1000 }
+            { type: 'damage', amount: 10 }
         ]
     },
 
