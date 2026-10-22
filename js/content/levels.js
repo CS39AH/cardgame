@@ -83,7 +83,7 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-enemy',
-        hero: 'gym-teacher',      // this level always uses the Gym Teacher
+        //hero: 'gym-teacher',      // this level always uses the Gym Teacher
 
         bonusCards: [
             'basketball-pass',
