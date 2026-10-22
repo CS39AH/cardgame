@@ -48,6 +48,37 @@ SC.cards = [
             { type: 'confiscate' }
         ]
     },
+    {
+        id: 'yard-stick',
+        name: "Yard Stick",
+        cost: 2,
+        type: 'Power',
+        rarity: 'Legendary',
+        art: '📏',                                    // fallback if the image is missing
+        image: 'graphics/cards/yard-stick.png',
+        imageAlt: 'a yard stick in the room',
+        imageScale: 1.0,
+        description: 'Whenever you play an Attack card, the Yard Stick deals 3 more damage.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 3 } }
+        ]
+    },
+    {
+        id: 'dismissal-bell',
+        name: "Dismissal Bell",
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Legendary',
+        art: '🔔',                                    // fallback if the image is missing
+        image: 'graphics/cards/dismissal-bell.png',
+        imageAlt: 'a dismissal bell for the class',
+        imageScale: 1.0,
+        description: 'Bell rings causing 5 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 5},
+            { type: 'multiplier', amount: 3}
+        ]
+    },
 
         {
         id: 'teachers-pet',
