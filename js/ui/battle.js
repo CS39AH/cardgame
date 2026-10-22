@@ -20,7 +20,7 @@ window.SC = window.SC || {};
     let resultTimer = null;    
 
     // How long the win/lose message waits so the last hit can play out
-    const RESULT_DELAY = 1400;
+    const RESULT_DELAY = 2800;    // long enough to see the last card rip in half
 
     // The battle is laid out at this width, then scaled up to fill the window
     const BASE_WIDTH = 960;
@@ -470,7 +470,46 @@ window.SC = window.SC || {};
             el.appendChild(relax);
         }
 
+        // Rips appear as it loses Sanity (remembered on the unit so
+        // a new rip only "tears" once, when it first appears)
+        const stage = tearStage(sanity, max);
+        applyTear(el, stage, unit._tear || 0);
+        unit._tear = stage;
+
         return el;
+    }
+
+    // ------- TEARING CARDS -------
+    // Over 75% Sanity: whole. 75%: small rip. 50%: bigger rips.
+    // 25%: badly torn. 0%: ripped in half (that part is in battle-fx.js).
+    function tearStage(sanity, max) {
+        const pct = max > 0 ? sanity / max : 1;
+        if (pct > 0.75) return 0;
+        if (pct > 0.5) return 1;
+        if (pct > 0.25) return 2;
+        return 3;
+    }
+
+    function applyTear(el, stage, prevStage) {
+        el.dataset.tear = stage;
+
+        // The layer the rip marks are drawn on (CSS picks the marks by stage)
+        if (!el.querySelector(':scope > .tear-marks')) {
+            const marks = document.createElement('div');
+            marks.className = 'tear-marks';
+            marks.setAttribute('aria-hidden', 'true');
+            el.appendChild(marks);
+        }
+
+        // A new rip: jolt the card and play the rip sound
+        if (stage > prevStage) {
+            el.classList.remove('is-ripping');
+            void el.offsetWidth;
+            el.classList.add('is-ripping');
+            if (SC.playSound) {
+                SC.playSound('rip');
+            }
+        }
     }
 
     // Power cards stay in play in their own zone, next to the field
@@ -501,6 +540,10 @@ window.SC = window.SC || {};
         const card = root.querySelector('.battle__hero .card--hero');
         if (!card) return;
         SC.updateHeroStats(card, state.player);
+
+        // Your hero badge tears too as you lose Sanity
+        const stage = tearStage(state.player.sanity, state.player.maxSanity);
+        applyTear(card, stage, Number(card.dataset.tear || 0));
     }
 
     // Shared by the battle and the tutorial.
