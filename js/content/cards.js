@@ -66,7 +66,7 @@ SC.cards = [
     {
         id: 'dismissal-bell',
         name: "Dismissal Bell",
-        cost: 1,
+        cost: 2,
         type: 'Attack',
         rarity: 'Legendary',
         art: '🔔',                                    // fallback if the image is missing
