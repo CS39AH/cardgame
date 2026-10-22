@@ -27,6 +27,7 @@ window.SC = window.SC || {};
     let lastEnemySanity = 0;
     let lastPlayerSanity = 0;
     let lastPlayerRelax = 0;
+    let lastFields = { enemy: [], player: [] };
     let nextKind = 'play';
 
     // ---------- Called from battle.js ----------
@@ -37,6 +38,7 @@ window.SC = window.SC || {};
         lastEnemySanity = state.enemy.sanity;
         lastPlayerSanity = state.player.sanity;
         lastPlayerRelax = state.player.relaxation;
+        lastFields = { enemy: state.enemy.field.slice(), player: state.player.field.slice() };
         nextKind = 'play';
     }
 
@@ -59,7 +61,8 @@ window.SC = window.SC || {};
             }),
             enemySanity: lastEnemySanity,
             playerSanity: lastPlayerSanity,
-            playerRelax: lastPlayerRelax
+            playerRelax: lastPlayerRelax,
+            fields: { enemy: grabUnits('enemy'), player: grabUnits('player') }
         };
     }
 
@@ -99,6 +102,8 @@ window.SC = window.SC || {};
         });
 
         let t = 0;
+        let enemyHitAt = 0;     // when the enemy side gets hit (for tearing)
+        let heroHitAt = 0;      // when your side gets hit
 
         if (kind === 'endTurn') {
             // 1. Leftover hand sweeps into the discard pile
@@ -118,6 +123,7 @@ window.SC = window.SC || {};
                 });
                 t += 450;
             }
+            heroHitAt = t;
             if (playerLoss > 0) {
                 later(t, function () { hit('.battle__hero', playerLoss); });
                 t += 350;
@@ -126,11 +132,13 @@ window.SC = window.SC || {};
             // A card was played
             leftHand.forEach(function (old) {
                 const impact = playedCard(old, enemyLoss);
+                enemyHitAt = Math.max(enemyHitAt, impact);
                 if (enemyLoss > 0) {
                     later(impact, function () { hit('.battle__enemy', enemyLoss); });
                 }
             });
             t = leftHand.length ? 650 : 0;
+            heroHitAt = t;
 
             if (playerLoss > 0) {
                 later(t, function () { hit('.battle__hero', playerLoss); });
@@ -148,6 +156,24 @@ window.SC = window.SC || {};
                     floatText('.battle__hero', '+' + relaxGain + ' 😌', 'fx-relax');
                 });
             }
+        }
+
+        // Defenders that got knocked out rip in half where they stood
+        tearKnockedOut(before.fields.enemy, state.enemy.field, 'enemy', enemyHitAt + 150);
+        tearKnockedOut(before.fields.player, state.player.field, 'player', heroHitAt + 150);
+
+        // Enemy beaten or you ran out of Sanity: that card rips in half
+        if (before.enemySanity > 0 && state.enemy.sanity <= 0) {
+            later(enemyHitAt + 200, function () {
+                const el = document.querySelector('.battle__enemy .unit--enemy');
+                if (el) tearApart(el);
+            });
+        }
+        if (before.playerSanity > 0 && state.player.sanity <= 0) {
+            later(heroHitAt + 200, function () {
+                const el = document.querySelector('.battle__hero .hero-badge');
+                if (el) tearApart(el);
+            });
         }
 
         // 3. Deal new cards from the deck
@@ -369,6 +395,7 @@ window.SC = window.SC || {};
 
     function remember(state) {
         lastHand = state.hand.slice();
+        lastFields = { enemy: state.enemy.field.slice(), player: state.player.field.slice() };
         lastEnemySanity = state.enemy.sanity;
         lastPlayerSanity = state.player.sanity;
         lastPlayerRelax = state.player.relaxation;
@@ -437,6 +464,82 @@ window.SC = window.SC || {};
             { opacity: 0, offset: startAt },
             { opacity: 1 }
         ], { duration: ms(duration), fill: 'forwards' });
+    }
+
+    // ---------- Tearing cards in half ----------
+
+    // The jagged rip down the middle of the card
+    const LEFT_HALF  = 'polygon(0 0, 54% 0, 48% 14%, 55% 28%, 46% 44%, 53% 60%, 45% 76%, 52% 90%, 49% 100%, 0 100%)';
+    const RIGHT_HALF = 'polygon(54% 0, 100% 0, 100% 100%, 49% 100%, 52% 90%, 45% 76%, 53% 60%, 46% 44%, 55% 28%, 48% 14%)';
+
+    // Copies of the defenders on a field, taken before render() rebuilds it
+    function grabUnits(side) {
+        const els = Array.from(document.querySelectorAll('.battle__field--' + side + ' > .unit'));
+        return lastFields[side].map(function (unit, i) {
+            const el = els[i];
+            if (!el) return null;
+            return {
+                unit: unit,
+                node: el.cloneNode(true),
+                left: el.offsetLeft,
+                top: el.offsetTop,
+                width: el.offsetWidth,
+                transform: getComputedStyle(el).transform
+            };
+        }).filter(Boolean);
+    }
+
+    // Any defender that was on the field before but isn't now got knocked out
+    function tearKnockedOut(beforeUnits, nowField, side, at) {
+        const gone = (beforeUnits || []).filter(function (old) {
+            return nowField.indexOf(old.unit) === -1;
+        });
+        if (!gone.length) return;
+
+        later(at, function () {
+            const field = document.querySelector('.battle__field--' + side);
+            gone.forEach(function (old) {
+                tearCopy(old.node, field, old.left, old.top, old.width, old.transform);
+            });
+        });
+    }
+
+    // Rip a card that's still on screen (the enemy or your hero badge)
+    function tearApart(el) {
+        tearCopy(el.cloneNode(true), el.offsetParent, el.offsetLeft, el.offsetTop,
+            el.offsetWidth, getComputedStyle(el).transform);
+        el.style.visibility = 'hidden';
+    }
+
+    // Two copies of the card, each showing one jagged half, falling apart
+    function tearCopy(node, parent, left, top, width, baseTransform) {
+        if (!parent) return;
+        const base = baseTransform && baseTransform !== 'none' ? baseTransform + ' ' : '';
+
+        if (SC.playSound) {
+            SC.playSound('ripApart');
+        }
+
+        ['left', 'right'].forEach(function (side) {
+            const dir = side === 'left' ? -1 : 1;
+            const half = node.cloneNode(true);
+            half.classList.add('tear-half');
+            half.style.left = left + 'px';
+            half.style.top = top + 'px';
+            half.style.width = width + 'px';
+            half.style.clipPath = side === 'left' ? LEFT_HALF : RIGHT_HALF;
+            parent.appendChild(half);
+
+            half.animate([
+                { transform: base + 'translate(0, 0) rotate(0deg)', opacity: 1 },
+                { transform: base + 'translate(' + (dir * 8) + 'px, -4px) rotate(' + (dir * 3) + 'deg)', opacity: 1, offset: 0.2 },
+                { transform: base + 'translate(' + (dir * 70) + 'px, 140px) rotate(' + (dir * 20) + 'deg)', opacity: 0 }
+            ], {
+                duration: ms(900),
+                easing: 'cubic-bezier(.4, 0, .8, .6)',
+                fill: 'forwards'
+            }).finished.then(function () { half.remove(); });
+        });
     }
 
     function reducedMotion() {
