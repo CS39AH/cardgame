@@ -83,7 +83,7 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-enemy',
-        //hero: 'gym-teacher',      // this level always uses the Gym Teacher
+        hero: 'gym-teacher',      // this level always uses the Gym Teacher
 
         bonusCards: [
             'basketball-pass',
@@ -91,6 +91,24 @@ SC.levels = {
             'stacked-mats',
             'running-shoes',
             'team-spirit'
+        ]
+    },
+
+    hallway: {
+        id: 'hallway',
+        name: 'hallway',
+        intro: 'The hallway is a mess. You need to get it under control.',
+        winText: 'The hallway is finally under control!',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'hallway-enemy',
+        hero: 'janitor',      // this level always uses the Janitor
+
+        bonusCards: [
+            'mop',
+            'broom',
         ]
     }
 };
