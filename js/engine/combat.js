@@ -579,7 +579,7 @@ window.SC = window.SC || {};
     }
 // Boss reward tables: boss id -> the specific cards offered after defeating them
 combat.bossRewards = {
-    'class-clown':   ['pencil-of-destiny', 'track-record', 'golden-apple'],
+    'class-clown':   ['dismissal-bell', 'yard-stick', 'golden-apple'],
     'cafeteria-enemy':    ['fresh-fruits', 'chocolate-milk', 'serving-spoon'],
     'gym-enemy':   ['team-spirit', 'basketball-pass', 'stacked-mats']
 };
