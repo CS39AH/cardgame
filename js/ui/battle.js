@@ -19,12 +19,31 @@ window.SC = window.SC || {};
     let levelId = 'tutorial';
     let resultTimer = null;    
 
+    // While the enemy is playing its cards (or your attack is flying),
+    // you can't click anything. fightId stops old timers from a fight you left.
+    let enemyTurnRunning = false;
+    let cardInFlight = false;
+    let fightId = 0;
+
+    // Pause after each enemy card so its hit, rip, etc. can finish (before SLOW)
+    const ENEMY_CARD_GAP = 700;
+
+    // How long after a defender's shield clang its new rip appears (real ms)
+    const TEAR_AFTER_HIT = 300;
+
     // How long the win/lose message waits so the last hit can play out
     const RESULT_DELAY = 2800;    // long enough to see the last card rip in half
 
     // The battle is laid out at this width, then scaled up to fill the window
     const BASE_WIDTH = 960;
     const MAX_SCALE = 1.8;
+
+    // Wide screens (like 2560x1080): the layout gets wider, up to this,
+    // so the boards stretch out sideways instead of leaving empty space
+    const MAX_WIDTH = 1440;
+
+    // Short windows: it can shrink down to this so nothing gets cut off
+    const MIN_SCALE = 0.7;
 
     // ------- SETUP -------
 
@@ -55,15 +74,12 @@ window.SC = window.SC || {};
         // Teacher Ability Button Listener.
 
         root.querySelector('.battle__teacher-ability').addEventListener('click', function () {
+            if (isBusy()) return;
             SC.combat.useTeacherAbility();
             render();
         });
 
-        root.querySelector('.battle__end-turn').addEventListener('click', function () {
-            SC.battleFx.mark('endTurn');
-            SC.combat.endTurn();
-            render();
-        });
+        root.querySelector('.battle__end-turn').addEventListener('click', runEnemyTurn);
 
         startFight();
 
@@ -80,28 +96,41 @@ window.SC = window.SC || {};
             return;
         }
 
-        // Fixed layout width; the page centers it (see #screen[data-screen="battle"])
+        // Lay it out at the normal width first and measure it
+        // (the page centers it, see #screen[data-screen="battle"])
         const roomWide = window.innerWidth - 48;
-        const width = Math.min(BASE_WIDTH, roomWide);
+        let width = Math.min(BASE_WIDTH, roomWide);
         root.style.width = width + 'px';
-
-        // Measure at normal size first
         root.style.zoom = 1;
+
         const top = root.getBoundingClientRect().top;
-        const height = root.offsetHeight;
+        let height = root.offsetHeight;
         const roomTall = window.innerHeight - top - 12;
 
-        const scale = Math.max(1, Math.min(MAX_SCALE, roomTall / height, roomWide / width));
+        // Wide screen: the height is what limits the size, so there'd be
+        // empty space on the sides. Make the layout wider to fill it.
+        const fitTall = roomTall / height;
+        if (roomWide / width > fitTall) {
+            width = Math.max(width, Math.min(MAX_WIDTH, roomWide / fitTall));
+            root.style.width = width + 'px';
+            height = root.offsetHeight;
+        }
+
+        // Then grow (or shrink) the whole thing to fill the window
+        const scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, roomTall / height, roomWide / width));
 
         root.style.zoom = scale;
         SC.battleScale = scale;          // battle-fx.js uses this to size flying cards
 
         fanHand();                       // hand space may have changed
+        squeezeZones();
     }
-
     // Start (or restart) the fight from scratch
     function startFight() {
         clearTimeout(resultTimer);
+        fightId += 1;                 // any timers from the last fight stop
+        enemyTurnRunning = false;
+        cardInFlight = false;
 
         const oldResult = root.querySelector('.battle__result');
         if (oldResult) {
@@ -222,8 +251,7 @@ window.SC = window.SC || {};
         root.querySelector('.battle__log').textContent = s.log[s.log.length - 1] || '';
         renderHint(s);
 
-        root.querySelector('.battle__end-turn').disabled = Boolean(s.result);
-
+        root.querySelector('.battle__end-turn').disabled = Boolean(s.result || enemyTurnRunning);
         const teacherAbilityButton = root.querySelector('.battle__teacher-ability');
         const teacher = SC.getCard(s.player.heroId);
         const abilityCost = teacher ? teacher.cost : 0;
@@ -231,6 +259,7 @@ window.SC = window.SC || {};
 
         teacherAbilityButton.disabled = Boolean(
             s.result ||
+            enemyTurnRunning ||
             s.teacherAbilityUsed ||
             notEnoughCoffee
         );
@@ -248,7 +277,9 @@ window.SC = window.SC || {};
         renderPowers(s);
         updatePiles(s);
         fanHand();
+        squeezeZones();                      // before play(), so cards fly to the right spots
         SC.battleFx.play(fx);                // animate what changed
+        lockWhileBusy();                     // no clicking until it's done
 
         showResult(s.result);
     }
@@ -445,6 +476,15 @@ window.SC = window.SC || {};
 
         el.appendChild(art);
 
+        // Defenders get a shield at the top with their Sanity in it
+        if (extraClass === 'unit--defender') {
+            const shield = document.createElement('div');
+            shield.className = 'unit__shield';
+            shield.textContent = sanity;
+            shield.title = sanity + ' / ' + max + ' Sanity';
+            el.appendChild(shield);
+        }
+
         const name = document.createElement('p');
         name.className = 'unit__name';
         name.textContent = unit.name;
@@ -491,6 +531,18 @@ window.SC = window.SC || {};
     }
 
     function applyTear(el, stage, prevStage) {
+        // Defenders: the shield CLANG plays first, then it tears a moment later
+        if (stage > prevStage && el.classList.contains('unit--defender')) {
+            el.dataset.tear = prevStage;          // keep the old rips for now
+            setTimeout(function () {
+                tearNow(el, stage, prevStage);
+            }, TEAR_AFTER_HIT);
+            return;
+        }
+        tearNow(el, stage, prevStage);
+    }
+
+    function tearNow(el, stage, prevStage) {
         el.dataset.tear = stage;
 
         // The layer the rip marks are drawn on (CSS picks the marks by stage)
@@ -525,9 +577,15 @@ window.SC = window.SC || {};
         zone.innerHTML = '';
         powers.forEach(function (card) {
             const slot = document.createElement('div');
-            slot.className = 'power-slot is-viewable';
-            slot.title = card.name + ': ' + card.description;
+            slot.className = 'power-slot is-viewable power-slot--' + (card.rarity || 'Common').toLowerCase();            slot.title = card.name + ': ' + card.description;
             slot.appendChild(SC.renderCard(card));
+
+            // The ⚡ badge on the corner
+            const badge = document.createElement('div');
+            badge.className = 'power-badge';
+            badge.textContent = '⚡';
+            slot.appendChild(badge);
+
             slot.addEventListener('click', function () {
                 viewCard(card);
             });
@@ -649,19 +707,74 @@ window.SC = window.SC || {};
         const zoom = parseFloat(root.style.zoom) || 1;
         const room = hand.getBoundingClientRect().width / zoom;
 
-        const CARD = 200;        // a hand card is 400px at zoom 0.5
-        let overlap = 45;        // normal overlap
+        const HAND_ZOOM = 0.6;   // must match zoom on .hand-slot in styles.css
+        const CARD = 400 * HAND_ZOOM;   // a hand card is 400px before its zoom
+        let overlap = 54;        // normal overlap
         if (count > 1 && CARD * count - overlap * (count - 1) > room) {
             overlap = (CARD * count - room) / (count - 1);
         }
-        overlap = Math.min(overlap, 150);   // always show at least 50px of each card
+        overlap = Math.min(overlap, CARD - 60);   // always show at least 60px of each card
 
         slots.forEach(function (slot, i) {
             const offset = i - mid;
             slot.style.setProperty('--i', offset);
             slot.style.setProperty('--lift', offset * offset);
-            // Margins on the slot are inside its zoom: 0.5, so double them
-            slot.style.marginLeft = i === 0 ? '0' : (-overlap * 2) + 'px';
+            // Margins on the slot are inside its zoom, so undo the zoom
+            slot.style.marginLeft = i === 0 ? '0' : (-overlap / HAND_ZOOM) + 'px';
+        });
+    }
+
+    // Lots of defenders or Powers: overlap them so they always fit in
+    // their zone, instead of wrapping onto new rows and pushing the
+    // screen down. Defenders overlap side to side, Powers stack down.
+    function squeezeZones() {
+        root.querySelectorAll('.battle__field').forEach(function (zone) {
+            squeeze(zone, '.unit', 'x');
+        });
+        root.querySelectorAll('.battle__powers').forEach(function (zone) {
+            squeeze(zone, '.power-slot', 'y');
+        });
+    }
+
+    function squeeze(zone, itemSelector, axis) {
+        const items = Array.from(zone.querySelectorAll(':scope > ' + itemSelector));
+        const side = axis === 'x' ? 'marginLeft' : 'marginTop';
+
+        // Start from no overlap
+        items.forEach(function (el, i) {
+            el.style[side] = '';
+            el.style.zIndex = '';
+            // Defenders: the front one (gets hit first) stays on top
+            if (axis === 'x') el.style.zIndex = items.length - i;
+        });
+        zone.classList.remove('is-squeezed');
+        if (items.length < 2) return;
+
+        // Everything here is in screen pixels (the battle is zoomed)
+        const zoom = parseFloat(root.style.zoom) || 1;
+        const box = zone.getBoundingClientRect();
+        const pad = getComputedStyle(zone);
+        const room = axis === 'x'
+            ? box.width - (parseFloat(pad.paddingLeft) + parseFloat(pad.paddingRight)) * zoom
+            : box.height - (parseFloat(pad.paddingTop) + parseFloat(pad.paddingBottom)) * zoom;
+
+        const first = items[0].getBoundingClientRect();
+        const last = items[items.length - 1].getBoundingClientRect();
+        const used = axis === 'x' ? last.right - first.left : last.bottom - first.top;
+        if (used <= room) return;
+        zone.classList.add('is-squeezed');
+
+        // Pull each card back over the one before it by the same amount.
+        // A margin is in the card's own pixels, so undo its zoom first.
+        const perCard = (used - room) / (items.length - 1);
+        items.forEach(function (el, i) {
+            if (i === 0) return;
+            const rect = el.getBoundingClientRect();
+            const ownSize = axis === 'x' ? el.offsetWidth : el.offsetHeight;
+            const screenSize = axis === 'x' ? rect.width : rect.height;
+            const toOwnPx = ownSize ? ownSize / screenSize : 1;
+            const current = parseFloat(getComputedStyle(el)[side]) || 0;
+            el.style[side] = (current - perCard * toOwnPx) + 'px';
         });
     }
 
@@ -770,12 +883,125 @@ window.SC = window.SC || {};
     // ------- CLICKS -------
 
     function play(handIndex) {
-        if (SC.combat.state.result) {
+        const s = SC.combat.state;
+        if (s.result || isBusy()) {
             return;
         }
+
+        // Attacks fly at their target first and only hit when they land,
+        // so the damage, tearing, etc. happen at the moment of impact
+        const card = s.hand[handIndex];
+        if (card && isAttackCard(card) && card.cost <= s.player.energy) {
+            const flyTime = SC.battleFx.attackFly(handIndex);
+            if (flyTime > 0) {
+                cardInFlight = true;
+                lockWhileBusy();
+                const id = fightId;
+                setTimeout(function () {
+                    if (id !== fightId) return;
+                    cardInFlight = false;
+                    SC.battleFx.mark('impact');
+                    playNow(handIndex);
+                }, flyTime);
+                return;
+            }
+        }
+
+        playNow(handIndex);
+    }
+
+    function playNow(handIndex) {
         if (SC.combat.playCard(handIndex) && SC.playSound) {
             SC.playSound('slam');
         }
+        render();
+    }
+
+    // Deals damage, and isn't a Power or a card that gets confiscated
+    function isAttackCard(card) {
+        const effects = card.effects || [];
+        return card.type !== 'Power' &&
+            effects.some(function (e) { return e.type === 'damage'; }) &&
+            !effects.some(function (e) { return e.type === 'confiscate'; });
+    }
+
+    // ------- WAITING FOR ANIMATIONS -------
+
+    // True while a card is still flying, slamming, tearing, etc.
+    function isBusy() {
+        return enemyTurnRunning || cardInFlight || SC.battleFx.busyFor() > 0;
+    }
+
+    // Grey out End Turn + Teacher Ability while busy, then turn them back on
+    let unlockTimer = null;
+
+    function lockWhileBusy() {
+        clearTimeout(unlockTimer);
+        if (!isBusy()) return;
+
+        root.querySelector('.battle__end-turn').disabled = true;
+        root.querySelector('.battle__teacher-ability').disabled = true;
+
+        // When the animations are done, redraw so the buttons come back.
+        // (During the enemy's turn, the turn itself redraws when it finishes.)
+        if (!enemyTurnRunning && !cardInFlight) {
+            const id = fightId;
+            unlockTimer = setTimeout(function () {
+                if (id === fightId && root && document.body.contains(root)) {
+                    render();
+                }
+            }, SC.battleFx.busyFor() + 20);
+        }
+    }
+
+    // ------- END TURN: the enemy plays its cards ONE AT A TIME -------
+
+    function runEnemyTurn() {
+        const s = SC.combat.state;
+        if (!s || s.result || enemyTurnRunning || cardInFlight) {
+            return;
+        }
+        enemyTurnRunning = true;
+        const id = fightId;
+
+        // 1. Your leftover hand sweeps into the discard pile
+        const handCount = s.hand.length;
+        SC.battleFx.mark('discard');
+        SC.combat.startEnemyTurn();
+        render();
+
+        const sweep = handCount ? 420 + handCount * 70 + 150 : 150;
+        setTimeout(function () { nextEnemyCard(id); }, SC.battleFx.ms(sweep));
+    }
+
+    // 2. The enemy's next card flies at its target, and only takes
+    //    effect when it lands. Then a short pause, then the next card.
+    function nextEnemyCard(id) {
+        if (id !== fightId || !root || !document.body.contains(root)) {
+            return;                   // you left this fight
+        }
+
+        const s = SC.combat.state;
+        if (s.result || !s.enemy.next.length) {
+            finishEnemyTurn();
+            return;
+        }
+
+        const flyTime = SC.battleFx.enemyCardFly(0);
+        setTimeout(function () {
+            if (id !== fightId) return;
+            SC.battleFx.mark('enemyCard');
+            SC.combat.enemyPlayNext();
+            render();
+            setTimeout(function () { nextEnemyCard(id); }, SC.battleFx.ms(ENEMY_CARD_GAP));
+        }, flyTime);
+    }
+
+    // 3. Your next turn: draw a new hand, see what the enemy plays next
+    function finishEnemyTurn() {
+        enemyTurnRunning = false;
+        SC.battleFx.mark('newTurn');
+        SC.combat.finishEnemyTurn();
         render();
     }
 

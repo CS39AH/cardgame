@@ -8,6 +8,12 @@
    SC.combat.playCard(handIndex)     play a card, true if it worked
    SC.combat.endTurn()               discard hand, enemy plays, next turn
 
+   The battle screen does End Turn one step at a time instead,
+   so you can watch the enemy play its cards one by one:
+   SC.combat.startEnemyTurn()        discard your hand
+   SC.combat.enemyPlayNext()         enemy plays ONE card (null when done)
+   SC.combat.finishEnemyTurn()       your next turn starts
+
    Damage rule: defenders on the field take hits first, then
    Relaxation, then Sanity. Relaxation lasts until your next turn.
 
@@ -215,16 +221,55 @@ window.SC = window.SC || {};
         return true;
     };
 
+    // All of End Turn at once
     combat.endTurn = function () {
+        combat.startEnemyTurn();
+        while (combat.enemyPlayNext()) {
+            // keep going until the enemy is out of cards
+        }
+        combat.finishEnemyTurn();
+    };
+
+    // Step 1: leftover hand goes to the discard pile
+    combat.startEnemyTurn = function () {
         const s = combat.state;
         if (!s || s.result) return;
 
-        // Leftover hand goes to the discard pile
         while (s.hand.length) {
             s.discard.push(s.hand.shift());
         }
+        s.enemy.relaxation = 0;                // its Relaxation lasts one turn
+    };
 
-        enemyTurn();
+    // Step 2: the enemy plays its next card.
+    // Returns the card, or null when it has nothing left to play.
+    combat.enemyPlayNext = function () {
+        const s = combat.state;
+        if (!s || s.result) return null;
+
+        const enemy = s.enemy;
+        const card = enemy.next.shift();
+        if (!card) return null;
+
+        addLog(enemy.name + ' played ' + card.name + '.');
+        resolveCard(card, 'enemy');
+
+        if (card.type === 'Power') {
+            enemy.powers.push(card);
+        }
+        if (isAttack(card) && card.type !== 'Power') {
+            firePowers('enemy', 'playAttack');
+        }
+        checkResult();
+        return card;
+    };
+
+    // Step 3: your next turn starts
+    combat.finishEnemyTurn = function () {
+        const s = combat.state;
+        if (!s) return;
+
+        s.enemy.next = [];
         checkResult();
         if (s.result) return;
 
@@ -246,29 +291,6 @@ window.SC = window.SC || {};
     };
 
     // ------- ENEMY -------
-
-    function enemyTurn() {
-        const s = combat.state;
-        const enemy = s.enemy;
-
-        enemy.relaxation = 0;                  // its Relaxation also lasts one turn
-
-        enemy.next.forEach(function (card) {
-            if (s.result) return;
-            addLog(enemy.name + ' played ' + card.name + '.');
-            resolveCard(card, 'enemy');
-
-            if (card.type === 'Power') {
-                enemy.powers.push(card);
-            }
-            if (isAttack(card) && card.type !== 'Power') {
-                firePowers('enemy', 'playAttack');
-            }
-            checkResult();
-        });
-
-        enemy.next = [];
-    }
 
     // Choose what the enemy plays next turn (shown as its intent).
     // The enemy has its own Coffee (maxEnergy, 3 by default). It keeps

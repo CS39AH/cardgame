@@ -2181,7 +2181,7 @@ h1, h2, h3 {
     position: relative;
     width: 400px;
     aspect-ratio: 16 / 9;
-    zoom: 0.42;
+    zoom: 0.5;
     transition: transform 0.15s ease;
 }
 
@@ -2195,6 +2195,99 @@ h1, h2, h3 {
     transform: scale(1.5);
 }
 
+/* ----- Power cards on the table: rarity edge, raspberry glow, ⚡ badge -----
+   (sizes here are before the 0.5 zoom, so they look half as big) */
+.power-slot {
+    z-index: 1;                      /* keeps each card's ⚡ with its own card */
+    margin: 26px 26px 0 0;           /* room for the ⚡ badge on the corner */
+}
+
+/* Each Power's rarity color (Common = pencil gray) */
+.power-slot                  { --ring: #9a927e; }
+.power-slot--uncommon        { --ring: #3f9a3f; }
+.power-slot--rare            { --ring: #3a78e0; }
+.power-slot--legendary       { --ring: #e0a800; }
+.power-slot--enemy           { --ring: #a82020; }
+
+/* Rarity-colored edge right on the outside of the card + soft raspberry glow */
+.power-slot .card,
+.power-slot .card:hover {
+    box-shadow:
+        0 0 0 6px var(--ring),
+        0 0 50px 18px rgba(200, 60, 120, 0.95),
+        0 8px 16px rgba(0, 0, 0, 0.45);
+}
+
+/* Round ⚡ badge on the top-right corner, ringed in the card's rarity color
+   (a circle, so it never looks like a defender's shield) */
+.power-badge {
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    z-index: 7;
+    display: grid;
+    place-items: center;
+    width: 66px;
+    height: 66px;
+    border: 5px solid var(--ring);
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #f07aa8 0%, #b8336a 55%, #7d1d47 100%);
+    box-shadow:
+        0 0 14px 4px rgba(184, 51, 106, 0.8),
+        0 4px 8px rgba(0, 0, 0, 0.5);
+    font-size: 36px;
+    line-height: 1;
+    pointer-events: none;
+}
+
+/* Rarity-colored ring that bursts out when the Power lands */
+.power-burst {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    border: 8px solid;
+    border-radius: var(--radius);
+    pointer-events: none;
+}
+
+/* ----- Lots of defenders / Powers: they overlap instead of stacking -----
+   The zones keep one height, so more cards never push the screen down.
+   (battle.js squeezeZones() works out how much they overlap.) */
+.battle__zones {
+    height: 12.5rem;
+    grid-template-columns: minmax(0, 1fr) auto;   /* Powers as wide as a card, Defenders get the rest */
+}
+
+/* The middle column (the zones) can't push the hero card or End Turn away */
+.battle__layout {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.battle__field,
+.battle__powers {
+    flex-wrap: nowrap;
+    min-height: 0;
+}
+
+/* When defenders overlap, each shield moves to the card's top-right
+   corner, the part of each card you can still see */
+.battle__field.is-squeezed .unit__shield {
+    left: auto;
+    right: -0.5rem;
+    transform: none;
+}
+
+/* Point at an overlapped defender to bring it to the front */
+.battle__field .unit--defender:hover {
+    z-index: 20 !important;
+}
+
+/* Powers stack downward, each one showing its top strip + ⚡ */
+.battle__powers {
+    flex-direction: column;
+    justify-content: center;
+}
+
 /* ----- Enemy and defender boxes ----- */
 .unit {
     width: 9.5rem;
@@ -2206,8 +2299,65 @@ h1, h2, h3 {
     box-shadow: var(--shadow-md);
 }
 
+/* Defender: blue paper with a blue glow around it.
+   Smaller than the enemy card, so a few fit side by side. */
 .unit--defender {
-    border: 3px solid #4a7bd0;
+    flex: none;
+    width: 8.25rem;
+    margin-top: 0.9rem;              /* room for the shield sticking out the top */
+    padding: 1.7rem var(--space-2) var(--space-2);
+    border: 3px solid #4a8ee8;
+    background: #eef4ff;
+    box-shadow:
+        0 0 0 2px rgba(120, 190, 255, 0.9),
+        0 0 16px 4px rgba(90, 170, 255, 0.7),
+        0 6px 12px rgba(0, 0, 0, 0.45);
+}
+
+/* Smaller picture and name to match the smaller card */
+.unit--defender .unit__art {
+    font-size: 2.6rem;
+}
+
+.unit--defender .unit__art img {
+    width: 72px;
+    height: 72px;
+}
+
+.unit--defender .unit__name {
+    font-size: 0.95rem;
+    line-height: 1.15;
+}
+
+.unit--defender .unit__relax {
+    font-size: 0.75rem;
+}
+
+/* The shield's number replaces the bar and "10 / 10" */
+.unit--defender .unit__bar,
+.unit--defender .unit__numbers {
+    display: none;
+}
+
+/* Shield badge at the top of the card with its Sanity */
+.unit__shield {
+    position: absolute;
+    top: -1.1rem;
+    left: 50%;
+    z-index: 7;                      /* above the tear marks */
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.9rem;
+    padding-bottom: 0.3rem;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, #8cc8ff 0%, #3b7fe0 55%, #2459b0 100%);
+    clip-path: polygon(50% 0, 100% 14%, 100% 52%, 86% 76%, 50% 100%, 14% 76%, 0 52%, 0 14%);
+    color: #fff;
+    font-family: var(--font-title);
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 /* Enemy: taped to the chalkboard, tilted */
@@ -2513,7 +2663,7 @@ h1, h2, h3 {
     position: relative;
     width: 400px;
     aspect-ratio: 16 / 9;
-    zoom: 0.5;
+    zoom: 0.6;                       /* if you change this, change HAND_ZOOM in battle.js too */
     cursor: pointer;
     transform-origin: 50% 130%;
     transform:
