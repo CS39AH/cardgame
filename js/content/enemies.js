@@ -35,6 +35,7 @@ SC.enemies = {
         id: 'class-clown',
         name: 'Class Clown',
         art: '🤡',
+        image: 'graphics/cards/class-clown.png',
         sanity: 40,
         energy: 3,
         order: 'inOrder',
@@ -52,4 +53,43 @@ SC.enemies = {
             'eraser'
         ]
     },
+
+    'cafeteria-enemy': {
+        id: 'cafeteria-enemy',
+        name: 'Living Burnt Pizza',
+        art: '🍕',
+        image: 'graphics/cards/cafeteria/burnt_pizza.png',
+        sanity: 80,
+        energy: 3,
+        order: 'inOrder',
+        
+        startingDeck: [
+            'rotten-produce',
+            'dirty-tray',
+            'dirty-rag',
+            'vengeful-leftovers',
+            'spoiled-milk'
+        ]
+
+    },
+
+    'gym-enemy': {
+        id: 'gym-enemy',
+        name: 'The PACER Test',
+        art: '⏱️',
+        image: 'graphics/cards/pacer_test.jpg',
+        sanity: 60,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'dodgeball-barrage',   // 2 Coffee: deal 2, three times
+            'dodgeball-barrage',
+            'medicine-ball',       // 2 Coffee: deal 7
+            'medicine-ball',
+            'bleacher-wall',       // 1 Coffee: 6 Sanity defender
+            'padded-walls',        // 2 Coffee: Power, takes 1 less per hit
+            'water-break'          // 1 Coffee: recover 5 Sanity
+        ]
+    }
 };

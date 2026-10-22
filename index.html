@@ -34,10 +34,19 @@
                 aria-label="Music volume" aria-expanded="false" aria-controls="volume-panel">🔉</button>
 
         <div id="volume-panel" class="volume-panel">
-            <span id="music-volume-value" class="volume-panel__value">15%</span>
-            <input id="music-volume" class="volume-panel__slider" type="range"
-                   min="0" max="100" step="1" value="15" aria-label="Music volume">
-            <span class="volume-panel__label">Music</span>
+            <div class="volume-panel__group">
+                <span id="music-volume-value" class="volume-panel__value">15%</span>
+                <input id="music-volume" class="volume-panel__slider" type="range"
+                       min="0" max="100" step="1" value="15" aria-label="Music volume">
+                <span class="volume-panel__label">Music</span>
+            </div>
+
+            <div class="volume-panel__group">
+                <span id="sfx-volume-value" class="volume-panel__value">100%</span>
+                <input id="sfx-volume" class="volume-panel__slider" type="range"
+                       min="0" max="100" step="1" value="100" aria-label="Sound effects volume">
+                <span class="volume-panel__label">Sounds</span>
+            </div>
         </div>
     </div>
 

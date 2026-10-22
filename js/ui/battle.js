@@ -17,10 +17,10 @@ window.SC = window.SC || {};
 
     let root = null;
     let levelId = 'tutorial';
-    let resultTimer = null;
+    let resultTimer = null;    
 
     // How long the win/lose message waits so the last hit can play out
-    const RESULT_DELAY = 1400;
+    const RESULT_DELAY = 2800;    // long enough to see the last card rip in half
 
     // The battle is laid out at this width, then scaled up to fill the window
     const BASE_WIDTH = 960;
@@ -38,6 +38,10 @@ window.SC = window.SC || {};
         levelId = (SC.currentBattle && SC.currentBattle.levelId)
             || root.dataset.level
             || 'tutorial';
+            
+        // Apply cafeteria styling only during Cafeteria Duty.
+        root.classList.toggle('battle-screen--cafeteria', levelId === 'cafeteria');
+        root.classList.toggle('battle-screen--gym', levelId === 'gym');
 
         if (SC.stopMusic) {
             SC.stopMusic();
@@ -107,7 +111,7 @@ window.SC = window.SC || {};
         // Clear the hero so render() builds a fresh one
         root.querySelector('.battle__hero').innerHTML = '';
 
-        SC.combat.start(levelId, chosenTeacher(), savedDeck());
+        SC.combat.start(levelId, heroForLevel(), savedDeck());
         SC.battleFx.reset(SC.combat.state);
         render();
     }
@@ -119,6 +123,13 @@ window.SC = window.SC || {};
 
     // The teacher picked on the title screen. How to Play passes it in
     // directly; map fights read it from the save made by Start a New Day.
+    // A level can set its own teacher (hero: 'gym-teacher' in levels.js).
+    // Otherwise use the teacher picked on the title screen.
+    function heroForLevel() {
+        const level = SC.levels && SC.levels[levelId];
+        return (level && level.hero) || chosenTeacher();
+    }
+
     function chosenTeacher() {
         if (SC.currentBattle && SC.currentBattle.heroId) {
             return SC.currentBattle.heroId;
@@ -305,8 +316,12 @@ window.SC = window.SC || {};
 
             s.enemy.next.forEach(function (card) {
                 const slot = document.createElement('div');
-                slot.className = 'intent-slot';
+                slot.className = 'intent-slot is-viewable';
+                slot.title = 'Click to look at ' + card.name;
                 slot.appendChild(SC.renderCard(card));
+                slot.addEventListener('click', function () {
+                    viewCard(card);
+                });
                 intentBox.appendChild(slot);
             });
         }
@@ -340,9 +355,18 @@ window.SC = window.SC || {};
                 slot.classList.add('is-unaffordable');
             }
 
-            slot.appendChild(SC.renderCard(card));
+            const cardEl = SC.renderCard(card);
+            cardEl.appendChild(makeViewButton(card));
+            slot.appendChild(cardEl);
+
             slot.addEventListener('click', function () {
                 play(i);
+            });
+
+            // Right-click also picks the card up instead of playing it
+            slot.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+                viewCard(card);
             });
             slot.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -353,6 +377,35 @@ window.SC = window.SC || {};
 
             handBox.appendChild(slot);
         });
+    }
+
+    // ------- LOOKING AT A CARD -------
+    // Opens the same big "picked up" view as the Cards screen.
+    // Playing still works the normal way; this only looks.
+    function viewCard(card) {
+        if (SC.openCardZoom) {
+            SC.openCardZoom(card);
+        }
+    }
+
+    // Small magnifying glass in the corner of each hand card
+    function makeViewButton(card) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'card-view-btn';
+        btn.textContent = '🔍';
+        btn.title = 'Look at ' + card.name;
+        btn.setAttribute('aria-label', 'Look at ' + card.name);
+
+        // Stop the click from also playing the card
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            viewCard(card);
+        });
+        btn.addEventListener('keydown', function (e) {
+            e.stopPropagation();
+        });
+        return btn;
     }
 
     // Defenders on a field
@@ -371,10 +424,25 @@ window.SC = window.SC || {};
 
         const el = document.createElement('div');
         el.className = 'unit ' + extraClass;
-
+       
         const art = document.createElement('div');
         art.className = 'unit__art';
-        art.textContent = unit.art || '🛡️';
+
+        if (unit.image) {
+            const img = document.createElement('img');
+            img.src = unit.image;
+            img.alt = unit.name || 'Enemy artwork';
+
+            // Use the emoji if the image cannot load.
+            img.onerror = function () {
+                art.textContent = unit.art || '🛡️';
+            };
+
+            art.appendChild(img);
+        } else {
+            art.textContent = unit.art || '🛡️';
+        }
+
         el.appendChild(art);
 
         const name = document.createElement('p');
@@ -402,7 +470,46 @@ window.SC = window.SC || {};
             el.appendChild(relax);
         }
 
+        // Rips appear as it loses Sanity (remembered on the unit so
+        // a new rip only "tears" once, when it first appears)
+        const stage = tearStage(sanity, max);
+        applyTear(el, stage, unit._tear || 0);
+        unit._tear = stage;
+
         return el;
+    }
+
+    // ------- TEARING CARDS -------
+    // Over 75% Sanity: whole. 75%: small rip. 50%: bigger rips.
+    // 25%: badly torn. 0%: ripped in half (that part is in battle-fx.js).
+    function tearStage(sanity, max) {
+        const pct = max > 0 ? sanity / max : 1;
+        if (pct > 0.75) return 0;
+        if (pct > 0.5) return 1;
+        if (pct > 0.25) return 2;
+        return 3;
+    }
+
+    function applyTear(el, stage, prevStage) {
+        el.dataset.tear = stage;
+
+        // The layer the rip marks are drawn on (CSS picks the marks by stage)
+        if (!el.querySelector(':scope > .tear-marks')) {
+            const marks = document.createElement('div');
+            marks.className = 'tear-marks';
+            marks.setAttribute('aria-hidden', 'true');
+            el.appendChild(marks);
+        }
+
+        // A new rip: jolt the card and play the rip sound
+        if (stage > prevStage) {
+            el.classList.remove('is-ripping');
+            void el.offsetWidth;
+            el.classList.add('is-ripping');
+            if (SC.playSound) {
+                SC.playSound('rip');
+            }
+        }
     }
 
     // Power cards stay in play in their own zone, next to the field
@@ -418,9 +525,12 @@ window.SC = window.SC || {};
         zone.innerHTML = '';
         powers.forEach(function (card) {
             const slot = document.createElement('div');
-            slot.className = 'power-slot';
+            slot.className = 'power-slot is-viewable';
             slot.title = card.name + ': ' + card.description;
             slot.appendChild(SC.renderCard(card));
+            slot.addEventListener('click', function () {
+                viewCard(card);
+            });
             zone.appendChild(slot);
         });
     }
@@ -430,6 +540,10 @@ window.SC = window.SC || {};
         const card = root.querySelector('.battle__hero .card--hero');
         if (!card) return;
         SC.updateHeroStats(card, state.player);
+
+        // Your hero badge tears too as you lose Sanity
+        const stage = tearStage(state.player.sanity, state.player.maxSanity);
+        applyTear(card, stage, Number(card.dataset.tear || 0));
     }
 
     // Shared by the battle and the tutorial.
@@ -567,7 +681,7 @@ window.SC = window.SC || {};
         const row = document.createElement('div');
         row.className = 'battle__rewards';
 
-        SC.combat.rewardChoices(3).forEach(function (card) {
+        SC.combat.rewardChoices(3, SC.combat.state.enemy.id).forEach(function (card) {
             const slot = document.createElement('div');
             slot.className = 'reward-slot';
             slot.tabIndex = 0;

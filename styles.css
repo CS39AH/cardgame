@@ -122,6 +122,33 @@ body::before {
     will-change: transform;
 }
 
+/* Cafeteria Background */
+body:has(.battle-screen--cafeteria)::before {
+    background:
+        radial-gradient(
+            ellipse 60% 50% at 85% 20%,
+            rgba(255, 210, 63, 0.35) 0%,
+            rgba(255, 210, 63, 0.15) 30%,
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 40% 40% at 15% 30%,
+            rgba(255, 210, 63, 0.06) 0%,
+            transparent 60%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(30, 58, 43, 0.80) 0%,
+            rgba(22, 48, 42, 0.84) 40%,
+            rgba(15, 36, 24, 0.92) 100%
+        ),
+        url('graphics/screens/cafeteria.png');
+    
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: var(--board-x) var(--board-y);
+}
+
 /* Zoomed in on the chalkboard (Cards screen) */
 body.scene--board::before {
     transform: scale(2.8) translateX(calc(var(--pan, 0) * -3%));
@@ -1950,6 +1977,35 @@ h1, h2, h3 {
         0 0 8px rgba(255, 255, 255, 0.15);
 }
 
+/* ---- Cafeteria enemy side: serving counter image ---- */
+.battle-screen--cafeteria .battle__side--enemy {
+    position: relative;
+    overflow: hidden;
+
+    /* Remove the original chalkboard image */
+    border-image: none;
+    border: 6px solid #66747a;
+    border-radius: 12px;
+
+    /* Stainless-steel serving counter */
+    background:
+        linear-gradient(
+            rgba(20, 28, 33, 0.15),
+            rgba(20, 28, 33, 0.30)
+        ),
+        url('graphics/screens/cafeteria-enemy.png') center / cover no-repeat;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* Keep labels readable */
+.battle-screen--cafeteria .battle__side--enemy .battle__side-label,
+.battle-screen--cafeteria .battle__side--enemy .battle__intent {
+    color: #f8f4e9;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+}
+
+
 /* ----- Player half: the teacher's desk -----
    Layers, top to bottom: slight darkening, desk.jpg,
    then CSS wood as a fallback if the photo is missing.
@@ -1982,6 +2038,60 @@ h1, h2, h3 {
     color: #fff3dc;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
+
+/* ---- Cafeteria player side: cafeteria tabletop ---- */
+.battle-screen--cafeteria .battle__side--player {
+    background:
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.09) 1px,
+            transparent 2px
+        ) 0 0 / 24px 24px,
+        linear-gradient(
+            135deg,
+            #72858a 0%,
+            #526970 50%,
+            #394e56 100%
+        );
+
+    border-top: 10px solid #aab8bd;
+
+    box-shadow:
+        inset 0 3px 8px rgba(255, 255, 255, 0.12),
+        inset 0 -8px 15px rgba(0, 0, 0, 0.18),
+        0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ---- Cafeteria player side: lunch tray ---- */
+.battle-screen--cafeteria .battle__side--player .battle__zones {
+    background: linear-gradient(
+        145deg,
+        #a6c7c2 0%,
+        #84aba8 55%,
+        #5f8a87 100%
+    );
+
+    border: 6px solid #c5d9d4;
+    border-radius: 20px;
+
+    box-shadow:
+        inset 0 0 0 3px #527c7a,
+        inset 0 7px 15px rgba(17, 49, 51, 0.25),
+        0 5px 12px rgba(0, 0, 0, 0.35);
+
+    color: #203e41;
+}
+/* Molded divider between the tray compartments */
+.battle-screen--cafeteria .battle__side--player .battle__powers {
+    border-left: 5px solid rgba(45, 92, 93, 0.55);
+}
+
+/* Darker labels for readability */
+.battle-screen--cafeteria .battle__side--player .battle__field::after,
+.battle-screen--cafeteria .battle__side--player .battle__powers::after {
+    color: #244447;
+}
+
 
 /* ----- Defenders | Powers: one shared area per side ----- */
 .battle__zones {
@@ -2130,6 +2240,15 @@ h1, h2, h3 {
 
 .unit--enemy .unit__art {
     font-size: 3.5rem;
+}
+
+.unit__art img {
+    display: block;
+    width: 90px;
+    height: 90px;
+    max-width: 100%;
+    object-fit: contain;
+    margin: 0 auto;
 }
 
 .unit__name {
@@ -2810,5 +2929,335 @@ h1, h2, h3 {
 
     .card-demo--in-battle {
         zoom: 0.6;
+    }
+}
+/* =========================================================
+   GYM CLASS LEVEL
+   battle.js adds .battle-screen--gym during the gym fight
+   ========================================================= */
+
+/* Enemy side: padded gym wall instead of the chalkboard */
+.battle-screen--gym .battle__side--enemy {
+    border-image: none;
+    border: 6px solid #1d3f73;
+    border-radius: 12px;
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.30)),
+        repeating-linear-gradient(90deg,
+            #2f5fa8 0 118px,
+            #234b88 118px 122px);
+    /* Yellow stripe painted along the bottom of the wall */
+    box-shadow:
+        inset 0 -14px 0 #f2b33d,
+        0 6px 16px rgba(0, 0, 0, 0.45);
+}
+
+.battle-screen--gym .battle__side--enemy .battle__side-label,
+.battle-screen--gym .battle__side--enemy .battle__intent {
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+}
+
+.battle-screen--gym .battle__side--enemy .battle__zones {
+    border-color: rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* Player side: hardwood court floor */
+.battle-screen--gym .battle__side--player {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.18)),
+        repeating-linear-gradient(90deg,
+            rgba(120, 70, 20, 0.18) 0 2px,
+            transparent 2px 60px),
+        repeating-linear-gradient(180deg,
+            rgba(255, 255, 255, 0.05) 0 1px,
+            transparent 1px 14px),
+        linear-gradient(180deg, #e2a865 0%, #cf9250 100%);
+    border-top: 10px solid #f4f1ea;      /* white boundary line */
+}
+
+/* Defenders | Powers: painted key area with white lines */
+.battle-screen--gym .battle__side--player .battle__zones {
+    background: rgba(200, 70, 40, 0.55);
+    border: 4px solid #f7f3ea;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.battle-screen--gym .battle__side--player .battle__powers {
+    border-left: 4px solid #f7f3ea;
+}
+
+.battle-screen--gym .battle__side--player .battle__field::after,
+.battle-screen--gym .battle__side--player .battle__powers::after {
+    color: #ffffff;
+}
+
+/* =========================================================
+   CARDS SCREEN: PAGE ARROWS
+   Each rarity holds 6 cards per chalkboard; extra cards go on
+   the next board. The arrows slide to the previous/next board.
+   ========================================================= */
+.board-stage {
+    position: relative;
+}
+
+.board-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0 6px;
+    border: 2px solid rgba(244, 240, 229, 0.65);
+    border-radius: 50%;
+    background: rgba(15, 40, 30, 0.8);
+    color: #f4f0e5;
+    font-family: var(--font-title);
+    font-size: 2.6rem;
+    line-height: 1;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: transform 0.15s ease, background 0.15s ease, opacity 0.2s ease;
+    animation: fade-in 0.35s ease 0.95s both;
+}
+
+.board-arrow--prev { left: -72px; }
+.board-arrow--next { right: -72px; }
+
+.board-arrow:hover:not(:disabled),
+.board-arrow:focus-visible {
+    transform: translateY(-50%) scale(1.1);
+    background: rgba(255, 210, 65, 0.9);
+    color: #1c2a20;
+    outline: none;
+}
+
+.board-arrow:disabled {
+    opacity: 0.25;
+    cursor: default;
+}
+
+.cards-screen--leaving .board-arrow {
+    animation: fade-out 0.15s ease both;
+}
+
+/* Narrow screens: arrows sit just inside the board edges */
+@media (max-width: 1450px) {
+    .board-arrow--prev { left: 6px; }
+    .board-arrow--next { right: 6px; }
+}
+/* =========================================================
+   VOLUME PANEL: Music and Sounds sliders side by side
+   ========================================================= */
+.volume-panel {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-3);
+    border-radius: 28px;
+}
+
+.volume-panel__group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 2.6rem;
+}
+
+/* Wider panel: line it up with the right edge so it stays on screen */
+.volume-control {
+    align-items: flex-end;
+}
+
+/* =========================================================
+   DAY MAP: unlocked nodes (temporary, see SC.UNLOCK_ALL_NODES in map.js)
+   ========================================================= */
+.day-node--open .day-node__button {
+    border-color: rgba(31, 95, 191, 0.45);
+    cursor: pointer;
+}
+
+.day-node--open .day-node__button:hover,
+.day-node--open .day-node__button:focus-visible {
+    border-color: #1f5fbf;
+    transform: scale(1.04);
+}
+
+/* Finished nodes can be replayed while everything is unlocked */
+.day-node--complete .day-node__button:not(:disabled) {
+    cursor: pointer;
+}
+
+.day-node--complete .day-node__button:not(:disabled):hover {
+    transform: scale(1.04);
+}
+
+/* Gym: bigger enemy card so the PACER Test picture is easy to see */
+.battle-screen--gym .unit--enemy {
+    width: 15rem;
+    padding: var(--space-4) var(--space-4) var(--space-3);
+}
+
+.battle-screen--gym .unit--enemy .unit__art img {
+    width: 150px;
+    height: 150px;
+}
+
+/* =========================================================
+   BATTLE: LOOK AT A CARD
+   🔍 on hand cards (or right-click) opens the big card view.
+   Enemy's next cards and Power cards open it with a click.
+   ========================================================= */
+.card-view-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 5;
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 3px solid #2a2a35;
+    border-radius: 50%;
+    background: #fffbe8;
+    font-size: 26px;
+    line-height: 1;
+    cursor: zoom-in;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+/* Shows up when you hover or tab to a hand card */
+.hand-slot:hover .card-view-btn,
+.hand-slot:focus-within .card-view-btn {
+    opacity: 1;
+}
+
+.card-view-btn:hover,
+.card-view-btn:focus-visible {
+    transform: scale(1.15);
+    background: #ffd23f;
+    outline: none;
+}
+
+/* Hide it on the flying copies and in the big view */
+.fly-ghost .card-view-btn,
+.card-zoom .card-view-btn {
+    display: none;
+}
+
+/* Enemy intent cards and Power cards: click to look */
+.intent-slot.is-viewable,
+.power-slot.is-viewable {
+    cursor: zoom-in;
+}
+
+/* =========================================================
+   BATTLE: TEARING CARDS
+   Cards rip more as they lose Sanity:
+     75% = small rip, 50% = bigger rips, 25% = badly torn,
+     0%  = ripped in half (the halves are made in battle-fx.js)
+   battle.js sets data-tear="0-3" and adds a .tear-marks layer.
+   ========================================================= */
+:root {
+    --rip-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpolyline points='177.6,0.6 173.6,7.6 179.6,13.6 172.6,20.6 176.6,27.6 170.6,33.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.95' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='176,0 172,7 178,13 171,20 175,27 169,33' fill='none' stroke='%233a2614' stroke-width='2.6' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --rip-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpolyline points='23.6,120.6 28.6,112.6 22.6,105.6 30.6,97.6 25.6,90.6 32.6,82.6 28.6,76.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.95' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='22,120 27,112 21,105 29,97 24,90 31,82 27,76' fill='none' stroke='%233a2614' stroke-width='2.6' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='201.6,70.6 194.6,73.6 198.6,78.6 190.6,81.6 193.6,86.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.65' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='200,70 193,73 197,78 189,81 192,86' fill='none' stroke='%233a2614' stroke-width='2.2' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --rip-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpolyline points='15.6,0.6 20.6,9.6 13.6,18.6 21.6,28.6 14.6,38.6 22.6,48.6 16.6,58.6 23.6,66.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='2.4' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='14,0 19,9 12,18 20,28 13,38 21,48 15,58 22,66' fill='none' stroke='%233a2614' stroke-width='3.2' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='201.6,104.6 193.6,106.6 196.6,111.6 187.6,113.6 190.6,120.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.8' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='200,104 192,106 195,111 186,113 189,120' fill='none' stroke='%233a2614' stroke-width='2.4' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+}
+
+/* Hero badge: its words are on the right, so its rips sit over
+   the picture and the bottom edge instead */
+.card--hero {
+    --rip-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpolyline points='53.6,0.6 49.6,8.6 56.6,15.6 48.6,23.6 54.6,31.6 47.6,38.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.95' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='52,0 48,8 55,15 47,23 53,31 46,38' fill='none' stroke='%233a2614' stroke-width='2.6' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --rip-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpolyline points='1.6,62.6 9.6,65.6 6.6,71.6 14.6,74.6 11.6,80.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.65' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='0,62 8,65 5,71 13,74 10,80' fill='none' stroke='%233a2614' stroke-width='2.2' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='161.6,120.6 157.6,113.6 164.6,107.6 156.6,101.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.65' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='160,120 156,113 163,107 155,101' fill='none' stroke='%233a2614' stroke-width='2.2' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --rip-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpolyline points='31.6,0.6 27.6,12.6 35.6,24.6 26.6,37.6 34.6,50.6 25.6,63.6 32.6,76.6 24.6,88.6 30.6,100.6 26.6,120.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='2.4' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='30,0 26,12 34,24 25,37 33,50 24,63 31,76 23,88 29,100 25,120' fill='none' stroke='%233a2614' stroke-width='3.2' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='201.6,104.6 193.6,106.6 196.6,111.6 187.6,113.6 190.6,120.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.8' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='200,104 192,106 195,111 186,113 189,120' fill='none' stroke='%233a2614' stroke-width='2.4' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+}
+
+/* So the rip layer and the torn halves line up with each card */
+.unit,
+.battle__enemy,
+.battle__hero {
+    position: relative;
+}
+
+/* The layer the rips are drawn on, over the whole card */
+.tear-marks {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+    border-radius: inherit;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+[data-tear="0"] > .tear-marks {
+    display: none;
+}
+
+[data-tear="1"] > .tear-marks {
+    background-image: var(--rip-1);
+}
+
+[data-tear="2"] > .tear-marks {
+    background-image: var(--rip-1), var(--rip-2);
+}
+
+/* Badly torn: all the rips plus some worn, darker edges */
+[data-tear="3"] > .tear-marks {
+    background-image:
+        var(--rip-1),
+        var(--rip-2),
+        var(--rip-3),
+        radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(80, 50, 20, 0.22) 100%);
+}
+
+/* A new rip appears: the card jolts and the rip snaps in */
+.is-ripping {
+    animation: card-rip 0.35s ease;
+}
+
+.is-ripping > .tear-marks {
+    animation: rip-snap 0.35s ease;
+}
+
+@keyframes card-rip {
+    0%   { translate: 0 0; }
+    20%  { translate: -5px 1px; }
+    40%  { translate: 5px -1px; }
+    60%  { translate: -2px 0; }
+    100% { translate: 0 0; }
+}
+
+@keyframes rip-snap {
+    from { opacity: 0; transform: scale(1.06); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* The two halves of a card ripped in two */
+.tear-half {
+    position: absolute;
+    margin: 0;
+    z-index: 30;
+    pointer-events: none;
+}
+
+.tear-half .card-view-btn {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .is-ripping,
+    .is-ripping > .tear-marks {
+        animation: none;
     }
 }

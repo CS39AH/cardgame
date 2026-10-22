@@ -48,6 +48,37 @@ SC.cards = [
             { type: 'confiscate' }
         ]
     },
+    {
+        id: 'yard-stick',
+        name: "Yard Stick",
+        cost: 2,
+        type: 'Power',
+        rarity: 'Legendary',
+        art: '📏',                                    // fallback if the image is missing
+        image: 'graphics/cards/yard-stick.png',
+        imageAlt: 'a yard stick in the room',
+        imageScale: 1.0,
+        description: 'Whenever you play an Attack card, the Yard Stick deals 3 more damage.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 3 } }
+        ]
+    },
+    {
+        id: 'dismissal-bell',
+        name: "Dismissal Bell",
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Legendary',
+        art: '🔔',                                    // fallback if the image is missing
+        image: 'graphics/cards/dismissal-bell.png',
+        imageAlt: 'a dismissal bell for the class',
+        imageScale: 1.0,
+        description: 'Bell rings causing 5 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 5},
+            { type: 'multiplier', amount: 3}
+        ]
+    },
 
         {
         id: 'teachers-pet',
@@ -158,6 +189,89 @@ SC.cards = [
             {type: 'shuffle', amount: 'deck'}
         ]
     },
+   
+    {   // Cafeteria related cards.
+        id: 'fresh-fruits',
+        name: 'Fresh Fruits',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '🍎',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/fresh_fruits.png',
+        description: 'Recover 4 Sanity. Gain 1 Coffee.',
+        effects: [
+            { type: 'heal', amount: 4 },
+            { type: 'energy', amount: 1 }
+        ]
+    },
+    {
+        id: 'chocolate-milk',
+        name: 'Chocolate Milk',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '🥛',                                   // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/chocolate_milk.png',
+        description: 'Gain 2 Coffee. Draw 1 card.',
+        effects: [
+            { type: 'energy', amount: 2 },
+            { type: 'draw', amount: 1 }
+        ]
+    },
+    {
+        id: 'protective-apron',
+        name: 'Protective Apron',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Uncommon',
+        art: '🥼',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/protective_apron.png',
+        description: 'Whenever you play a Defense card, gain 2 Relaxation.',
+        effects: [
+            {
+                type: 'power',
+                trigger: 'playDefense',
+                effect: {
+                    type: 'block',
+                    amount: 2
+                }
+            }
+        ]
+    },
+    {
+        id: 'serving-spoon',
+        name: 'Serving Spoon',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Uncommon',
+        art: '🥄',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/serving_spoon.png',
+        description: 'Deal 6 damage. Heal for half the Sanity damage dealt.',
+        effects: [
+            { type: 'damage', amount: 6 },
+            { type: 'lifesteal', fraction: 0.5 }
+        ]
+    },
+    {
+        id: 'clean-tray',
+        name: 'Clean Tray',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Common',
+        art: '🍽️',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/clean_tray.png',
+        description: 'Place a 6 Sanity defender. While active, your attacks deal +1 damage.',
+        effects: [
+            {
+                type: 'defender',
+                amount: 6,
+                name: 'Clean Tray',
+                art: '🍽️',
+                attackBonus: 1
+            }
+        ]
+    },
+
 
         {
         id: 'stapler-shot',
@@ -238,38 +352,245 @@ SC.cards = [
         ]
     },
 
+    {   // Cafeteria related enemy cards.
+        id: 'rotten-produce',
+        name: 'Rotten Produce',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🍅',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/rotten_produce.png',
+        description: 'Deal 1 damage twice.',
+        effects: [
+            { type: 'damage', amount: 1 },
+            { type: 'multiplier', amount: 2 }
+        ]
+    },
+    {
+        id: 'dirty-tray',
+        name: 'Dirty Tray',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🍽️',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/dirty_tray.png',
+        description: 'Gain 5 Relaxation.',
+        effects: [
+            { type: 'block', amount: 5 }
+        ]
+    },
+    {
+        id: 'dirty-rag',
+        name: 'Dirty Rag',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '🧽',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/dirty_rag.png',
+        description: 'All future attacks deal +1 damage.',
+        effects: [
+            {
+                type: 'power',
+                trigger: 'Attacks',
+                effect: {
+                    type: 'damage',
+                    amount: 1
+                }
+            }
+        ]
+    },
+    {
+        id: 'vengeful-leftovers',
+        name: 'Vengeful Leftovers',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🥘',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/vengeful_leftovers.png',
+        description: 'Deal 6 damage. Recover 4 Sanity.',
+        effects: [
+            { type: 'damage', amount: 6 },
+            { type: 'heal', amount: 4 }
+        ]
+    },  
+    {
+        id: 'spoiled-milk',
+        name: 'Spoiled Milk',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Enemy',
+        art: '🥛',                                  // fallback if the image is missing
+        image: 'graphics/cards/cafeteria/spoiled_milk.png',
+        description: 'Reduce the player\'s Coffee by 1 next turn.',
+        effects: [
+            { type: 'reduceNextTurnEnergy', amount: 1 }
+        ]
+    },
+
+    
+
+    
+
+    // ---------- GYM CLASS: player bonus cards ----------
+    {
+        id: 'basketball-pass',
+        name: 'Basketball Pass',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Common',
+        art: '🏀',
+        description: 'Deal 4 damage. Draw 1 card.',
+        effects: [
+            { type: 'damage', amount: 4 },
+            { type: 'draw', amount: 1 }
+        ]
+    },
+    {
+        id: 'sports-drink',
+        name: 'Sports Drink',
+        cost: 0,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '🧃',
+        description: 'Gain 1 Coffee. Recover 2 Sanity.',
+        effects: [
+            { type: 'energy', amount: 1 },
+            { type: 'heal', amount: 2 }
+        ]
+    },
+    {
+        id: 'stacked-mats',
+        name: 'Stacked Mats',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Common',
+        art: '🟦',
+        description: 'Place a 10 Sanity defender.',
+        effects: [
+            { type: 'defender', amount: 10, name: 'Stacked Mats', art: '🟦' }
+        ]
+    },
+    {
+        id: 'running-shoes',
+        name: 'Running Shoes',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '👟',
+        description: 'Draw 2 cards.',
+        effects: [
+            { type: 'draw', amount: 2 }
+        ]
+    },
+    {
+        id: 'team-spirit',
+        name: 'Team Spirit',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Uncommon',
+        art: '📣',
+        description: 'Whenever you play an Attack card, gain 2 Relaxation.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'block', amount: 2 } }
+        ]
+    },
+
+    // ---------- GYM CLASS: enemy cards ----------
+    {
+        id: 'dodgeball-barrage',
+        name: 'Dodgeball Barrage',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🔴',
+        description: 'Deal 2 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 2 },
+            { type: 'multiplier', amount: 3 }
+        ]
+    },
+    {
+        id: 'medicine-ball',
+        name: 'Medicine Ball',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🏐',
+        description: 'Deal 7 damage.',
+        effects: [
+            { type: 'damage', amount: 7 }
+        ]
+    },
+    {
+        id: 'bleacher-wall',
+        name: 'Bleacher Wall',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🪜',
+        description: 'Place a 6 Sanity defender.',
+        effects: [
+            { type: 'defender', amount: 6, name: 'Bleachers', art: '🪜' }
+        ]
+    },
+    {
+        id: 'padded-walls',
+        name: 'Padded Walls',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '🧱',
+        description: 'Take 1 less damage from every hit.',
+        effects: [
+            { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -1 } }
+        ]
+    },
+    {
+        id: 'water-break',
+        name: 'Water Break',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Enemy',
+        art: '💧',
+        description: 'Recover 5 Sanity.',
+        effects: [
+            { type: 'heal', amount: 5 }
+        ]
+    },
+
     {
         // Title screen showcase only. demo: true keeps it off the Cards board.
         id: 'substitute-teacher',
         name: 'Substitute Teacher',
-        cost: 1,
+        cost: 2,
         type: 'Attack',
         art: '🧑‍🏫',                                  // fallback if the image is missing
         image: 'graphics/cards/teacher.png',
         imageAlt: 'The substitute teacher',
         imageScale: 1.1,
-        description: 'Deal 1000 damage.',
+        description: 'Deal 20 damage.',
         demo: true,
         hero: true,
         startingSanity: 30,
         startingEnergy: 3,
         startingDeck: [
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee',
+            'pencil-of-destiny',
             'teachers-pet',
             'red-pen-markup',
-            'desk-key',
-            'coffee-refill',
-            'red-pen-markup',
-            'backpack-wall',
             'morning-coffee',
-            'lesson-plan'
+            'worksheets',
+            'desk-key',
+            'lesson-plan',
+            'track-record',
+            'backpack-wall',
+            'backpack-wall',
+            'coffee-refill'
+
         ],
         badgeText: 'Staff · Substitute',
         badgeColor: '#b92626',
         effects: [
-            { type: 'damage', amount: 1000 }
+            { type: 'damage', amount: 20 }
         ]
     },
 
@@ -287,7 +608,7 @@ SC.cards = [
         hero: true,
         startingSanity: 30,
         startingEnergy: 3,
-        StartDeck: [
+        startingDeck: [
             'red-pen-markup',
             'backpack-wall',
             'morning-coffee',
@@ -313,7 +634,7 @@ SC.cards = [
         cost: 1,
         type: 'Attack',
         art: '🏀',
-        image: 'graphics/cards/gym-teacher.png',
+        image: 'graphics/cards/gym-teacher.jpg',
         imageAlt: 'The gym teacher',
         imageScale: 1.1,
         description: 'Deal 10 damage. Gain 6 Relaxation.',
@@ -321,17 +642,18 @@ SC.cards = [
         hero: true,
         startingSanity: 40,
         startingEnergy: 3,
-        StartDeck: [
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee',
-            'teachers-pet',
-            'red-pen-markup',
-            'desk-key',
-            'coffee-refill',
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee'
+        startingDeck: [
+            'team-spirit',
+            'running-shoes',
+            'stacked-mats',
+            'sports-drink',
+            'basketball-pass',
+            'basketball-pass',
+            'basketball-pass',
+            'sports-drink',
+            'sports-drink',
+            'stacked-mats'
+
         ],
         badgeText: 'Staff · Gym Teacher',
         badgeColor: '#c9652b',
@@ -355,17 +677,17 @@ SC.cards = [
         hero: true,
         startingSanity: 30,
         startingEnergy: 4,
-        StartDeck: [
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee',
-            'teachers-pet',
-            'red-pen-markup',
-            'desk-key',
-            'coffee-refill',
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee'
+        startingDeck: [
+            'fresh-fruits',
+            'fresh-fruits',
+            'chocolate-milk',
+            'chocolate-milk',
+            'protective-apron',
+            'serving-spoon',
+            'serving-spoon',
+            'serving-spoon',
+            'clean-tray',
+            'clean-tray'
         ],
         badgeText: 'Staff · Lunch Lady',
         badgeColor: '#b8860b',
@@ -389,7 +711,7 @@ SC.cards = [
         hero: true,
         startingSanity: 30,
         startingEnergy: 3,
-        StartDeck: [
+        startingDeck: [
             'red-pen-markup',
             'backpack-wall',
             'morning-coffee',
@@ -423,7 +745,7 @@ SC.cards = [
         hero: true,
         startingSanity: 30,
         startingEnergy: 3,
-        StartDeck: [
+        startingDeck: [
             'red-pen-markup',
             'backpack-wall',
             'morning-coffee',

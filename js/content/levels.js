@@ -50,5 +50,47 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'class-clown'
+    },
+
+
+    cafeteria: {
+        id: 'cafeteria',
+        name: 'Cafeteria Duty',
+        intro: 'The lunch rush is getting out of control!',
+        winText: 'The cafeteria is finally under control!',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'cafeteria-enemy',
+
+        bonusCards: [
+            'fresh-fruits',
+            'chocolate-milk',
+            'protective-apron',
+            'serving-spoon',
+            'clean-tray'
+        ]
+    },
+
+    gym: {
+        id: 'gym',
+        name: 'Gym Class',
+        intro: 'Line up on the start line. The PACER Test begins... now!',
+        winText: 'The beeping finally stops. You survived the PACER Test!',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'gym-enemy',
+        //hero: 'gym-teacher',      // this level always uses the Gym Teacher
+
+        bonusCards: [
+            'basketball-pass',
+            'sports-drink',
+            'stacked-mats',
+            'running-shoes',
+            'team-spirit'
+        ]
     }
 };
