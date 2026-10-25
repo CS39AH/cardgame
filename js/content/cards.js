@@ -608,6 +608,8 @@ SC.cards = [
         ]
     },
 
+    
+
     {
         // Title screen showcase only. demo: true keeps it off the Cards board.
         id: 'substitute-teacher',
@@ -820,6 +822,69 @@ SC.cards = [
                 }
             },
             { type: 'confiscate' }
+        ]
+    },
+
+    // ---------- LIBRARY: player bonus cards ----------
+    {
+        id: 'hardcover-slam',
+        name: 'Hardcover Slam',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Common',
+        art: '📕',
+        description: 'Deal 9 damage.',
+        effects: [
+            { type: 'damage', amount: 9 }
+        ]
+    },
+    {
+        id: 'quiet-corner',
+        name: 'Quiet Corner',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Common',
+        art: '🪑',
+        description: 'Gain 8 Relaxation.',
+        effects: [
+            { type: 'block', amount: 8 }
+        ]
+    },
+    {
+        id: 'herbal-tea',
+        name: 'Herbal Tea',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '🍵',
+        description: 'Recover 6 Sanity.',
+        effects: [
+            { type: 'heal', amount: 6 }
+        ]
+    },
+    {
+        id: 'research-notes',
+        name: 'Research Notes',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '📝',
+        description: 'Draw 1 card. Gain 4 Relaxation.',
+        effects: [
+            { type: 'draw', amount: 1 },
+            { type: 'block', amount: 4 }
+        ]
+    },
+    {
+        id: 'library-rules',
+        name: 'Library Rules',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Uncommon',
+        art: '🤫',
+        description: 'Whenever you play an Attack card, Call Out the enemy.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'status', status: 'calledOut', amount: 1 } }
         ]
     }
 ];

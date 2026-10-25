@@ -61,6 +61,7 @@ window.SC = window.SC || {};
         // Apply cafeteria styling only during Cafeteria Duty.
         root.classList.toggle('battle-screen--cafeteria', levelId === 'cafeteria');
         root.classList.toggle('battle-screen--gym', levelId === 'gym');
+        root.classList.toggle('battle-screen--library', levelId === 'library');
 
         if (SC.stopMusic) {
             SC.stopMusic();

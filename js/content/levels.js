@@ -92,5 +92,28 @@ SC.levels = {
             'running-shoes',
             'team-spirit'
         ]
+    },
+
+    library: {
+    id: 'library',
+    name: 'Library',
+    intro: 'Shhh! Silence is golden. Someone is whispering too loudly, keep it down!',
+    winText: 'Alas, silence has been restored. You may now read in peace.',
+    sanity: 30,
+    energy: 3,
+    refillEnergy: true,
+    handSize: 5,
+    enemy: 'library-enemy',
+    
+
+    bonusCards: [
+            'hardcover-slam',
+            'quiet-corner',
+            'herbal-tea',
+            'research-notes',
+            'library-rules'
+        ]
+    
     }
+
 };
