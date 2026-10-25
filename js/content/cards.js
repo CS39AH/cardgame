@@ -272,6 +272,54 @@ SC.cards = [
         ]
     },
 
+    // ---------- CAFETERIA DUTY: Legendary boss rewards ----------
+    {
+        id: 'golden-spork',
+        name: 'The Golden Spork',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🍴',
+        image: 'graphics/cards/cafeteria/golden_spork.png',
+        imageAlt: 'A magical golden spork.',
+        description: 'When an Attack card damages enemy Sanity, heal 2 Sanity.',
+        effects: [
+            { type: 'power', trigger: 'directSanityAttack', effect: { type: 'heal', amount: 2 } }
+        ]
+    },
+    {
+        id: 'bottomless-chocolate-milk',
+        name: 'Bottomless Chocolate Milk',
+        cost: 2,
+        type: 'Skill',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🥛',
+        image: 'graphics/cards/cafeteria/bottomless_chocolate_milk.png',
+        imageAlt: 'An overflowing magical chocolate milk carton.',
+        description: 'Gain 3 Coffee. Draw 2 cards.',
+        effects: [
+            { type: 'energy', amount: 3 },
+            { type: 'draw', amount: 2 }
+        ]
+    },
+    {
+        id: 'lunch-ladys-legendary-special',
+        name: "Lunch Lady's Legendary Special",
+        cost: 3,
+        type: 'Skill',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🍱',
+        image: 'graphics/cards/cafeteria/lunch_ladys_special.png',
+        imageAlt: 'A gourmet meal served on a cafeteria tray.',
+        description: 'Recover 10 Sanity. Gain 8 Relaxation.',
+        effects: [
+            { type: 'heal', amount: 10 },
+            { type: 'block', amount: 8 }
+        ]
+    },
 
         {
         id: 'stapler-shot',
