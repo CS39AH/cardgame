@@ -44,6 +44,7 @@ window.SC = window.SC || {};
                 return null; // very old browser, no sound
             }
             ctx = new AudioCtx();
+            loadSoundFiles(ctx);
         }
         if (ctx.state === 'suspended') {
             ctx.resume();
@@ -162,6 +163,52 @@ window.SC = window.SC || {};
         osc.stop(start + duration + 0.05);
     }
 
+    // ------- SOUND FILES -------
+    // Real recorded sounds from the audio folder. They load once when
+    // sound starts, then play through the same Sounds slider as the rest.
+    const SOUND_FILES = {
+        shieldUp: { src: 'audio/shieldsound.mp3', volume: 0.4 },
+        petJump:  { src: 'audio/hamster_jump.mp3', volume: 0.3 }
+    };
+    const fileBuffers = {};
+
+    function loadSoundFiles(ac) {
+        Object.keys(SOUND_FILES).forEach(function (name) {
+            fetch(SOUND_FILES[name].src)
+                .then(function (res) { return res.arrayBuffer(); })
+                .then(function (data) { return ac.decodeAudioData(data); })
+                .then(function (buffer) { fileBuffers[name] = buffer; })
+                .catch(function () { /* missing file: the made-up sound plays instead */ });
+        });
+    }
+
+    // Plays a loaded file. Returns false if it isn't loaded (yet).
+    function playFile(ac, name) {
+        const buffer = fileBuffers[name];
+        if (!buffer) return false;
+
+        const source = ac.createBufferSource();
+        source.buffer = buffer;
+        const gain = ac.createGain();
+        gain.gain.value = SOUND_FILES[name].volume;
+        source.connect(gain);
+        gain.connect(getSfxBus(ac));
+        source.start();
+        return true;
+    }
+
+    // A piece of metal ringing: a few out-of-tune pitches stacked
+    // together (that's what makes it sound like metal, not music).
+    // High pitches fade faster than low ones, like a real shield.
+    function metal(ac, start, base, duration, peak) {
+        const parts = [1, 1.47, 2.09, 2.56, 3.32, 4.18];
+        parts.forEach(function (ratio, i) {
+            const loudness = peak / (1 + i * 0.7);
+            const length = duration / (1 + i * 0.35);
+            tone(ac, start, base * ratio, length, loudness);
+        });
+    }
+
     // ------- SOUNDS -------
 
     const SOUNDS = {
@@ -210,6 +257,58 @@ window.SC = window.SC || {};
         whoosh: function (ac) {
             const t = ac.currentTime + 0.02;
             stroke(ac, t, 0.45, 3000, 600, VOLUME * 0.7);
+        },
+
+        // A defender bracing: "shhk-CHUNK", a shield sliding up and locking into place
+        shieldUp: function (ac) {
+            if (playFile(ac, 'shieldUp')) return;    // audio/shieldsound.mp3
+
+            // Backup if the file is missing
+            const t = ac.currentTime + 0.01;
+            stroke(ac, t,        0.16, 2600, 1100, VOLUME * 0.45);   // shhk: slides up
+            stroke(ac, t + 0.15, 0.14, 380,  110,  VOLUME * 1.3);    // CHUNK: locks in
+            stroke(ac, t + 0.15, 0.04, 3600, 2400, VOLUME * 0.4);    // the latch clicking
+            metal(ac, t + 0.15, 210, 0.16, VOLUME * 0.12);           // short, dull metal (no bell ring)
+        },
+
+        // Something hits a defender: a heavy CLANG on a metal shield
+        shieldHit: function (ac) {
+            const t = ac.currentTime + 0.01;
+            stroke(ac, t, 0.12, 420, 140, VOLUME * 1.4);      // the thump of the hit
+            stroke(ac, t, 0.05, 4200, 2600, VOLUME * 0.6);    // the sharp clank
+            metal(ac, t, 330, 0.55, VOLUME * 0.22);           // the shield ringing
+        },
+
+        // Teacher's Pet jumping out (audio/hamster_jump.mp3)
+        petJump: function (ac) {
+            if (playFile(ac, 'petJump')) return;
+
+            // Backup if the file is missing: a tiny "eep!"
+            const t = ac.currentTime + 0.01;
+            tone(ac, t,        1800, 0.06, VOLUME * 0.12);
+            tone(ac, t + 0.05, 2400, 0.08, VOLUME * 0.10);
+        },
+
+        // A small stone spear: a quick thrust, then the stone tip
+        // cracking into the target with a short knock
+        spearStab: function (ac) {
+            const t = ac.currentTime + 0.01;
+            stroke(ac, t,        0.09, 1200, 4500, VOLUME * 0.35);   // the thrust
+            stroke(ac, t + 0.07, 0.05, 2200,  900, VOLUME * 0.9);    // stone tip cracks in
+            stroke(ac, t + 0.07, 0.10,  500,  160, VOLUME * 1.0);    // knock of the hit
+            tone(ac,   t + 0.07, 760,  0.06, VOLUME * 0.12);         // stony click
+            tone(ac,   t + 0.07, 1130, 0.04, VOLUME * 0.08);
+        },
+
+        // A Power switching on: an electric crackle with a quick rising hum
+        powerUp: function (ac) {
+            const t = ac.currentTime + 0.01;
+            for (let i = 0; i < 6; i++) {
+                stroke(ac, t + i * 0.035, 0.05, 5200, 2600, VOLUME * 0.3);
+            }
+            tone(ac, t,        440,  0.25, VOLUME * 0.12);
+            tone(ac, t + 0.05, 880,  0.30, VOLUME * 0.10);
+            tone(ac, t + 0.10, 1760, 0.35, VOLUME * 0.06);
         },
 
         // A card slapped onto the chalkboard: low thud plus a tiny paper snap
