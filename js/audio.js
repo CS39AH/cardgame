@@ -311,6 +311,45 @@ window.SC = window.SC || {};
             tone(ac, t + 0.10, 1760, 0.35, VOLUME * 0.06);
         },
 
+        // Coach's whistle: "tweet-TWEEEET". A high tone with a fast wobble
+        // (that's the little ball rattling inside), plus a bit of breath
+        whistle: function (ac) {
+            const t = ac.currentTime + 0.01;
+
+            function blast(start, length) {
+                const osc = ac.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(2900, start);
+
+                // The rattle: wobble the pitch up and down ~38 times a second
+                const rattle = ac.createOscillator();
+                rattle.frequency.value = 38;
+                const rattleDepth = ac.createGain();
+                rattleDepth.gain.value = 170;
+                rattle.connect(rattleDepth);
+                rattleDepth.connect(osc.frequency);
+
+                const gain = ac.createGain();
+                gain.gain.setValueAtTime(0.0001, start);
+                gain.gain.exponentialRampToValueAtTime(VOLUME * 0.28, start + 0.02);
+                gain.gain.setValueAtTime(VOLUME * 0.28, start + length - 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.0001, start + length);
+
+                osc.connect(gain);
+                gain.connect(getSfxBus(ac));
+                osc.start(start);
+                rattle.start(start);
+                osc.stop(start + length + 0.05);
+                rattle.stop(start + length + 0.05);
+
+                // Breath through the whistle
+                stroke(ac, start, length, 2600, 3400, VOLUME * 0.22);
+            }
+
+            blast(t, 0.16);           // tweet
+            blast(t + 0.22, 0.45);    // TWEEEET
+        },
+
         // A card slapped onto the chalkboard: low thud plus a tiny paper snap
         slam: function (ac) {
             const t = ac.currentTime + 0.01;

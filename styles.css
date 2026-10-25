@@ -101,8 +101,9 @@ body::before {
             rgba(22, 48, 42, 0.84) 40%,
             rgba(15, 36, 24, 0.92) 100%
         ),
-        /* The classroom photo, at the very bottom */
-        url('graphics/title/classroom-bg.jpg');
+        /* The photo at the very bottom: the classroom, unless a location
+           swaps in its own (see .scene--gym below) */
+        var(--scene-photo, url('graphics/title/classroom-bg.jpg'));
 
     background-size: cover;
     background-repeat: no-repeat;
@@ -120,6 +121,11 @@ body::before {
         transform 0.9s cubic-bezier(0.4, 0, 0.2, 1),
         filter 0.9s ease;
     will-change: transform;
+}
+
+/* Inside the Gym (its zone map): the gym photo instead of the classroom */
+body.scene--gym {
+    --scene-photo: url('graphics/screens/gym-bg.jpg');
 }
 
 /* Cafeteria Background */
@@ -1837,6 +1843,217 @@ h1, h2, h3 {
    (js/main.js sets data-screen="map" on #screen when it loads) */
 #screen[data-screen="map"] {
     max-width: 900px;
+}
+
+/* =========================================================
+   ZONE MAP SCREEN  (screens/zones.html, js/ui/zones.js)
+   The mini-map inside a location, like the Gym's clipboard.
+   Zones are drawn on it like a coach's play: O's and X's in
+   marker, joined by dotted arrows.
+   ========================================================= */
+#screen[data-screen="zones"] {
+    max-width: 960px;
+}
+
+.zone-screen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin: 0 auto;
+}
+
+/* The picture sets the size; markers and arrows sit on top in %.
+   container-type lets the markers size themselves in "cqw" (1cqw = 1% of
+   the map's width), so they shrink and grow with the clipboard. */
+.zone-map {
+    position: relative;
+    width: 100%;
+    container-type: inline-size;
+}
+
+/* Arriving from the day map: the clipboard zooms in from the middle */
+.zone-map {
+    animation: zone-arrive 0.55s cubic-bezier(.2, .8, .3, 1) both;
+}
+
+@keyframes zone-arrive {
+    from { transform: scale(0.35); opacity: 0; filter: blur(4px); }
+    to   { transform: none;        opacity: 1; filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .zone-map {
+        animation: none;
+    }
+}
+
+.zone-map__art {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.5));
+}
+
+/* Dotted play arrows, drawn in dry-erase marker */
+.zone-map__plays {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.zone-map__play,
+.zone-map__arrowhead {
+    fill: none;
+    stroke: #2a3a8a;                 /* blue marker */
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.zone-map__play {
+    stroke-dasharray: 2 9;
+    animation: zone-play-march 1.2s linear infinite;
+}
+
+/* Paths already played turn red, like the coach marked them done */
+.zone-map__play--done {
+    stroke: #c0392b;
+    animation: none;
+}
+
+@keyframes zone-play-march {
+    to { stroke-dashoffset: -22; }
+}
+
+/* ----- One zone: a big marker letter with its name under it ----- */
+.zone-node {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translate(-50%, -50%);   /* left/top mark the letter's center */
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-title);
+}
+
+.zone-node__mark {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 9.5cqw;
+    height: 9.5cqw;
+    font-size: 8.8cqw;
+    font-weight: 700;
+    line-height: 1;
+    transition: transform 0.15s ease;
+}
+
+/* Next zone: a yellow highlighter circle behind its marker */
+.zone-node--current .zone-node__mark::before {
+    content: '';
+    position: absolute;
+    inset: -1cqw;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 226, 60, 0.75) 0%, rgba(255, 226, 60, 0.45) 55%, rgba(255, 226, 60, 0) 72%);
+    animation: zone-highlight 1.4s ease-in-out infinite;
+}
+
+@keyframes zone-highlight {
+    0%, 100% { transform: scale(0.92); opacity: 0.85; }
+    50%      { transform: scale(1.08); opacity: 1; }
+}
+
+.zone-node__mark--o { color: #2a3a8a; }    /* blue marker O */
+.zone-node__mark--x { color: #c0392b; }    /* red marker X */
+
+/* The boss: its X is circled, like the coach's key player */
+.zone-node--boss .zone-node__mark {
+    border: 0.55cqw solid #c0392b;
+    border-radius: 50%;
+    font-size: 7.2cqw;
+}
+
+/* Name written under the marker, in the coach's handwriting
+   (the white glow keeps it readable over the court lines) */
+.zone-node__label {
+    margin-top: var(--space-1);
+    color: #1f2a6b;
+    font-size: max(0.7rem, 2.1cqw);
+    font-weight: 700;
+    white-space: nowrap;
+    transform: rotate(-2deg);
+    text-shadow:
+        0 0 3px #f4f0e5,
+        0 0 3px #f4f0e5,
+        0 0 6px #f4f0e5;
+}
+.zone-node__boss {
+    margin-top: 2px;
+    padding: 0 0.9cqw;
+    border-radius: 999px;
+    background: #c0392b;
+    color: #fff;
+    font-size: max(0.55rem, 1.3cqw);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+/* Next zone to play: it bounces a little so you know to click it */
+.zone-node--current .zone-node__mark,
+.zone-node--open .zone-node__mark {
+    animation: zone-bob 1.4s ease-in-out infinite;
+}
+
+.zone-node:not(:disabled):hover .zone-node__mark {
+    transform: scale(1.15) rotate(-6deg);
+    animation: none;
+}
+
+@keyframes zone-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+
+/* Finished: faded, with a green check on top */
+.zone-node--complete .zone-node__mark {
+    opacity: 0.45;
+}
+
+.zone-node__check {
+    position: absolute;
+    top: -0.4rem;
+    left: 50%;
+    transform: translateX(-10%);
+    color: #2e8b3a;
+    font-size: 4.6cqw;
+    line-height: 1;
+    pointer-events: none;
+}
+
+/* Not reachable yet */
+.zone-node--locked {
+    cursor: not-allowed;
+}
+
+.zone-node--locked .zone-node__mark,
+.zone-node--locked .zone-node__label {
+    opacity: 0.35;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .zone-map__play,
+    .zone-node--current .zone-node__mark,
+    .zone-node--open .zone-node__mark,
+    .zone-node--current .zone-node__mark::before {
+        animation: none;
+    }
 }
 
 /* =========================================================
