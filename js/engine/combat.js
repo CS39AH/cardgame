@@ -88,7 +88,9 @@ window.SC = window.SC || {};
             hand: [],
             discard: [],
             confiscated: [],
-            log: []
+            log: [],
+            powerFires: [],        // Powers that just went off (the battle screen animates these)
+            hitLog: []             // every single hit of the last card (for multi-hit animations)
         };
 
         combat.state = state;
@@ -150,6 +152,8 @@ window.SC = window.SC || {};
 
         const card = s.hand[handIndex];
         if (!card) return false;
+        s.powerFires = [];
+        s.hitLog = [];
 
         if (card.cost > s.player.energy) {
             addLog('Not enough Coffee for ' + card.name + '.');
@@ -157,6 +161,7 @@ window.SC = window.SC || {};
         }
 
         s.player.energy -= card.cost;
+        s.player.cardsPlayed = (s.player.cardsPlayed || 0) + 1;   // Bin Dump counts these
         s.hand.splice(handIndex, 1);
         addLog('You played ' + card.name + '.');
 
@@ -249,6 +254,8 @@ window.SC = window.SC || {};
 
         const enemy = s.enemy;
         const card = enemy.next.shift();
+        s.powerFires = [];
+        s.hitLog = [];
         if (!card) return null;
 
         addLog(enemy.name + ' played ' + card.name + '.');
@@ -275,6 +282,7 @@ window.SC = window.SC || {};
 
         // Your next turn
         s.turn += 1;
+        s.player.cardsPlayed = 0;              // start counting again
         s.player.relaxation = 0;               // Relaxation lasts one turn
         if (s.level.refillEnergy) {
             s.player.energy = s.player.maxEnergy;
@@ -366,7 +374,15 @@ window.SC = window.SC || {};
             
             case 'damage': {
                 const total = Math.max(0, amount + attackBonus(who));
-                ctx.lastSanityDamage = hit(foeWho, total);
+
+                // "times" = hit that many times, e.g. once per card you played.
+                // Leave it out for a normal single hit.
+                const times = effect.times !== undefined ? amountOf(effect.times) : 1;
+                let dealt = 0;
+                for (let i = 0; i < times && !s.result; i++) {
+                    dealt += hit(foeWho, total);
+                }
+                ctx.lastSanityDamage = dealt;
                 ctx.lastDamage = total;
                 break;
             }
@@ -397,6 +413,8 @@ window.SC = window.SC || {};
                 owner.field.push({
                     name: effect.name || card.name,
                     art: effect.art || card.art,
+                    rarity: card.rarity || 'Common',             // for its rarity color on the table
+                    image: effect.image || card.image || null,   // the card's picture, if it has one
                     sanity: amount,
                     maxSanity: amount,
                     attackBonus: effect.attackBonus || 0
@@ -459,6 +477,7 @@ window.SC = window.SC || {};
     function amountOf(amount) {
         if (typeof amount === 'number') return amount;
         if (amount === 'player discard pile size') return combat.state.discard.length;
+        if (amount === 'cards played by player') return combat.state.player.cardsPlayed || 0;
         return 0;
     }
 
@@ -467,7 +486,9 @@ window.SC = window.SC || {};
     // Defenders first, then Relaxation, then Sanity
     function hit(targetWho, amount) {
         const target = sideOf(targetWho);
-
+        const fieldBefore = fieldSanity(target);
+        const startSanity = target.sanity;
+        const startRelax = target.relaxation;
         // Powers like Track Record soften every hit
         amount = Math.max(0, amount + powerTotal(targetWho, 'Attacked'));
 
@@ -494,11 +515,24 @@ window.SC = window.SC || {};
         const sanityBefore = target.sanity;
         target.sanity = Math.max(0, target.sanity - amount);
 
+        // Remember this one hit, so the battle screen can show each hit
+        // of a "Deal 2 damage 3 times" card separately
+        combat.state.hitLog.push({
+            who: targetWho,
+            defender: fieldBefore - fieldSanity(target),   // damage to defenders
+            sanity: startSanity - target.sanity,          // damage to the enemy/hero
+            relax: startRelax - target.relaxation,        // soaked up by Relaxation
+            fromPower: firingPower                        // a Power did it, not the card
+        });
+
         // Return the actual Sanity damage dealt.
         return sanityBefore - target.sanity;
     }
 
     // ------- POWERS -------
+
+    // True while a Power's effect is running (so its hits are tagged)
+    let firingPower = false;
 
     // Run the inner effect of every Power with this trigger
     function firePowers(who, trigger) {
@@ -506,10 +540,35 @@ window.SC = window.SC || {};
         side.powers.forEach(function (card) {
             (card.effects || []).forEach(function (effect) {
                 if (effect.type === 'power' && effect.trigger === trigger && effect.effect) {
+                    const foe = sideOf(who === 'player' ? 'enemy' : 'player');
+                    const sanityBefore = foe.sanity;
+                    const fieldBefore = fieldSanity(foe);
+                    const relaxBefore = foe.relaxation;
+
+                    firingPower = true;
                     resolveEffect(effect.effect, who, card, { lastDamage: 0 });
+                    firingPower = false;
+
+                    // Remember it, so the battle screen can show this Power going off
+                    combat.state.powerFires.push({
+                        who: who,
+                        card: card,
+                        sanityLoss: sanityBefore - foe.sanity,          // damage to the enemy/hero
+                        defenderLoss: fieldBefore - fieldSanity(foe),   // damage to defenders
+                        relaxLoss: relaxBefore - foe.relaxation,        // soaked up by Relaxation
+                        attacks: effect.effect.type === 'damage' &&      // an attacking Power (even if
+                            amountOf(effect.effect.amount) > 0          // it ends up doing 0 damage)
+                    });
                 }
             });
         });
+    }
+
+    // All the Sanity left on a side's defenders, added up
+    function fieldSanity(side) {
+        return side.field.reduce(function (total, unit) {
+            return total + Math.max(0, unit.sanity);
+        }, 0);
     }
 
     // Add up the numbers on Powers with this trigger (no effect run)

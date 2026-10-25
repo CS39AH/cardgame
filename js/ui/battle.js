@@ -283,6 +283,7 @@ window.SC = window.SC || {};
 
         showResult(s.result);
     }
+    SC.redrawBattle = render;   // for testing in the F12 console
     // Tutorial hints: only levels with a `hints` entry get a Hints button
     function renderHint(s) {
         const hints = s.level.hints;
@@ -455,6 +456,11 @@ window.SC = window.SC || {};
 
         const el = document.createElement('div');
         el.className = 'unit ' + extraClass;
+
+        // Defenders get their card's rarity color (defender--rare etc.)
+        if (extraClass === 'unit--defender') {
+            el.classList.add('defender--' + (unit.rarity || 'Common').toLowerCase());
+        }
        
         const art = document.createElement('div');
         art.className = 'unit__art';
@@ -483,6 +489,18 @@ window.SC = window.SC || {};
             shield.textContent = sanity;
             shield.title = sanity + ' / ' + max + ' Sanity';
             el.appendChild(shield);
+
+            // Metal corner brackets, like armor plating
+            ['tl', 'tr', 'bl', 'br'].forEach(function (spot) {
+                const corner = document.createElement('i');
+                corner.className = 'def-corner def-corner--' + spot;
+                el.appendChild(corner);
+            });
+
+            // The shine that sweeps across Legendary defenders (CSS only shows it on those)
+            const shine = document.createElement('div');
+            shine.className = 'def-shine';
+            el.appendChild(shine);
         }
 
         const name = document.createElement('p');
@@ -508,6 +526,14 @@ window.SC = window.SC || {};
             relax.className = 'unit__relax';
             relax.textContent = '😌 ' + unit.relaxation + ' Relaxation';
             el.appendChild(relax);
+        }
+
+        // Defenders: a DEFENSE strip across the bottom
+        if (extraClass === 'unit--defender') {
+            const strip = document.createElement('div');
+            strip.className = 'def-strip';
+            strip.textContent = 'Defense';
+            el.appendChild(strip);
         }
 
         // Rips appear as it loses Sanity (remembered on the unit so
@@ -741,11 +767,9 @@ window.SC = window.SC || {};
         const side = axis === 'x' ? 'marginLeft' : 'marginTop';
 
         // Start from no overlap
-        items.forEach(function (el, i) {
+        items.forEach(function (el) {
             el.style[side] = '';
             el.style.zIndex = '';
-            // Defenders: the front one (gets hit first) stays on top
-            if (axis === 'x') el.style.zIndex = items.length - i;
         });
         zone.classList.remove('is-squeezed');
         if (items.length < 2) return;
@@ -763,6 +787,13 @@ window.SC = window.SC || {};
         const used = axis === 'x' ? last.right - first.left : last.bottom - first.top;
         if (used <= room) return;
         zone.classList.add('is-squeezed');
+
+        // Overlapping defenders: the front one (gets hit first) stays on top
+        if (axis === 'x') {
+            items.forEach(function (el, i) {
+                el.style.zIndex = items.length - i;
+            });
+        }
 
         // Pull each card back over the one before it by the same amount.
         // A margin is in the card's own pixels, so undo its zoom first.
@@ -993,7 +1024,9 @@ window.SC = window.SC || {};
             SC.battleFx.mark('enemyCard');
             SC.combat.enemyPlayNext();
             render();
-            setTimeout(function () { nextEnemyCard(id); }, SC.battleFx.ms(ENEMY_CARD_GAP));
+            // Next card once this one's animations are done (at least ENEMY_CARD_GAP)
+            const wait = Math.max(SC.battleFx.ms(ENEMY_CARD_GAP), SC.battleFx.busyFor());
+            setTimeout(function () { nextEnemyCard(id); }, wait);
         }, flyTime);
     }
 

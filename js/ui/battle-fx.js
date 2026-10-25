@@ -38,11 +38,7 @@ window.SC = window.SC || {};
 
     // New fight: forget the old screen
     function reset(state) {
-        busyUntil = 0;
-        if (flight) {
-            flight.ghost.remove();
-            flight = null;
-        }
+        clear();
         lastHand = [];
         lastEnemySanity = state.enemy.sanity;
         lastPlayerSanity = state.player.sanity;
@@ -107,6 +103,13 @@ window.SC = window.SC || {};
 
         remember(state);
 
+        // Powers that went off during this action (Teacher's Pet, etc.).
+        // Take them now so they only play once.
+        const fires = state.powerFires || [];
+        state.powerFires = [];
+        const hits = state.hitLog || [];
+        state.hitLog = [];
+
         if (reducedMotion()) {
             return;
         }
@@ -119,6 +122,8 @@ window.SC = window.SC || {};
         let enemyHitAt = 0;     // when the enemy side gets hit (for tearing)
         let heroHitAt = 0;      // when your side gets hit
         let cardLandAt = 0;     // when your played card reaches the table
+        let enemyTearAt = null; // when knocked-out defenders rip (null = the usual time)
+        let playerTearAt = null;
 
         if (kind === 'discard') {
             // End Turn: your leftover hand sweeps into the discard pile
@@ -127,16 +132,31 @@ window.SC = window.SC || {};
             });
         } else if (kind === 'enemyCard') {
             // An enemy card just LANDED (it already flew over): hits happen now
-            afterHit(hitOutcome(before.fields.player, state.player.field));
+            const outcome = hitOutcome(before.fields.player, state.player.field);
+            const landedCard = takeFlight();
             const guards = defenderDamage(before.fields.player, state.player.field, 'player');
-            guards.forEach(function (g, k) {
-                later(k * 120, function () { hitDefender(g); });
-            });
+            const split = splitPowerDamage(fires, 'enemy', guards, playerLoss);
+            const cardHits = hits.filter(function (h) { return !h.fromPower && h.who === 'player'; });
+            let doneAt = 0;
 
-            // Anything left over after your defenders goes through to your hero
-            if (playerLoss > 0) {
-                later(guards.length ? 250 : 0, function () { hit('.battle__hero', playerLoss); });
+            if (cardHits.length > 1) {
+                // "Deal 2 damage 3 times": it bobs back and jabs again for each hit
+                const r = multiHit(cardHits, before.fields.player, state.player.field, 'player', '.battle__hero', landedCard);
+                doneAt = r.lastAt;
+                playerTearAt = r.lastDefenderAt + 150;
+            } else {
+                guards.forEach(function (g, k) {
+                    if (g.loss > 0) later(k * 120, function () { hitDefender(g); });
+                });
+
+                // Anything left over after your defenders goes through to your hero
+                if (split.cardLoss > 0) {
+                    later(guards.length ? 250 : 0, function () { hit('.battle__hero', split.cardLoss); });
+                }
+                showRelaxHit(cardHits, '.battle__hero', split.cardLoss > 0 ? 250 : 0);
             }
+            later(doneAt, function () { afterHit(outcome, landedCard); });
+            showPowerFires(fires, doneAt + 350, split.target);
 
             // The enemy healing or gaining Relaxation
             const enemyRelaxGain = state.enemy.relaxation - before.enemyRelax;
@@ -150,9 +170,8 @@ window.SC = window.SC || {};
             // You played a card. 'impact' = an attack that already flew
             // to its target, so its hits happen right now.
             const landed = kind === 'impact';
-            if (landed) {
-                afterHit(hitOutcome(before.fields.enemy, state.enemy.field));
-            }
+            const outcome = hitOutcome(before.fields.enemy, state.enemy.field);
+            const landedCard = landed ? takeFlight() : null;
 
             leftHand.forEach(function (old) {
                 const at = landed ? 0 : playedCard(old, enemyLoss);
@@ -162,14 +181,32 @@ window.SC = window.SC || {};
 
             // Enemy defenders soak up the hit first, then the enemy
             const enemyGuards = defenderDamage(before.fields.enemy, state.enemy.field, 'enemy');
-            enemyGuards.forEach(function (g, k) {
-                later(enemyHitAt + k * 120, function () { hitDefender(g); });
-            });
-            if (enemyLoss > 0) {
-                later(enemyHitAt + (enemyGuards.length ? 250 : 0), function () {
-                    hit('.battle__enemy', enemyLoss);
+            const split = splitPowerDamage(fires, 'player', enemyGuards, enemyLoss);
+            const cardHits = hits.filter(function (h) { return !h.fromPower && h.who === 'enemy'; });
+            let doneAt = Math.max(enemyHitAt, cardLandAt);
+
+            if (landed && cardHits.length > 1) {
+                // "Deal 2 damage 3 times": it bobs back and jabs again for each hit
+                const r = multiHit(cardHits, before.fields.enemy, state.enemy.field, 'enemy', '.battle__enemy', landedCard);
+                doneAt = r.lastAt;
+                enemyTearAt = r.lastDefenderAt + 150;
+            } else {
+                enemyGuards.forEach(function (g, k) {
+                    if (g.loss > 0) later(enemyHitAt + k * 120, function () { hitDefender(g); });
                 });
+                if (split.cardLoss > 0) {
+                    later(enemyHitAt + (enemyGuards.length ? 250 : 0), function () {
+                        hit('.battle__enemy', split.cardLoss);
+                    });
+                }
+                showRelaxHit(cardHits, '.battle__enemy', enemyHitAt + (split.cardLoss > 0 ? 250 : 0));
             }
+            if (landed) {
+                later(doneAt, function () { afterHit(outcome, landedCard); });
+            }
+
+            // Your Powers go off just after the card's last hit
+            showPowerFires(fires, doneAt + 350, split.target);
 
             heroHitAt = landed ? 0 : (leftHand.length ? 650 : 0);
             if (playerLoss > 0) {
@@ -199,8 +236,10 @@ window.SC = window.SC || {};
         slamNewPowers(before.powers.enemy, state.enemy.powers, 'enemy', heroHitAt);
 
         // Defenders that got knocked out rip in half where they stood
-        tearKnockedOut(before.fields.enemy, state.enemy.field, 'enemy', enemyHitAt + 150);
-        tearKnockedOut(before.fields.player, state.player.field, 'player', heroHitAt + 150);
+        tearKnockedOut(before.fields.enemy, state.enemy.field, 'enemy',
+            enemyTearAt !== null ? enemyTearAt : enemyHitAt + 150);
+        tearKnockedOut(before.fields.player, state.player.field, 'player',
+            playerTearAt !== null ? playerTearAt : heroHitAt + 150);
 
         // Enemy beaten or you ran out of Sanity: that card rips in half
         if (before.enemySanity > 0 && state.enemy.sanity <= 0) {
@@ -367,6 +406,322 @@ window.SC = window.SC || {};
         return ms(duration);
     }
 
+    // ---------- Cards that hit more than once ----------
+
+    // Longest the bobbing can take, so a big Bin Dump doesn't go on forever
+    const BOB_MAX_TOTAL = 1600;
+
+    // Shows each hit separately: the card bobs back and jabs again,
+    // and every hit shows its own number (and clang on a defender).
+    // Returns when the last hit lands, and the last hit on a defender.
+    function multiHit(cardHits, beforeUnits, nowField, side, cardSel, landedCard) {
+        const count = cardHits.length;
+        const gap = Math.min(300, BOB_MAX_TOTAL / (count - 1));
+
+        // Each defender's Sanity as the hits come in (front one first).
+        // Their shields start back at the old number and count down.
+        const els = Array.from(document.querySelectorAll('.battle__field--' + side + ' > .unit'));
+        const units = (beforeUnits || []).map(function (old) {
+            const i = nowField.indexOf(old.unit);
+            const el = i === -1 ? null : els[i];
+            if (el) setShield(el, old.sanity);
+            return { hp: old.sanity, el: el, old: old, center: old.center };
+        });
+
+        if (landedCard) bobAttack(landedCard, count, gap);
+
+        let lastDefenderAt = 0;
+        cardHits.forEach(function (h, i) {
+            const at = i * gap;
+
+            if (h.defender > 0) {
+                // The front defender still standing takes it
+                const target = units.find(function (u) { return u.hp > 0; });
+                let left = h.defender;
+                units.forEach(function (u) {
+                    const took = Math.min(u.hp, left);
+                    u.hp -= took;
+                    left -= took;
+                });
+
+                if (target) {
+                    const hpNow = Math.max(0, target.hp);
+                    later(at, function () {
+                        // The defender, or the copy standing in for it if it's knocked out
+                        const el = target.el || target.old.standIn;
+                        const alive = el && document.body.contains(el) ? el : null;
+                        if (alive) setShield(alive, hpNow);
+                        hitDefender({ el: alive, center: target.center, loss: h.defender });
+                    });
+                    lastDefenderAt = at;
+                }
+            }
+
+            if (h.sanity > 0) {
+                later(at + (h.defender > 0 ? 80 : 0), function () {
+                    if (!h.defender && SC.playSound) SC.playSound('slam');
+                    hit(cardSel, h.sanity);
+                });
+            } else if (!h.defender) {
+                later(at, function () {
+                    if (SC.playSound) SC.playSound('slam');
+                });
+            }
+
+            // Soaked up by Relaxation: a blue "-2 😌"
+            if (h.relax > 0) {
+                later(at + (h.sanity > 0 ? 150 : 0), function () {
+                    floatText(cardSel, '-' + h.relax + ' 😌', 'fx-relax');
+                });
+            }
+        });
+
+        return { lastAt: (count - 1) * gap, lastDefenderAt: lastDefenderAt };
+    }
+
+    // A floating number at a point on the screen
+    function floatAt(point, text) {
+        const num = document.createElement('div');
+        num.className = 'fx-damage';
+        num.textContent = text;
+        num.style.left = point.x + 'px';
+        num.style.top = point.y + 'px';
+        document.body.appendChild(num);
+        num.animate([
+            { transform: 'translate(-50%, -50%) scale(0.5)', opacity: 0 },
+            { transform: 'translate(-50%, -90%) scale(1.4)', opacity: 1, offset: 0.2 },
+            { transform: 'translate(-50%, -250%) scale(1)', opacity: 0 }
+        ], { duration: ms(950), easing: 'ease-out', fill: 'forwards' })
+            .finished.then(function () { num.remove(); });
+    }
+
+    // A card's hits that Relaxation soaked up show as a blue "-3 😌"
+    function showRelaxHit(cardHits, cardSel, at) {
+        const relax = cardHits.reduce(function (total, h) { return total + (h.relax || 0); }, 0);
+        if (relax > 0) {
+            later(at, function () {
+                floatText(cardSel, '-' + relax + ' 😌', 'fx-relax');
+            });
+        }
+    }
+
+    function setShield(el, value) {
+        const shield = el.querySelector('.unit__shield');
+        if (shield) shield.textContent = value;
+    }
+
+    // The attack card pulls back and jabs forward again, once per extra hit
+    function bobAttack(f, count, gap) {
+        const a = f.end;
+        const length = Math.hypot(a.x, a.y) || 1;
+        const dir = { x: a.x / length, y: a.y / length };
+        const back = { x: a.x - dir.x * 45, y: a.y - dir.y * 45 - 12, scale: a.scale * 1.05, rot: a.rot - 10 };
+
+        const frames = [{ transform: moveTo(a), offset: 0, easing: 'ease-out' }];
+        for (let i = 1; i < count; i++) {
+            frames.push({ transform: moveTo(back), offset: (i - 0.55) / (count - 1), easing: 'cubic-bezier(.6, 0, 1, .6)' });
+            frames.push({ transform: moveTo(a), offset: i / (count - 1), easing: 'ease-out' });
+        }
+
+        hold(ms((count - 1) * gap + 200));
+        f.ghost.animate(frames, { duration: ms((count - 1) * gap), fill: 'forwards' });
+    }
+
+    // ---------- Powers going off ----------
+
+    // The engine already added a Power's damage into the totals.
+    // Take it back out, so the card's hit and the Power's hit each
+    // show their own number. Returns what's left for the card, and
+    // where the Power's hit should land.
+    //   who    = whose Powers went off ('player' or 'enemy')
+    //   guards = the defenders that got hit (from defenderDamage)
+    //   loss   = Sanity the enemy/hero lost in total
+    function splitPowerDamage(fires, who, guards, loss) {
+        let powerSanity = 0;
+        let powerDefender = 0;
+        fires.forEach(function (f) {
+            if (f.who !== who) return;
+            powerSanity += f.sanityLoss;
+            powerDefender += f.defenderLoss;
+        });
+
+        // Damage goes to defenders front-first, and the Power hits after
+        // the card, so the Power's share is at the back end. Take it off
+        // from the back; the front-most defender it reached is its target.
+        let left = powerDefender;
+        let target = null;
+        for (let i = guards.length - 1; i >= 0 && left > 0; i--) {
+            const share = Math.min(guards[i].loss, left);
+            guards[i].loss -= share;
+            left -= share;
+            target = guards[i];
+        }
+
+        const foeCard = who === 'player' ? '.battle__enemy' : '.battle__hero';
+        return {
+            cardLoss: loss - powerSanity,
+            target: {
+                defender: target,
+                card: foeCard
+            }
+        };
+    }
+
+    // Each Power that went off: if it does damage, the Power card itself
+    // jumps out, attacks the target, flies back and slams into its spot.
+    // If it doesn't do damage (like Team Spirit), it just lights up.
+    function showPowerFires(fires, at, target) {
+        let t = at;
+        fires.forEach(function (f) {
+            const powers = SC.combat.state[f.who].powers;
+            const slot = document.querySelectorAll('.battle__powers--' + f.who + ' > .power-slot')[powers.indexOf(f.card)];
+            if (!slot) return;
+
+            const toDefender = f.defenderLoss > 0 && target.defender;
+            const amount = toDefender ? f.defenderLoss : f.sanityLoss;
+            const relax = f.relaxLoss || 0;
+
+            // Not an attacking Power (like Team Spirit): it just lights up
+            if (!f.attacks && amount <= 0 && relax <= 0) {
+                later(t, function () { pulsePower(slot); });
+                t += 450;
+                return;
+            }
+
+            hold(ms(t + POWER_ATTACK + 300));      // stay busy until it's back in its spot
+            later(t, function () {
+                // Did 0 damage (e.g. the enemy's Padded Walls blocked it all)?
+                // It still attacks: the front defender if there is one, or the card
+                const foeSide = f.who === 'player' ? 'enemy' : 'player';
+                const blocked = amount <= 0 && relax <= 0;
+                // (:not(.tear-half) skips a knocked-out defender that's still ripping apart)
+                const frontDefender = document.querySelector('.battle__field--' + foeSide + ' > .unit:not(.tear-half)');
+                let to;
+                if (toDefender) {
+                    to = target.defender.el && document.body.contains(target.defender.el)
+                        ? centerOf(target.defender.el) : target.defender.center;
+                } else if (blocked && frontDefender) {
+                    to = centerOf(frontDefender);
+                } else {
+                    const el = document.querySelector(target.card);
+                    if (!el) return;
+                    to = centerOf(el);
+                }
+
+                powerAttack(slot, to, f.card.attackSounds || {}, function () {
+                    if (blocked) {
+                        // Nothing got through: a "0" where it hit
+                        if (frontDefender && SC.playSound) SC.playSound('shieldHit');
+                        floatAt(to, '0');
+                    } else if (toDefender) {
+                        hitDefender({ el: target.defender.el, center: to, loss: amount });
+                    } else if (amount > 0) {
+                        hit(target.card, amount);
+                    }
+                    // Soaked up by Relaxation: a blue "-1 😌"
+                    if (relax > 0) {
+                        later(amount > 0 ? 150 : 0, function () {
+                            floatText(target.card, '-' + relax + ' 😌', 'fx-relax');
+                        });
+                    }
+                });
+            });
+            t += POWER_ATTACK + 150;      // the next Power waits for this one
+        });
+    }
+
+    const POWER_W = 200;        // Power cards on the table are 400px at zoom 0.5
+    const POWER_ATTACK = 1000;  // how long a Power's whole attack takes (before SLOW)
+
+    // The Power card jumps up, swoops at the target, bounces off,
+    // flies back to its spot and slams down. onHit runs on impact.
+    // sounds: the card's own { jump, hit } sounds (from cards.js), if it has them
+    function powerAttack(slot, to, sounds, onHit) {
+        const cardEl = slot.querySelector('.card');
+        if (!cardEl) return;
+
+        const from = centerOf(slot);
+        const ghost = makeGhost(cardEl.cloneNode(true), from, POWER_W);
+        ghost.classList.add('fly-ghost--power');
+        slot.style.visibility = 'hidden';           // the real one left its spot
+
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+        const HIT = 0.45;                            // when it reaches the target
+
+        hold(ms(POWER_ATTACK + 300));
+        if (SC.playSound) SC.playSound(sounds.jump || 'powerUp');
+
+        ghost.animate([
+            // jump up out of the Power spot
+            { transform: 'translate(0, 0) scale(1) rotate(0deg)', easing: 'cubic-bezier(.2, .8, .3, 1)' },
+            { transform: 'translate(0, -70px) scale(1.25) rotate(-6deg)', offset: 0.18, easing: 'cubic-bezier(.6, 0, 1, .6)' },
+            // swoop in and hit
+            { transform: 'translate(' + dx + 'px, ' + dy + 'px) scale(0.9) rotate(10deg)', offset: HIT, easing: 'cubic-bezier(.2, .8, .3, 1)' },
+            // bounce back off it
+            { transform: 'translate(' + (dx * 0.85) + 'px, ' + (dy * 0.85 - 30) + 'px) scale(1) rotate(-8deg)', offset: 0.58, easing: 'ease-in-out' },
+            // fly home and hang above the spot...
+            { transform: 'translate(0, -60px) scale(1.2) rotate(-4deg)', offset: 0.9, easing: 'cubic-bezier(.7, 0, 1, .5)' },
+            // ...then SLAM back down
+            { transform: 'translate(0, 0) scale(1) rotate(0deg)' }
+        ], { duration: ms(POWER_ATTACK), fill: 'forwards' });
+
+        later(POWER_ATTACK * HIT + 50, function () {     // +50: a hair after it touches
+            if (sounds.hit && SC.playSound) SC.playSound(sounds.hit);
+            onHit();
+        });
+
+        later(POWER_ATTACK, function () {
+            ghost.remove();
+            slot.style.visibility = '';
+            if (SC.playSound) SC.playSound('slam');
+
+            // squash into the spot and flash its glow
+            slot.animate([
+                { scale: '1.12 0.85' },
+                { scale: '0.96 1.06', offset: 0.45 },
+                { scale: '1' }
+            ], { duration: ms(300), easing: 'ease-out' });
+
+            const ring = getComputedStyle(slot).getPropertyValue('--ring').trim() || '#9a927e';
+            cardEl.animate([
+                { boxShadow: powerGlow(ring, 2) },
+                { boxShadow: powerGlow(ring, 1) }
+            ], { duration: ms(500), easing: 'ease-out' });
+        });
+    }
+
+    // The Power card jumps and its glow flashes
+    function pulsePower(slot) {
+        if (SC.playSound) SC.playSound('powerUp');
+        hold(ms(500));
+
+        slot.animate([
+            { scale: '1' },
+            { scale: '1.15', offset: 0.3 },
+            { scale: '1' }
+        ], { duration: ms(450), easing: 'ease-out' });
+
+        const card = slot.querySelector('.card');
+        const ring = getComputedStyle(slot).getPropertyValue('--ring').trim() || '#9a927e';
+        if (card) {
+            card.animate([
+                { boxShadow: powerGlow(ring, 1) },
+                { boxShadow: powerGlow(ring, 2), offset: 0.3 },
+                { boxShadow: powerGlow(ring, 1) }
+            ], { duration: ms(500), easing: 'ease-out' });
+        }
+
+        const badge = slot.querySelector('.power-badge');
+        if (badge) {
+            badge.animate([
+                { rotate: '0deg', scale: '1' },
+                { rotate: '200deg', scale: '1.4', offset: 0.5 },
+                { rotate: '360deg', scale: '1' }
+            ], { duration: ms(500), easing: 'ease-out' });
+        }
+    }
+
     // ---------- After an attack lands ----------
 
     // The attack card that just landed and is still on screen
@@ -381,9 +736,14 @@ window.SC = window.SC || {};
     //   'bounce'  hit a defender that survived: bounces back off the shield
     //   'through' knocked the defender out: smashes on through it
     //   'hit'     no defender: just hits (no bounce)
-    function afterHit(outcome) {
+    // Grab the attack card that just landed, so a later card can't take its place
+    function takeFlight() {
         const f = flight;
         flight = null;
+        return f;
+    }
+
+    function afterHit(outcome, f) {
         if (!f) return;
 
         const a = f.end;
@@ -601,6 +961,15 @@ window.SC = window.SC || {};
         setTimeout(fn, ms(n));
     }
 
+    // Remove anything still flying around (leaving the battle, or a new fight)
+    function clear() {
+        busyUntil = 0;
+        flight = null;
+        document.querySelectorAll('.fly-ghost, .fx-damage, .tear-half').forEach(function (el) {
+            el.remove();
+        });
+    }
+
     // ---------- Busy: battle.js waits for animations before you can act ----------
 
     let busyUntil = 0;              // the moment the last animation ends
@@ -751,12 +1120,22 @@ window.SC = window.SC || {};
             { transform: 'scale(1)' }
         ], { duration: ms(300), easing: 'ease-out' });
 
-        // Starts as a plain card, then turns blue and the glow bursts out
+        // Starts as a plain card, flashes white, then settles into its
+        // rarity look (the end of the animation = whatever the CSS says)
+        const look = getComputedStyle(el);
         el.animate([
             { borderColor: '#cbbf9f', backgroundColor: '#fbf7ea', boxShadow: NO_GLOW },
-            { borderColor: '#9fd0ff', backgroundColor: '#f4f8ff', boxShadow: BIG_GLOW, offset: 0.3 },
-            { borderColor: '#4a8ee8', backgroundColor: '#eef4ff', boxShadow: GLOW }
+            { borderColor: '#ffffff', backgroundColor: '#ffffff', boxShadow: BIG_GLOW, offset: 0.3 },
+            { borderColor: look.borderTopColor, backgroundColor: look.backgroundColor,
+              boxShadow: 'rgba(255, 255, 255, 0) 0px 0px 0px 0px, ' + look.boxShadow }
         ], { duration: ms(700), easing: 'ease-out' });
+
+        // The rarity glow (its own layer under the cards) fades in after the flash
+        el.animate([
+            { opacity: 0 },
+            { opacity: 0, offset: 0.3 },
+            { opacity: 1 }
+        ], { duration: ms(700), easing: 'ease-out', pseudoElement: '::before' });
 
         later(100, function () {
             if (SC.playSound) SC.playSound('shieldUp');
@@ -860,10 +1239,9 @@ window.SC = window.SC || {};
         return '0 0 0 6px ' + ring + ', 0 0 50px 18px rgba(200, 60, 120, 0.95), 0 8px 16px rgba(0, 0, 0, 0.45)';
     }
 
-    // Same 3 shadows in each so they blend smoothly (matches .unit--defender in CSS)
-    const NO_GLOW  = '0 0 0 0 rgba(90, 170, 255, 0), 0 0 0 0 rgba(90, 170, 255, 0), 0 6px 12px rgba(0, 0, 0, 0.45)';
-    const BIG_GLOW = '0 0 0 3px rgba(190, 225, 255, 1), 0 0 38px 16px rgba(90, 170, 255, 0.95), 0 6px 12px rgba(0, 0, 0, 0.45)';
-    const GLOW     = '0 0 0 2px rgba(120, 190, 255, 0.9), 0 0 16px 4px rgba(90, 170, 255, 0.7), 0 6px 12px rgba(0, 0, 0, 0.45)';
+    // Defender slam flash: 2 shadows each (a white flash, then the drop shadow)
+    const NO_GLOW  = '0 0 0 0 rgba(255, 255, 255, 0), 0 6px 12px rgba(0, 0, 0, 0.45)';
+    const BIG_GLOW = '0 0 50px 22px rgba(255, 255, 255, 0.95), 0 6px 12px rgba(0, 0, 0, 0.45)';
 
     // ---------- Tearing cards in half ----------
 
@@ -912,14 +1290,18 @@ window.SC = window.SC || {};
             copy.style.top = old.top + 'px';
             copy.style.width = old.width + 'px';
             field.appendChild(copy);
+            old.standIn = copy;           // multi-hit cards still hit this copy
             return copy;
         });
 
         later(at, function () {
-            standIns.forEach(function (copy) { copy.remove(); });
             gone.forEach(function (old) {
-                tearCopy(old.node, field, old.left, old.top, old.width, old.transform);
+                // Rip the stand-in as it looks now (its shield may have counted down)
+                const node = old.standIn ? old.standIn.cloneNode(true) : old.node;
+                node.classList.remove('is-hit');
+                tearCopy(node, field, old.left, old.top, old.width, old.transform);
             });
+            standIns.forEach(function (copy) { copy.remove(); });
         });
     }
 
@@ -1009,6 +1391,7 @@ window.SC = window.SC || {};
         enemyCardFly: enemyCardFly,
         attackFly: attackFly,
         busyFor: busyFor,
+        clear: clear,
         ms: ms
     };
 })();

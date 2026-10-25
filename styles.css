@@ -2202,8 +2202,8 @@ h1, h2, h3 {
     margin: 26px 26px 0 0;           /* room for the ⚡ badge on the corner */
 }
 
-/* Each Power's rarity color (Common = pencil gray) */
-.power-slot                  { --ring: #9a927e; }
+/* Each Power's rarity color (Common = grey) */
+.power-slot                  { --ring: #a0a0a0; }
 .power-slot--uncommon        { --ring: #3f9a3f; }
 .power-slot--rare            { --ring: #3a78e0; }
 .power-slot--legendary       { --ring: #e0a800; }
@@ -2299,24 +2299,183 @@ h1, h2, h3 {
     box-shadow: var(--shadow-md);
 }
 
-/* Defender: blue paper with a blue glow around it.
-   Smaller than the enemy card, so a few fit side by side. */
+/* ----- Defenders: armored cards whose look steps up with rarity -----
+   Each rarity sets these colors:
+     --ring   the border        --paper  the card color
+     --glow   the glow around   --metal  corners + shield rim */
 .unit--defender {
+    --ring: #9a9a9a;
+    --paper: #f1f1ee;
+    --glow: rgba(0, 0, 0, 0);                 /* Common: no glow */
+    --metal: linear-gradient(135deg, #d9d9d9, #8c8c8c);
+
     flex: none;
     width: 8.25rem;
     margin-top: 0.9rem;              /* room for the shield sticking out the top */
-    padding: 1.7rem var(--space-2) var(--space-2);
-    border: 3px solid #4a8ee8;
-    background: #eef4ff;
-    box-shadow:
-        0 0 0 2px rgba(120, 190, 255, 0.9),
-        0 0 16px 4px rgba(90, 170, 255, 0.7),
-        0 6px 12px rgba(0, 0, 0, 0.45);
+    padding: 1.7rem var(--space-2) 0;
+    border: 4px solid var(--ring);
+    border-radius: 10px;
+    background-color: var(--paper);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.45);
+}
+
+/* The rarity glow lives on its own layer UNDER all the cards, so a
+   glowing defender doesn't light up the card next to it */
+.battle__field {
+    isolation: isolate;
+}
+
+.unit--defender::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    box-shadow: 0 0 22px 6px var(--glow);
+    pointer-events: none;
+}
+
+/* Uncommon: green, thicker border, soft green glow */
+.defender--uncommon {
+    --ring: #3f9a3f;
+    --paper: #eaf6e6;
+    --glow: rgba(63, 154, 63, 0.55);
+    --metal: linear-gradient(135deg, #8fd08f, #2f7a2f);
+    border-width: 5px;
+}
+
+/* Rare: blue, double border, strong blue glow, silver metal */
+.unit--defender.defender--rare {
+    --ring: #3a78e0;
+    --paper: #e6f0fc;
+    --glow: rgba(58, 120, 224, 0.75);
+    --metal: linear-gradient(135deg, #ffffff, #b9c4d4 45%, #7f8ea3);
+    border-width: 5px;
+    outline: 2px solid #9cc0ff;
+    outline-offset: 3px;
+}
+
+.defender--rare::before {
+    box-shadow: 0 0 30px 10px var(--glow);
+}
+
+/* Legendary: bigger, gold frame, big gold glow, gold metal, shine sweep */
+.unit--defender.defender--legendary {
+    --ring: #e0a800;
+    --paper: #fff4d1;
+    --glow: rgba(255, 196, 0, 0.85);
+    --metal: linear-gradient(135deg, #fff1a8, #e0a800 50%, #9a6b00);
+    width: 9rem;
+    border-width: 6px;
+    outline: 3px solid #ffe27a;
+    outline-offset: 3px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.defender--legendary::before {
+    box-shadow: 0 0 40px 16px var(--glow);
+}
+
+/* Enemy: dark red, with a red DEFENSE strip */
+.defender--enemy {
+    --ring: #a82020;
+    --paper: #f6e3e1;
+    --glow: rgba(168, 32, 32, 0.6);
+    --metal: linear-gradient(135deg, #e07a7a, #7a1414);
+    border-width: 5px;
+}
+
+/* Metal corner brackets with a rivet */
+.def-corner {
+    position: absolute;
+    z-index: 4;
+    width: 16px;
+    height: 16px;
+    background: var(--metal);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 35% 35%, 35% 100%, 0 100%);
+    pointer-events: none;
+}
+
+.def-corner::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.def-corner--tl { top: -4px;    left: -4px; }
+.def-corner--tr { top: -4px;    right: -4px;  transform: scaleX(-1); }
+.def-corner--bl { bottom: -4px; left: -4px;   transform: scaleY(-1); }
+.def-corner--br { bottom: -4px; right: -4px;  transform: scale(-1, -1); }
+
+/* DEFENSE strip across the bottom */
+.def-strip {
+    margin: var(--space-1) calc(-1 * var(--space-2)) 0;
+    padding: 2px 0 3px;
+    border-radius: 0 0 5px 5px;
+    background: linear-gradient(180deg, #4f8fe6, #2c63c0);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+}
+
+.defender--legendary .def-strip {
+    box-shadow: inset 0 2px 0 #ffd84a;
+}
+
+.defender--enemy .def-strip {
+    background: linear-gradient(180deg, #c0392b, #7a1414);
+}
+
+/* Shine that sweeps across Legendary defenders. It sits in its own
+   box with overflow hidden, so the shield can still stick out the top. */
+.def-shine {
+    display: none;
+}
+
+.defender--legendary .def-shine {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    overflow: hidden;
+    border-radius: 5px;
+    pointer-events: none;
+}
+
+.defender--legendary .def-shine::after {
+    content: '';
+    position: absolute;
+    inset: -40%;
+    background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.75) 50%, transparent 60%);
+    animation: def-shine 3s ease-in-out infinite;
+}
+
+@keyframes def-shine {
+    0%        { transform: translateX(-60%); }
+    60%, 100% { transform: translateX(60%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .defender--legendary .def-shine::after {
+        animation: none;
+    }
 }
 
 /* Smaller picture and name to match the smaller card */
 .unit--defender .unit__art {
     font-size: 2.6rem;
+
+    /* Any white box behind the picture or emoji (Windows draws one
+       behind some emojis) disappears into the card paper */
+    mix-blend-mode: multiply;
 }
 
 .unit--defender .unit__art img {
@@ -2351,13 +2510,23 @@ h1, h2, h3 {
     height: 2.9rem;
     padding-bottom: 0.3rem;
     transform: translateX(-50%);
-    background: linear-gradient(180deg, #8cc8ff 0%, #3b7fe0 55%, #2459b0 100%);
+    background: var(--metal, #a0a0a0);  /* the rim: the card's rarity metal */
     clip-path: polygon(50% 0, 100% 14%, 100% 52%, 86% 76%, 50% 100%, 14% 76%, 0 52%, 0 14%);
     color: #fff;
     font-family: var(--font-title);
     font-size: 1.15rem;
     font-weight: 700;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* The blue inside of the shield, a little smaller so the rarity rim shows around it */
+.unit__shield::before {
+    content: '';
+    position: absolute;
+    inset: 3px 3px 4px;
+    z-index: -1;
+    background: linear-gradient(180deg, #8cc8ff 0%, #3b7fe0 55%, #2459b0 100%);
+    clip-path: polygon(50% 0, 100% 14%, 100% 52%, 86% 76%, 50% 100%, 14% 76%, 0 52%, 0 14%);
 }
 
 /* Enemy: taped to the chalkboard, tilted */
@@ -2399,6 +2568,10 @@ h1, h2, h3 {
     max-width: 100%;
     object-fit: contain;
     margin: 0 auto;
+
+    /* White background in the picture disappears into the card paper
+       (same trick as the pictures on the regular cards) */
+    mix-blend-mode: multiply;
 }
 
 .unit__name {
@@ -2899,6 +3072,13 @@ h1, h2, h3 {
     color: #ff4a3d;
     -webkit-text-stroke: 2px #2a0a0a;
     text-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* A Power card flying out to attack keeps its glow */
+.fly-ghost--power .card {
+    box-shadow:
+        0 0 0 4px rgba(255, 255, 255, 0.9),
+        0 0 24px 8px rgba(200, 60, 120, 0.9);
 }
 
 .fx-heal {

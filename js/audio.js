@@ -167,7 +167,8 @@ window.SC = window.SC || {};
     // Real recorded sounds from the audio folder. They load once when
     // sound starts, then play through the same Sounds slider as the rest.
     const SOUND_FILES = {
-        shieldUp: { src: 'audio/shieldsound.mp3', volume: 0.4 }
+        shieldUp: { src: 'audio/shieldsound.mp3', volume: 0.4 },
+        petJump:  { src: 'audio/hamster_jump.mp3', volume: 0.3 }
     };
     const fileBuffers = {};
 
@@ -258,7 +259,6 @@ window.SC = window.SC || {};
             stroke(ac, t, 0.45, 3000, 600, VOLUME * 0.7);
         },
 
-        // A defender's shield turning on: a quick bright shimmer going up
         // A defender bracing: "shhk-CHUNK", a shield sliding up and locking into place
         shieldUp: function (ac) {
             if (playFile(ac, 'shieldUp')) return;    // audio/shieldsound.mp3
@@ -277,7 +277,29 @@ window.SC = window.SC || {};
             stroke(ac, t, 0.12, 420, 140, VOLUME * 1.4);      // the thump of the hit
             stroke(ac, t, 0.05, 4200, 2600, VOLUME * 0.6);    // the sharp clank
             metal(ac, t, 330, 0.55, VOLUME * 0.22);           // the shield ringing
-        }, 
+        },
+
+        // Teacher's Pet jumping out (audio/hamster_jump.mp3)
+        petJump: function (ac) {
+            if (playFile(ac, 'petJump')) return;
+
+            // Backup if the file is missing: a tiny "eep!"
+            const t = ac.currentTime + 0.01;
+            tone(ac, t,        1800, 0.06, VOLUME * 0.12);
+            tone(ac, t + 0.05, 2400, 0.08, VOLUME * 0.10);
+        },
+
+        // A small stone spear: a quick thrust, then the stone tip
+        // cracking into the target with a short knock
+        spearStab: function (ac) {
+            const t = ac.currentTime + 0.01;
+            stroke(ac, t,        0.09, 1200, 4500, VOLUME * 0.35);   // the thrust
+            stroke(ac, t + 0.07, 0.05, 2200,  900, VOLUME * 0.9);    // stone tip cracks in
+            stroke(ac, t + 0.07, 0.10,  500,  160, VOLUME * 1.0);    // knock of the hit
+            tone(ac,   t + 0.07, 760,  0.06, VOLUME * 0.12);         // stony click
+            tone(ac,   t + 0.07, 1130, 0.04, VOLUME * 0.08);
+        },
+
         // A Power switching on: an electric crackle with a quick rising hum
         powerUp: function (ac) {
             const t = ac.currentTime + 0.01;

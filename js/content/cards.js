@@ -91,6 +91,8 @@ SC.cards = [
         imageAlt: 'The class hamster',
         imageScale: 1.8,
         description: 'Whenever you play an Attack card, Teacher\'s Pet deals 1 damage.',
+        // Sounds when this Power jumps out to attack (names from SOUNDS in audio.js)
+        attackSounds: { jump: 'petJump', hit: 'spearStab' },
         effects: [
             { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 1 } }
         ]
@@ -347,8 +349,8 @@ SC.cards = [
         imageScale: 1.0,
         description: 'Deal 1 damage per card played by player',
         effects: [
-            {type: 'damage', amount: 1},
-            {type: 'multiplier', amount: 'player discard pile size'}
+            // 1 damage, once for every card you played on your turn
+            { type: 'damage', amount: 1, times: 'cards played by player' }
         ]
     },
 
