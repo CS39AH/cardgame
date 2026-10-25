@@ -91,5 +91,21 @@ SC.enemies = {
             'padded-walls',        // 2 Coffee: Power, takes 1 less per hit
             'water-break'          // 1 Coffee: recover 5 Sanity
         ]
-    }
+    },
+    
+    'library-enemy': {
+    id: 'library-enemy',
+    name: 'The Loud Whisperer',
+    art: '📚',
+    image: 'graphics/cards/library/loud-whisperer.png',
+    sanity: 35,
+    energy: 3,
+    order: 'inOrder',
+    shuffleEnemyDeck: true,
+    startingDeck: [
+        'stapler-shot',
+        'eraser',
+        'stapler-shot'
+    ]
+},
 };

@@ -122,8 +122,9 @@ body::before {
     will-change: transform;
 }
 
-/* Cafeteria Background */
-body:has(.battle-screen--cafeteria)::before {
+/* Cafeteria Background & Library Background*/
+body:has(.battle-screen--cafeteria)::before,
+body:has(.battle-screen--library)::before {
     background:
         radial-gradient(
             ellipse 60% 50% at 85% 20%,
@@ -3159,4 +3160,38 @@ h1, h2, h3 {
 .intent-slot.is-viewable,
 .power-slot.is-viewable {
     cursor: zoom-in;
+}
+
+/* ===== LIBRARY BATTLE ===== */
+
+/* Library enemy side: library image */
+.battle-screen--library .battle__side--enemy {
+    position: relative;
+    overflow: hidden;
+
+    border-image: none;
+    border: 6px solid #5a3a1e;
+    border-radius: 12px;
+
+    background:
+        linear-gradient(rgba(20, 12, 6, 0.15), rgba(20, 12, 6, 0.30)),
+        url('graphics/screens/library.jpg') center / cover no-repeat;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.battle-screen--library .battle__side--enemy .battle__side-label,
+.battle-screen--library .battle__side--enemy .battle__intent {
+    color: #f8f4e9;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+}
+
+/* Library hero side: librarian's desk image */
+.battle-screen--library .battle__side--player {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.25)),
+        url('graphics/screens/library-hero.jpg') center 75% / cover no-repeat,
+        linear-gradient(180deg, #8a5a30 0%, #53341a 100%);
+
+    border-top: 10px solid #6b4423;
 }
