@@ -606,6 +606,149 @@ SC.cards = [
         ]
     },
 
+    // ---------- HALLWAY: enemy cards ----------
+    {
+        id: 'mop',
+        name: 'Mop',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🧼',
+        image: 'graphics/cards/mop.jpg',
+        description: 'Deal 3 damage.',
+        effects: [
+            { type: 'damage', amount: 3 }
+        ]
+    },
+
+    {
+        id: 'broom',
+        name: 'Broom',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🧹',
+        image: 'graphics/cards/broom.jpg',
+        description: 'Deal 2 damage.',
+        effects: [
+            { type: 'damage', amount: 2 }
+        ]
+    },
+
+    {
+        id: 'dustpan',
+        name: 'Dustpan',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🧹',
+        image: 'graphics/cards/dustpan.jpg',
+        description: 'Gain 4 Relaxation.',
+        effects: [
+            { type: 'block', amount: 4 }
+        ]
+    },
+
+    {
+        id: 'locker',
+        name: 'Locker',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🚪',
+        image: 'graphics/cards/evil-locker.jpg',
+        description: 'Place a 5 Sanity defender.',
+        effects: [
+            { type: 'defender', amount: 5, name: 'Locker', art: '🚪' }
+        ]
+    },
+
+    {
+        id: 'trash-can',
+        name: 'Trash Can',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🗑️',
+        image: 'graphics/cards/evil-trashcan.jpg',
+        description: 'Deal 1 damage.',
+        effects: [
+            { type: 'damage', amount: 1 }
+        ]
+    },
+
+    // --------- Hallway: player bonus cards ----------
+    {
+        id: 'wet-floor-sign',
+        name: 'Wet Floor Sign',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Player',
+        art: '⚠️',
+        image: 'graphics/cards/wet-floor-sign.jpg',
+        description: 'Gain 6 Relaxation.',
+        effects: [
+            { type: 'block', amount: 6 }
+        ]
+    },
+
+    {
+        id: 'disinfectant-spray',
+        name: 'Disinfectant Spray',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Player',
+        art: '🧴',
+        image: 'graphics/cards/disinfectant-spray.jpg',
+        description: 'Recover 4 Sanity.',
+        effects: [
+            { type: 'heal', amount: 4 }
+        ]
+    },
+
+    {
+        id: 'janitor-key',
+        name: 'Janitor Key',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Player',
+        art: '🗝️',
+        image: 'graphics/cards/janitor-keys.jpg',
+        description: 'Draw 2 cards.',
+        effects: [
+            { type: 'draw', amount: 2 }
+        ]
+    },
+
+    {
+        id: 'vacuum',
+        name: 'Vacuum',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Player',
+        art: '🧹',
+        image: 'graphics/cards/vacuum.jpg',
+        description: 'Deal 4 damage.',
+        effects: [
+            { type: 'damage', amount: 4 }
+        ]
+    },
+
+    {
+        id: 'gloves',
+        name: 'Gloves',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Player',
+        art: '🧤',
+        image: 'graphics/cards/gloves.jpg',
+        description: 'Gain 2 Strength.',
+        effects: [
+            { type: 'damage', amount: 4 }
+        ]
+    },
+
+    
     {
         // Title screen showcase only. demo: true keeps it off the Cards board.
         id: 'substitute-teacher',
@@ -657,16 +800,16 @@ SC.cards = [
         startingSanity: 30,
         startingEnergy: 3,
         startingDeck: [
-            'red-pen-markup',
-            'backpack-wall',
+            'gloves',
+            'wet-floor-sign',
             'morning-coffee',
-            'teachers-pet',
-            'red-pen-markup',
-            'desk-key',
+            'janitor-keys',
+            'gloves',
+            'disinfectant-spray',
             'coffee-refill',
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee'
+            'gloves',
+            'wet-floor-sign',
+            'disinfectant-spray'
         ],
         badgeText: 'Staff · Janitor',
         badgeColor: '#4f6f81',

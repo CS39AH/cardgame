@@ -106,6 +106,8 @@ SC.enemies = {
             'mop',
             'broom',
             'dustpan',
+            'locker',
+            'trash-can'
         ]
     }
 };
