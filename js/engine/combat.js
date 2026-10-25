@@ -8,11 +8,18 @@
    SC.combat.playCard(handIndex)     play a card, true if it worked
    SC.combat.endTurn()               discard hand, enemy plays, next turn
 
+   The battle screen does End Turn one step at a time instead,
+   so you can watch the enemy play its cards one by one:
+   SC.combat.startEnemyTurn()        discard your hand
+   SC.combat.enemyPlayNext()         enemy plays ONE card (null when done)
+   SC.combat.finishEnemyTurn()       your next turn starts
+
    Damage rule: defenders on the field take hits first, then
    Relaxation, then Sanity. Relaxation lasts until your next turn.
 
    Power cards stay in play (side.powers) and react to triggers:
      'playAttack'  owner played an Attack     (Teacher's Pet)
+     'directSanityAttack'  Attack card reached enemy Sanity (Golden Spork)
      'Attacked'    owner is hit by an attack  (Track Record, amount is negative)
      'Attacks'     owner's attacks get +amount (Pencil Sharpener)
    ========================================================= */
@@ -82,7 +89,9 @@ window.SC = window.SC || {};
             hand: [],
             discard: [],
             confiscated: [],
-            log: []
+            log: [],
+            powerFires: [],        // Powers that just went off (the battle screen animates these)
+            hitLog: []             // every single hit of the last card (for multi-hit animations)
         };
 
         combat.state = state;
@@ -115,7 +124,7 @@ window.SC = window.SC || {};
 
         // Last resort: random deck from the card pool (code unchanged)
         const pool = SC.cards.filter(function (card) {
-            return !card.demo && !card.hero && card.rarity !== 'Enemy';
+            return !card.demo && !card.hero && card.rarity !== 'Enemy' && !card.rewardOnly;
         });
 
         const deck = (level.guaranteedCards || []).map(copyCard).filter(Boolean);
@@ -144,6 +153,8 @@ window.SC = window.SC || {};
 
         const card = s.hand[handIndex];
         if (!card) return false;
+        s.powerFires = [];
+        s.hitLog = [];
 
         if (card.cost > s.player.energy) {
             addLog('Not enough Coffee for ' + card.name + '.');
@@ -151,10 +162,12 @@ window.SC = window.SC || {};
         }
 
         s.player.energy -= card.cost;
+        s.player.cardsPlayed = (s.player.cardsPlayed || 0) + 1;   // Bin Dump counts these
         s.hand.splice(handIndex, 1);
         addLog('You played ' + card.name + '.');
 
-        resolveCard(card, 'player');
+        // Track Sanity damage from this card, separate from any triggered Powers.
+        const effectContext = resolveCard(card, 'player');
 
         // Where the card goes after it's played
         if (card.type === 'Power') {
@@ -168,6 +181,10 @@ window.SC = window.SC || {};
 
         // Powers that react to you playing an Attack
         if (isAttack(card) && card.type !== 'Power') {
+            // Golden Spork heals once per Attack card if it reached enemy Sanity.
+            if (card.type === 'Attack' && effectContext.sanityDamageDealt > 0) {
+                firePowers('player', 'directSanityAttack');
+            }
             firePowers('player', 'playAttack');
         }
         
@@ -215,21 +232,63 @@ window.SC = window.SC || {};
         return true;
     };
 
+    // All of End Turn at once
     combat.endTurn = function () {
+        combat.startEnemyTurn();
+        while (combat.enemyPlayNext()) {
+            // keep going until the enemy is out of cards
+        }
+        combat.finishEnemyTurn();
+    };
+
+    // Step 1: leftover hand goes to the discard pile
+    combat.startEnemyTurn = function () {
         const s = combat.state;
         if (!s || s.result) return;
 
-        // Leftover hand goes to the discard pile
         while (s.hand.length) {
             s.discard.push(s.hand.shift());
         }
+        s.enemy.relaxation = 0;                // its Relaxation lasts one turn
+    };
 
-        enemyTurn();
+    // Step 2: the enemy plays its next card.
+    // Returns the card, or null when it has nothing left to play.
+    combat.enemyPlayNext = function () {
+        const s = combat.state;
+        if (!s || s.result) return null;
+
+        const enemy = s.enemy;
+        const card = enemy.next.shift();
+        s.powerFires = [];
+        s.hitLog = [];
+        if (!card) return null;
+
+        addLog(enemy.name + ' played ' + card.name + '.');
+        resolveCard(card, 'enemy');
+
+        if (card.type === 'Power') {
+            enemy.powers.push(card);
+        }
+        if (isAttack(card) && card.type !== 'Power') {
+            firePowers('enemy', 'playAttack');
+        }
+        checkResult();
+        return card;
+    };
+
+    // Step 3: your next turn starts
+    combat.finishEnemyTurn = function () {
+        const s = combat.state;
+        if (!s) return;
+
+        s.enemy.next = [];
         checkResult();
         if (s.result) return;
 
         // Your next turn
         s.turn += 1;
+        s.player.cardsPlayed = 0;              // start counting again
         s.player.relaxation = 0;               // Relaxation lasts one turn
         if (s.level.refillEnergy) {
             s.player.energy = s.player.maxEnergy;
@@ -246,29 +305,6 @@ window.SC = window.SC || {};
     };
 
     // ------- ENEMY -------
-
-    function enemyTurn() {
-        const s = combat.state;
-        const enemy = s.enemy;
-
-        enemy.relaxation = 0;                  // its Relaxation also lasts one turn
-
-        enemy.next.forEach(function (card) {
-            if (s.result) return;
-            addLog(enemy.name + ' played ' + card.name + '.');
-            resolveCard(card, 'enemy');
-
-            if (card.type === 'Power') {
-                enemy.powers.push(card);
-            }
-            if (isAttack(card) && card.type !== 'Power') {
-                firePowers('enemy', 'playAttack');
-            }
-            checkResult();
-        });
-
-        enemy.next = [];
-    }
 
     // Choose what the enemy plays next turn (shown as its intent).
     // The enemy has its own Coffee (maxEnergy, 3 by default). It keeps
@@ -328,10 +364,11 @@ window.SC = window.SC || {};
 
     // Runs every effect on a card for whoever played it
     function resolveCard(card, who) {
-        const ctx = { lastDamage: 0 };
+        const ctx = { lastDamage: 0, sanityDamageDealt: 0 };
         (card.effects || []).forEach(function (effect) {
             resolveEffect(effect, who, card, ctx);
         });
+        return ctx;
     }
 
     function resolveEffect(effect, who, card, ctx) {
@@ -344,7 +381,16 @@ window.SC = window.SC || {};
             
             case 'damage': {
                 const total = Math.max(0, amount + attackBonus(who));
-                ctx.lastSanityDamage = hit(foeWho, total);
+
+                // "times" = hit that many times, e.g. once per card you played.
+                // Leave it out for a normal single hit.
+                const times = effect.times !== undefined ? amountOf(effect.times) : 1;
+                let dealt = 0;
+                for (let i = 0; i < times && !s.result; i++) {
+                    dealt += hit(foeWho, total);
+                }
+                ctx.lastSanityDamage = dealt;
+                ctx.sanityDamageDealt = (ctx.sanityDamageDealt || 0) + dealt;
                 ctx.lastDamage = total;
                 break;
             }
@@ -352,7 +398,7 @@ window.SC = window.SC || {};
             case 'multiplier':
                 // "Deal 2 damage 3 times" = damage once, then repeat 2 more times
                 for (let i = 1; i < amount && !s.result; i++) {
-                    hit(foeWho, ctx.lastDamage);
+                    ctx.sanityDamageDealt = (ctx.sanityDamageDealt || 0) + hit(foeWho, ctx.lastDamage);
                 }
                 break;
 
@@ -375,6 +421,8 @@ window.SC = window.SC || {};
                 owner.field.push({
                     name: effect.name || card.name,
                     art: effect.art || card.art,
+                    rarity: card.rarity || 'Common',             // for its rarity color on the table
+                    image: effect.image || card.image || null,   // the card's picture, if it has one
                     sanity: amount,
                     maxSanity: amount,
                     attackBonus: effect.attackBonus || 0
@@ -437,6 +485,7 @@ window.SC = window.SC || {};
     function amountOf(amount) {
         if (typeof amount === 'number') return amount;
         if (amount === 'player discard pile size') return combat.state.discard.length;
+        if (amount === 'cards played by player') return combat.state.player.cardsPlayed || 0;
         return 0;
     }
 
@@ -445,7 +494,9 @@ window.SC = window.SC || {};
     // Defenders first, then Relaxation, then Sanity
     function hit(targetWho, amount) {
         const target = sideOf(targetWho);
-
+        const fieldBefore = fieldSanity(target);
+        const startSanity = target.sanity;
+        const startRelax = target.relaxation;
         // Powers like Track Record soften every hit
         amount = Math.max(0, amount + powerTotal(targetWho, 'Attacked'));
 
@@ -472,11 +523,24 @@ window.SC = window.SC || {};
         const sanityBefore = target.sanity;
         target.sanity = Math.max(0, target.sanity - amount);
 
+        // Remember this one hit, so the battle screen can show each hit
+        // of a "Deal 2 damage 3 times" card separately
+        combat.state.hitLog.push({
+            who: targetWho,
+            defender: fieldBefore - fieldSanity(target),   // damage to defenders
+            sanity: startSanity - target.sanity,          // damage to the enemy/hero
+            relax: startRelax - target.relaxation,        // soaked up by Relaxation
+            fromPower: firingPower                        // a Power did it, not the card
+        });
+
         // Return the actual Sanity damage dealt.
         return sanityBefore - target.sanity;
     }
 
     // ------- POWERS -------
+
+    // True while a Power's effect is running (so its hits are tagged)
+    let firingPower = false;
 
     // Run the inner effect of every Power with this trigger
     function firePowers(who, trigger) {
@@ -484,10 +548,35 @@ window.SC = window.SC || {};
         side.powers.forEach(function (card) {
             (card.effects || []).forEach(function (effect) {
                 if (effect.type === 'power' && effect.trigger === trigger && effect.effect) {
+                    const foe = sideOf(who === 'player' ? 'enemy' : 'player');
+                    const sanityBefore = foe.sanity;
+                    const fieldBefore = fieldSanity(foe);
+                    const relaxBefore = foe.relaxation;
+
+                    firingPower = true;
                     resolveEffect(effect.effect, who, card, { lastDamage: 0 });
+                    firingPower = false;
+
+                    // Remember it, so the battle screen can show this Power going off
+                    combat.state.powerFires.push({
+                        who: who,
+                        card: card,
+                        sanityLoss: sanityBefore - foe.sanity,          // damage to the enemy/hero
+                        defenderLoss: fieldBefore - fieldSanity(foe),   // damage to defenders
+                        relaxLoss: relaxBefore - foe.relaxation,        // soaked up by Relaxation
+                        attacks: effect.effect.type === 'damage' &&      // an attacking Power (even if
+                            amountOf(effect.effect.amount) > 0          // it ends up doing 0 damage)
+                    });
                 }
             });
         });
+    }
+
+    // All the Sanity left on a side's defenders, added up
+    function fieldSanity(side) {
+        return side.field.reduce(function (total, unit) {
+            return total + Math.max(0, unit.sanity);
+        }, 0);
     }
 
     // Add up the numbers on Powers with this trigger (no effect run)
@@ -580,7 +669,7 @@ window.SC = window.SC || {};
 // Boss reward tables: boss id -> the specific cards offered after defeating them
 combat.bossRewards = {
     'class-clown':   ['dismissal-bell', 'yard-stick', 'golden-apple'],
-    'cafeteria-enemy':    ['fresh-fruits', 'chocolate-milk', 'serving-spoon'],
+    'cafeteria-enemy':    ['golden-spork', 'bottomless-chocolate-milk', 'lunch-ladys-legendary-special'],
     'gym-enemy':   ['team-spirit', 'basketball-pass', 'stacked-mats']
 };
 
@@ -611,7 +700,7 @@ combat.rewardChoices = function (count, bossId) {
     }
 
     const pool = SC.cards.filter(function (card) {
-        return !card.demo && !card.hero && card.rarity !== 'Enemy';
+        return !card.demo && !card.hero && card.rarity !== 'Enemy' && !card.rewardOnly;
     });
     return shuffle(pool.slice()).slice(0, count).map(function (card) {
         return Object.assign({}, card);

@@ -91,6 +91,8 @@ SC.cards = [
         imageAlt: 'The class hamster',
         imageScale: 1.8,
         description: 'Whenever you play an Attack card, Teacher\'s Pet deals 1 damage.',
+        // Sounds when this Power jumps out to attack (names from SOUNDS in audio.js)
+        attackSounds: { jump: 'petJump', hit: 'spearStab' },
         effects: [
             { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 1 } }
         ]
@@ -272,6 +274,54 @@ SC.cards = [
         ]
     },
 
+    // ---------- CAFETERIA DUTY: Legendary boss rewards ----------
+    {
+        id: 'golden-spork',
+        name: 'The Golden Spork',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🍴',
+        image: 'graphics/cards/cafeteria/golden_spork.png',
+        imageAlt: 'A magical golden spork.',
+        description: 'When an Attack card damages enemy Sanity, heal 2 Sanity.',
+        effects: [
+            { type: 'power', trigger: 'directSanityAttack', effect: { type: 'heal', amount: 2 } }
+        ]
+    },
+    {
+        id: 'bottomless-chocolate-milk',
+        name: 'Bottomless Chocolate Milk',
+        cost: 2,
+        type: 'Skill',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🥛',
+        image: 'graphics/cards/cafeteria/bottomless_chocolate_milk.png',
+        imageAlt: 'An overflowing magical chocolate milk carton.',
+        description: 'Gain 3 Coffee. Draw 2 cards.',
+        effects: [
+            { type: 'energy', amount: 3 },
+            { type: 'draw', amount: 2 }
+        ]
+    },
+    {
+        id: 'lunch-ladys-legendary-special',
+        name: "Lunch Lady's Legendary Special",
+        cost: 3,
+        type: 'Skill',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🍱',
+        image: 'graphics/cards/cafeteria/lunch_ladys_special.png',
+        imageAlt: 'A gourmet meal served on a cafeteria tray.',
+        description: 'Recover 10 Sanity. Gain 8 Relaxation.',
+        effects: [
+            { type: 'heal', amount: 10 },
+            { type: 'block', amount: 8 }
+        ]
+    },
 
         {
         id: 'stapler-shot',
@@ -347,8 +397,8 @@ SC.cards = [
         imageScale: 1.0,
         description: 'Deal 1 damage per card played by player',
         effects: [
-            {type: 'damage', amount: 1},
-            {type: 'multiplier', amount: 'player discard pile size'}
+            // 1 damage, once for every card you played on your turn
+            { type: 'damage', amount: 1, times: 'cards played by player' }
         ]
     },
 
@@ -557,6 +607,8 @@ SC.cards = [
             { type: 'heal', amount: 5 }
         ]
     },
+
+    
 
     {
         // Title screen showcase only. demo: true keeps it off the Cards board.
@@ -770,6 +822,69 @@ SC.cards = [
                 }
             },
             { type: 'confiscate' }
+        ]
+    },
+
+    // ---------- LIBRARY: player bonus cards ----------
+    {
+        id: 'hardcover-slam',
+        name: 'Hardcover Slam',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Common',
+        art: '📕',
+        description: 'Deal 9 damage.',
+        effects: [
+            { type: 'damage', amount: 9 }
+        ]
+    },
+    {
+        id: 'quiet-corner',
+        name: 'Quiet Corner',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Common',
+        art: '🪑',
+        description: 'Gain 8 Relaxation.',
+        effects: [
+            { type: 'block', amount: 8 }
+        ]
+    },
+    {
+        id: 'herbal-tea',
+        name: 'Herbal Tea',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '🍵',
+        description: 'Recover 6 Sanity.',
+        effects: [
+            { type: 'heal', amount: 6 }
+        ]
+    },
+    {
+        id: 'research-notes',
+        name: 'Research Notes',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '📝',
+        description: 'Draw 1 card. Gain 4 Relaxation.',
+        effects: [
+            { type: 'draw', amount: 1 },
+            { type: 'block', amount: 4 }
+        ]
+    },
+    {
+        id: 'library-rules',
+        name: 'Library Rules',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Uncommon',
+        art: '🤫',
+        description: 'Whenever you play an Attack card, Call Out the enemy.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'status', status: 'calledOut', amount: 1 } }
         ]
     }
 ];

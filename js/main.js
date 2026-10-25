@@ -153,6 +153,7 @@
         }
 
         if (from === 'battle') {
+            if (SC.battleFx) SC.battleFx.clear();   // nothing left flying on the next screen
             SCREEN.classList.add('is-fading');
             return wait(TIMING.titleFadeOut);
         }

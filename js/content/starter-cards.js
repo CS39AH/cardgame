@@ -18,7 +18,9 @@ SC.cards.push(
         cost: 1,
         type: 'Defense',
         rarity: 'Common',
-        art: '🎒',
+        art: '🎒',                                   // fallback if the image is missing
+        image: 'graphics/cards/backpack_wall.png',
+        imageAlt: 'Backpacks hanging on a hook rail.',
         description: 'Put a Backpack on the field with 6 Sanity. It takes hits before you do.',
         effects: [
             { type: 'defender', name: 'Backpack', amount: 6 }
