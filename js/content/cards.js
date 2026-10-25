@@ -527,57 +527,7 @@ SC.cards = [
         ]
     },
 
-        // ---------- LIBRARY: player bonus cards ----------
-    {
-    id: 'hardcover-slam',
-    name: 'Hardcover Slam',
-    cost: 2,
-    type: 'Attack',
-    rarity: 'Common',
-    art: '📕',
-    description: 'Deal 9 damage.',
-    effects: [{ type: 'damage', amount: 9 }]
-},
-{
-    id: 'quiet-corner',
-    name: 'Quiet Corner',
-    cost: 1,
-    type: 'Defense',
-    rarity: 'Common',
-    art: '🪑',
-    description: 'Gain 8 Relaxation.',
-    effects: [{ type: 'block', amount: 8 }]
-},
-{
-    id: 'herbal-tea',
-    name: 'Herbal Tea',
-    cost: 1,
-    type: 'Defense',
-    rarity: 'Common',
-    art: '🍵',
-    description: 'Heal 6 Sanity.',
-    effects: [{ type: 'heal', amount: 6 }]
-},
-{
-    id: 'research-notes',
-    name: 'Research Notes',
-    cost: 1,
-    type: 'Defense',
-    rarity: 'Uncommon',
-    art: '📝',
-    description: 'Draw 2 cards.',
-    effects: [{ type: 'draw', amount: 2 }]
-},
-{
-    id: 'library-rules',
-    name: 'Library Rules',
-    cost: 1,
-    type: 'Attack',
-    rarity: 'Uncommon',
-    art: '🤫',
-    description: 'Whenever you play an Attack card, gain 2 Relaxation.',
-    effects: [{ type: 'power', trigger: 'playAttack', effect: { type: 'block', amount: 2 } }]
-},    
+    
 
     {
         // Title screen showcase only. demo: true keeps it off the Cards board.

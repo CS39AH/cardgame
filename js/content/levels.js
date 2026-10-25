@@ -99,7 +99,7 @@ SC.levels = {
     name: 'Library',
     intro: 'Shhh! Silence is golden. Someone is whispering too loudly, keep it down!',
     winText: 'Alas, silence has been restored. You may now read in peace.',
-    sanity: 70,
+    sanity: 30,
     energy: 3,
     refillEnergy: true,
     handSize: 5,

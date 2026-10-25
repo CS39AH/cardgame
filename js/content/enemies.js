@@ -98,7 +98,7 @@ SC.enemies = {
     name: 'The Loud Whisperer',
     art: '📚',
     image: 'graphics/cards/library/loud-whisperer.png',
-    sanity: 35,
+    sanity: 70,
     energy: 3,
     order: 'inOrder',
     shuffleEnemyDeck: true,
