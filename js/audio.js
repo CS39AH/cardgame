@@ -172,6 +172,40 @@ window.SC = window.SC || {};
             stroke(ac, t + 0.30, 0.32, 2000,  800, VOLUME * 0.8);
         },
 
+        // Paper ripping: a fast, bright scratch with a crackly tail
+        rip: function (ac) {
+            const t = ac.currentTime + 0.01;
+            stroke(ac, t,        0.10, 2500, 5200, VOLUME * 0.9);
+            stroke(ac, t + 0.06, 0.20, 4200, 1400, VOLUME * 0.7);
+        },
+
+        // Ripping all the way through (a card at 0 Sanity): lots of tiny
+        // paper-fiber snaps over a scratchy "rrrrip", speeding up, then
+        // a final snap as the two halves come apart
+        ripApart: function (ac) {
+            const t = ac.currentTime + 0.02;
+            const length = 0.7;
+
+            // The scratchy body of the tear under the crackles
+            stroke(ac, t, length, 1100, 3400, VOLUME * 0.4);
+
+            // Fiber snaps: random little cracks, closer together as it goes
+            let at = 0;
+            while (at < length) {
+                const progress = at / length;
+                const freq = 1600 + Math.random() * 3800;
+                stroke(ac, t + at,
+                    0.015 + Math.random() * 0.035,
+                    freq,
+                    freq * (0.6 + Math.random() * 0.8),
+                    VOLUME * (0.35 + Math.random() * 0.45) * (0.7 + progress * 0.6));
+                at += 0.035 - progress * 0.022 + Math.random() * 0.015;
+            }
+
+            // Final pull apart
+            stroke(ac, t + length, 0.14, 5200, 900, VOLUME);
+        },
+
         // Stepping back from the board: one soft swoosh, high to low
         whoosh: function (ac) {
             const t = ac.currentTime + 0.02;

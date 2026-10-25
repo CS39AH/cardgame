@@ -3195,3 +3195,103 @@ h1, h2, h3 {
 
     border-top: 10px solid #6b4423;
 }
+/* =========================================================
+   BATTLE: TEARING CARDS
+   Cards rip more as they lose Sanity:
+     75% = small rip, 50% = bigger rips, 25% = badly torn,
+     0%  = ripped in half (the halves are made in battle-fx.js)
+   battle.js sets data-tear="0-3" and adds a .tear-marks layer.
+   ========================================================= */
+:root {
+    --rip-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpolyline points='177.6,0.6 173.6,7.6 179.6,13.6 172.6,20.6 176.6,27.6 170.6,33.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.95' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='176,0 172,7 178,13 171,20 175,27 169,33' fill='none' stroke='%233a2614' stroke-width='2.6' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --rip-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpolyline points='23.6,120.6 28.6,112.6 22.6,105.6 30.6,97.6 25.6,90.6 32.6,82.6 28.6,76.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.95' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='22,120 27,112 21,105 29,97 24,90 31,82 27,76' fill='none' stroke='%233a2614' stroke-width='2.6' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='201.6,70.6 194.6,73.6 198.6,78.6 190.6,81.6 193.6,86.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.65' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='200,70 193,73 197,78 189,81 192,86' fill='none' stroke='%233a2614' stroke-width='2.2' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --rip-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpolyline points='15.6,0.6 20.6,9.6 13.6,18.6 21.6,28.6 14.6,38.6 22.6,48.6 16.6,58.6 23.6,66.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='2.4' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='14,0 19,9 12,18 20,28 13,38 21,48 15,58 22,66' fill='none' stroke='%233a2614' stroke-width='3.2' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='201.6,104.6 193.6,106.6 196.6,111.6 187.6,113.6 190.6,120.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.8' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='200,104 192,106 195,111 186,113 189,120' fill='none' stroke='%233a2614' stroke-width='2.4' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+}
+
+/* Hero badge: its words are on the right, so its rips sit over
+   the picture and the bottom edge instead */
+.card--hero {
+    --rip-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpolyline points='53.6,0.6 49.6,8.6 56.6,15.6 48.6,23.6 54.6,31.6 47.6,38.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.95' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='52,0 48,8 55,15 47,23 53,31 46,38' fill='none' stroke='%233a2614' stroke-width='2.6' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --rip-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpolyline points='1.6,62.6 9.6,65.6 6.6,71.6 14.6,74.6 11.6,80.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.65' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='0,62 8,65 5,71 13,74 10,80' fill='none' stroke='%233a2614' stroke-width='2.2' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='161.6,120.6 157.6,113.6 164.6,107.6 156.6,101.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.65' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='160,120 156,113 163,107 155,101' fill='none' stroke='%233a2614' stroke-width='2.2' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --rip-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpolyline points='31.6,0.6 27.6,12.6 35.6,24.6 26.6,37.6 34.6,50.6 25.6,63.6 32.6,76.6 24.6,88.6 30.6,100.6 26.6,120.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='2.4' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='30,0 26,12 34,24 25,37 33,50 24,63 31,76 23,88 29,100 25,120' fill='none' stroke='%233a2614' stroke-width='3.2' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='201.6,104.6 193.6,106.6 196.6,111.6 187.6,113.6 190.6,120.6' fill='none' stroke='white' stroke-opacity='0.95' stroke-width='1.8' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3Cpolyline points='200,104 192,106 195,111 186,113 189,120' fill='none' stroke='%233a2614' stroke-width='2.4' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+}
+
+/* So the rip layer and the torn halves line up with each card */
+.unit,
+.battle__enemy,
+.battle__hero {
+    position: relative;
+}
+
+/* The layer the rips are drawn on, over the whole card */
+.tear-marks {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+    border-radius: inherit;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+[data-tear="0"] > .tear-marks {
+    display: none;
+}
+
+[data-tear="1"] > .tear-marks {
+    background-image: var(--rip-1);
+}
+
+[data-tear="2"] > .tear-marks {
+    background-image: var(--rip-1), var(--rip-2);
+}
+
+/* Badly torn: all the rips plus some worn, darker edges */
+[data-tear="3"] > .tear-marks {
+    background-image:
+        var(--rip-1),
+        var(--rip-2),
+        var(--rip-3),
+        radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(80, 50, 20, 0.22) 100%);
+}
+
+/* A new rip appears: the card jolts and the rip snaps in */
+.is-ripping {
+    animation: card-rip 0.35s ease;
+}
+
+.is-ripping > .tear-marks {
+    animation: rip-snap 0.35s ease;
+}
+
+@keyframes card-rip {
+    0%   { translate: 0 0; }
+    20%  { translate: -5px 1px; }
+    40%  { translate: 5px -1px; }
+    60%  { translate: -2px 0; }
+    100% { translate: 0 0; }
+}
+
+@keyframes rip-snap {
+    from { opacity: 0; transform: scale(1.06); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* The two halves of a card ripped in two */
+.tear-half {
+    position: absolute;
+    margin: 0;
+    z-index: 30;
+    pointer-events: none;
+}
+
+.tear-half .card-view-btn {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .is-ripping,
+    .is-ripping > .tear-marks {
+        animation: none;
+    }
+}

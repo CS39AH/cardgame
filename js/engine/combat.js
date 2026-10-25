@@ -13,6 +13,7 @@
 
    Power cards stay in play (side.powers) and react to triggers:
      'playAttack'  owner played an Attack     (Teacher's Pet)
+     'directSanityAttack'  Attack card reached enemy Sanity (Golden Spork)
      'Attacked'    owner is hit by an attack  (Track Record, amount is negative)
      'Attacks'     owner's attacks get +amount (Pencil Sharpener)
    ========================================================= */
@@ -115,7 +116,7 @@ window.SC = window.SC || {};
 
         // Last resort: random deck from the card pool (code unchanged)
         const pool = SC.cards.filter(function (card) {
-            return !card.demo && !card.hero && card.rarity !== 'Enemy';
+            return !card.demo && !card.hero && card.rarity !== 'Enemy' && !card.rewardOnly;
         });
 
         const deck = (level.guaranteedCards || []).map(copyCard).filter(Boolean);
@@ -154,7 +155,8 @@ window.SC = window.SC || {};
         s.hand.splice(handIndex, 1);
         addLog('You played ' + card.name + '.');
 
-        resolveCard(card, 'player');
+        // Track Sanity damage from this card, separate from any triggered Powers.
+        const effectContext = resolveCard(card, 'player');
 
         // Where the card goes after it's played
         if (card.type === 'Power') {
@@ -168,6 +170,10 @@ window.SC = window.SC || {};
 
         // Powers that react to you playing an Attack
         if (isAttack(card) && card.type !== 'Power') {
+            // Golden Spork heals once per Attack card if it reached enemy Sanity.
+            if (card.type === 'Attack' && effectContext.sanityDamageDealt > 0) {
+                firePowers('player', 'directSanityAttack');
+            }
             firePowers('player', 'playAttack');
         }
         
@@ -328,10 +334,11 @@ window.SC = window.SC || {};
 
     // Runs every effect on a card for whoever played it
     function resolveCard(card, who) {
-        const ctx = { lastDamage: 0 };
+        const ctx = { lastDamage: 0, sanityDamageDealt: 0 };
         (card.effects || []).forEach(function (effect) {
             resolveEffect(effect, who, card, ctx);
         });
+        return ctx;
     }
 
     function resolveEffect(effect, who, card, ctx) {
@@ -345,6 +352,7 @@ window.SC = window.SC || {};
             case 'damage': {
                 const total = Math.max(0, amount + attackBonus(who));
                 ctx.lastSanityDamage = hit(foeWho, total);
+                ctx.sanityDamageDealt = (ctx.sanityDamageDealt || 0) + ctx.lastSanityDamage;
                 ctx.lastDamage = total;
                 break;
             }
@@ -352,7 +360,7 @@ window.SC = window.SC || {};
             case 'multiplier':
                 // "Deal 2 damage 3 times" = damage once, then repeat 2 more times
                 for (let i = 1; i < amount && !s.result; i++) {
-                    hit(foeWho, ctx.lastDamage);
+                    ctx.sanityDamageDealt = (ctx.sanityDamageDealt || 0) + hit(foeWho, ctx.lastDamage);
                 }
                 break;
 
@@ -579,8 +587,8 @@ window.SC = window.SC || {};
     }
 // Boss reward tables: boss id -> the specific cards offered after defeating them
 combat.bossRewards = {
-    'class-clown':   ['pencil-of-destiny', 'track-record', 'golden-apple'],
-    'cafeteria-enemy':    ['fresh-fruits', 'chocolate-milk', 'serving-spoon'],
+    'class-clown':   ['dismissal-bell', 'yard-stick', 'golden-apple'],
+    'cafeteria-enemy':    ['golden-spork', 'bottomless-chocolate-milk', 'lunch-ladys-legendary-special'],
     'gym-enemy':   ['team-spirit', 'basketball-pass', 'stacked-mats']
 };
 
@@ -611,7 +619,7 @@ combat.rewardChoices = function (count, bossId) {
     }
 
     const pool = SC.cards.filter(function (card) {
-        return !card.demo && !card.hero && card.rarity !== 'Enemy';
+        return !card.demo && !card.hero && card.rarity !== 'Enemy' && !card.rewardOnly;
     });
     return shuffle(pool.slice()).slice(0, count).map(function (card) {
         return Object.assign({}, card);
