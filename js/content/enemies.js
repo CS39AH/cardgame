@@ -53,6 +53,50 @@ SC.enemies = {
             'eraser'
         ]
     },
+    'class-computer': {
+        id: 'class-computer',
+        name: 'Infected Computer',
+        art: '🖥️',
+        image: 'graphics/cards/infected-computer.png',
+        sanity: 25,
+        energy: 4,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'stapler-shot',       // 1 Coffee: deal 2
+            'eraser',             // 1 Coffee: gain 4 Relaxation
+            'bin-dump',           // 1 Coffee: 1 damage per card in your discard pile
+            'pencil-sharpener',   // 2 Coffee: Power, its attacks deal +1
+            'scattered-pencils',   // 2 Coffee: deal 2, four times
+            'stapler-shot',
+            'eraser',
+            'bin-dump',
+            'stapler-shot',
+            'eraser'
+        ]
+    },
+    'marker-hoard': {
+        id: 'marker-horde',
+        name: 'Horde of Markers',
+        art: '🖊️🖊️🖊️🖊️🖊️',
+        image: 'graphics/cards/marker-horde.png',
+        sanity: 50,
+        energy: 2,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'stapler-shot',       // 1 Coffee: deal 2
+            'eraser',             // 1 Coffee: gain 4 Relaxation
+            'bin-dump',           // 1 Coffee: 1 damage per card in your discard pile
+            'pencil-sharpener',   // 2 Coffee: Power, its attacks deal +1
+            'scattered-pencils',   // 2 Coffee: deal 2, four times
+            'stapler-shot',
+            'eraser',
+            'bin-dump',
+            'stapler-shot',
+            'eraser'
+        ]
+    },
 
     'cafeteria-enemy': {
         id: 'cafeteria-enemy',

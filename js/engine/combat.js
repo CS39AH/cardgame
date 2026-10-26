@@ -700,7 +700,7 @@ combat.rewardChoices = function (count, bossId) {
     }
 
     const pool = SC.cards.filter(function (card) {
-        return !card.demo && !card.hero && card.rarity !== 'Enemy' && !card.rewardOnly;
+        return !card.demo && !card.hero && card.rarity !== 'Enemy' && card.rarity !== 'Legendary' &&!card.rewardOnly;
     });
     return shuffle(pool.slice()).slice(0, count).map(function (card) {
         return Object.assign({}, card);

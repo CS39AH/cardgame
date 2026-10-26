@@ -51,6 +51,28 @@ SC.levels = {
         handSize: 5,
         enemy: 'class-clown'
     },
+    'homeroom-computer': {
+        id: 'homeroom-computer',
+        name: 'A virus is spreading',
+        intro: 'Oh no someone has downloaded a virus',
+        winText: "Good we were able to stop it before it corrupted anything vital.",
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'class-computer'
+    },
+    'homeroom-markers': {
+        id: 'homeroom-markers',
+        name: 'Did those markers move!?',
+        intro: 'There is something wrong with these markers.',
+        winText: "The markers have stopped moving. What a weird school",
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'marker-horde'
+    },
 
 
     cafeteria: {
