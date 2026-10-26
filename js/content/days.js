@@ -33,9 +33,9 @@ SC.days = {
                     zoneMap: 'graphics/screens/homeroom-map.jpg',
                     sound: 'bell',
                     zones: [
-                        { id: 'homeroom-markers', label: 'Did those markers move!?', mark: 'X', type: 'combat', pos: {x:20, y: 45}},
+                        { id: 'homeroom-markers', label: 'Did those markers MOVE', mark: 'X', type: 'combat', pos: {x:20, y: 45}},
                         { id: 'homeroom-computer', label: 'A virus is spreading', mark: 'X', type: 'combat', pos: {x:58, y: 40}},
-                        { id: 'homeroom-boss', label: 'Disruption in class', mark: 'X', type: 'combat', pos: {x: 87, y: 50}}
+                        { id: 'homeroom-boss', label: 'Disruption in class', mark: 'X', type: 'boss', pos: {x: 87, y: 50}}
                     ]
                 },
                 { id: 'hallway',   label: 'Hallway Patrol',     icon: '🚪', type: 'combat', pos: { x: 38.9, y: 28.3 } },

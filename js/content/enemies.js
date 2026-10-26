@@ -58,6 +58,7 @@ SC.enemies = {
         name: 'Infected Computer',
         art: '🖥️',
         image: 'graphics/cards/infected-computer.png',
+        imageScale: 1.5,
         sanity: 25,
         energy: 4,
         order: 'inOrder',
@@ -75,11 +76,12 @@ SC.enemies = {
             'eraser'
         ]
     },
-    'marker-hoard': {
+    'marker-horde': {
         id: 'marker-horde',
         name: 'Horde of Markers',
         art: '🖊️🖊️🖊️🖊️🖊️',
         image: 'graphics/cards/marker-horde.png',
+        imageScale: 1.5,
         sanity: 50,
         energy: 2,
         order: 'inOrder',

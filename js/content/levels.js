@@ -64,7 +64,7 @@ SC.levels = {
     },
     'homeroom-markers': {
         id: 'homeroom-markers',
-        name: 'Did those markers move!?',
+        name: 'Did those markers MOVE',
         intro: 'There is something wrong with these markers.',
         winText: "The markers have stopped moving. What a weird school",
         sanity: 30,
