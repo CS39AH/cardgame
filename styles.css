@@ -3841,3 +3841,39 @@ h1, h2, h3 {
         animation: none;
     }
 }
+
+/* =========================================================
+    Hallway Level
+    battle.js adds .battle-screen--hallway during the hallway fight
+   ========================================================= */
+/* HALLWAY */
+.battle-screen--hallway .battle__side--enemy {
+    border-image: none;
+    border: 6px solid #596579;
+    border-radius: 12px;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 20%,
+            rgba(110, 100, 160, 0.5),
+            transparent 70%
+        ),
+        linear-gradient(145deg, #41415a, #242735);
+
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+}
+
+/* Keep enemy text readable */
+.battle-screen--hallway .battle__side--enemy .battle__side-label,
+.battle-screen--hallway .battle__side--enemy .battle__intent {
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+}
+
+.battle-screen--hallway .battle__side--player {
+    background:
+        radial-gradient(ellipse at 50% 20%,
+            rgba(110, 170, 200, 0.45),
+            transparent 70%),
+        linear-gradient(145deg, #526a7b, #303c4b);
+}

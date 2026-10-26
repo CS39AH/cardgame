@@ -173,6 +173,24 @@ SC.enemies = {
             'water-break'          // 1 Coffee: recover 5 Sanity
         ]
     },
+
+    'hallway-enemy': {
+        id: 'hallway-enemy',
+        name: 'spilled-liquid',
+        art: '🧹',
+        image: 'graphics/cards/spill.jpg',
+        sanity: 50,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'mop',
+            'broom',
+            'dustpan',
+            'locker',
+            'trash-can'
+        ]
+    },
     
     'library-enemy': {
     id: 'library-enemy',
