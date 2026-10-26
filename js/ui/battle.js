@@ -525,6 +525,11 @@ window.SC = window.SC || {};
             img.src = unit.image;
             img.alt = unit.name || 'Enemy artwork';
 
+            // imageScale from enemies.js / cards.js: zoom the picture in or out
+            if (unit.imageScale && unit.imageScale !== 1) {
+                img.style.transform = 'scale(' + unit.imageScale + ')';
+            }
+
             // Use the emoji if the image cannot load.
             img.onerror = function () {
                 art.textContent = unit.art || '🛡️';

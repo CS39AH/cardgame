@@ -71,6 +71,7 @@ window.SC = window.SC || {};
                 name: enemyDef.name,
                 art: enemyDef.art,
                 image: enemyDef.image || null,
+                imageScale: enemyDef.imageScale || 1,   // zoom the picture (enemies.js)
                 sanity: enemyDef.sanity,
                 maxSanity: enemyDef.sanity,
                 relaxation: 0,
@@ -423,6 +424,7 @@ window.SC = window.SC || {};
                     art: effect.art || card.art,
                     rarity: card.rarity || 'Common',             // for its rarity color on the table
                     image: effect.image || card.image || null,   // the card's picture, if it has one
+                    imageScale: card.imageScale || 1,
                     sanity: amount,
                     maxSanity: amount,
                     attackBonus: effect.attackBonus || 0
