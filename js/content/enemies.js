@@ -53,6 +53,52 @@ SC.enemies = {
             'eraser'
         ]
     },
+    'class-computer': {
+        id: 'class-computer',
+        name: 'Infected Computer',
+        art: '🖥️',
+        image: 'graphics/cards/infected-computer.png',
+        imageScale: 1.5,
+        sanity: 25,
+        energy: 4,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'stapler-shot',       // 1 Coffee: deal 2
+            'eraser',             // 1 Coffee: gain 4 Relaxation
+            'bin-dump',           // 1 Coffee: 1 damage per card in your discard pile
+            'pencil-sharpener',   // 2 Coffee: Power, its attacks deal +1
+            'scattered-pencils',   // 2 Coffee: deal 2, four times
+            'stapler-shot',
+            'eraser',
+            'bin-dump',
+            'stapler-shot',
+            'eraser'
+        ]
+    },
+    'marker-horde': {
+        id: 'marker-horde',
+        name: 'Horde of Markers',
+        art: '🖊️🖊️🖊️🖊️🖊️',
+        image: 'graphics/cards/marker-horde.png',
+        imageScale: 1.5,
+        sanity: 50,
+        energy: 2,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'stapler-shot',       // 1 Coffee: deal 2
+            'eraser',             // 1 Coffee: gain 4 Relaxation
+            'bin-dump',           // 1 Coffee: 1 damage per card in your discard pile
+            'pencil-sharpener',   // 2 Coffee: Power, its attacks deal +1
+            'scattered-pencils',   // 2 Coffee: deal 2, four times
+            'stapler-shot',
+            'eraser',
+            'bin-dump',
+            'stapler-shot',
+            'eraser'
+        ]
+    },
 
     'cafeteria-enemy': {
         id: 'cafeteria-enemy',
@@ -71,6 +117,41 @@ SC.enemies = {
             'spoiled-milk'
         ]
 
+    },
+
+    // ----- Gym zone enemies (the boss is gym-enemy below) -----
+    'gym-warmup-enemy': {
+        id: 'gym-warmup-enemy',
+        name: 'Runaway Jump Rope',
+        art: '🪢',
+        image: 'graphics/cards/jump_rope.png',
+        sanity: 30,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'medicine-ball',
+            'water-break',
+            'dodgeball-barrage',
+            'water-break'
+        ]
+    },
+
+    'gym-dodgeball-enemy': {
+        id: 'gym-dodgeball-enemy',
+        name: 'The Ball Cart',
+        art: '🛒',
+        sanity: 40,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'dodgeball-barrage',
+            'dodgeball-barrage',
+            'medicine-ball',
+            'bleacher-wall',
+            'water-break'
+        ]
     },
 
     'gym-enemy': {
@@ -109,5 +190,21 @@ SC.enemies = {
             'locker',
             'trash-can'
         ]
-    }
+    },
+    
+    'library-enemy': {
+    id: 'library-enemy',
+    name: 'The Loud Whisperer',
+    art: '📚',
+    image: 'graphics/cards/library/loud-whisperer.png',
+    sanity: 70,
+    energy: 3,
+    order: 'inOrder',
+    shuffleEnemyDeck: true,
+    startingDeck: [
+        'stapler-shot',
+        'eraser',
+        'stapler-shot'
+    ]
+},
 };

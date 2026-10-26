@@ -91,6 +91,8 @@ SC.cards = [
         imageAlt: 'The class hamster',
         imageScale: 1.8,
         description: 'Whenever you play an Attack card, Teacher\'s Pet deals 1 damage.',
+        // Sounds when this Power jumps out to attack (names from SOUNDS in audio.js)
+        attackSounds: { jump: 'petJump', hit: 'spearStab' },
         effects: [
             { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 1 } }
         ]
@@ -395,8 +397,8 @@ SC.cards = [
         imageScale: 1.0,
         description: 'Deal 1 damage per card played by player',
         effects: [
-            {type: 'damage', amount: 1},
-            {type: 'multiplier', amount: 'player discard pile size'}
+            // 1 damage, once for every card you played on your turn
+            { type: 'damage', amount: 1, times: 'cards played by player' }
         ]
     },
 
@@ -961,6 +963,69 @@ SC.cards = [
                 }
             },
             { type: 'confiscate' }
+        ]
+    },
+
+    // ---------- LIBRARY: player bonus cards ----------
+    {
+        id: 'hardcover-slam',
+        name: 'Hardcover Slam',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Common',
+        art: '📕',
+        description: 'Deal 9 damage.',
+        effects: [
+            { type: 'damage', amount: 9 }
+        ]
+    },
+    {
+        id: 'quiet-corner',
+        name: 'Quiet Corner',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Common',
+        art: '🪑',
+        description: 'Gain 8 Relaxation.',
+        effects: [
+            { type: 'block', amount: 8 }
+        ]
+    },
+    {
+        id: 'herbal-tea',
+        name: 'Herbal Tea',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '🍵',
+        description: 'Recover 6 Sanity.',
+        effects: [
+            { type: 'heal', amount: 6 }
+        ]
+    },
+    {
+        id: 'research-notes',
+        name: 'Research Notes',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '📝',
+        description: 'Draw 1 card. Gain 4 Relaxation.',
+        effects: [
+            { type: 'draw', amount: 1 },
+            { type: 'block', amount: 4 }
+        ]
+    },
+    {
+        id: 'library-rules',
+        name: 'Library Rules',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Uncommon',
+        art: '🤫',
+        description: 'Whenever you play an Attack card, Call Out the enemy.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'status', status: 'calledOut', amount: 1 } }
         ]
     }
 ];

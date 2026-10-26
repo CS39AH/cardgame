@@ -51,6 +51,28 @@ SC.levels = {
         handSize: 5,
         enemy: 'class-clown'
     },
+    'homeroom-computer': {
+        id: 'homeroom-computer',
+        name: 'A virus is spreading',
+        intro: 'Oh no someone has downloaded a virus',
+        winText: "Good we were able to stop it before it corrupted anything vital.",
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'class-computer'
+    },
+    'homeroom-markers': {
+        id: 'homeroom-markers',
+        name: 'Did those markers MOVE',
+        intro: 'There is something wrong with these markers.',
+        winText: "The markers have stopped moving. What a weird school",
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'marker-horde'
+    },
 
 
     cafeteria: {
@@ -71,6 +93,35 @@ SC.levels = {
             'serving-spoon',
             'clean-tray'
         ]
+    },
+
+    // ----- Gym zones (left basket, center court). The boss is `gym` below. -----
+    'gym-warmup': {
+        id: 'gym-warmup',
+        name: 'Gym: Jump Rope Warm-Up',
+        theme: 'gym',             // uses the gym's battle look
+        intro: 'Grab a rope. Fifty jumps, no tripping!',
+        winText: 'Fifty jumps done. On to the drills.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'gym-warmup-enemy',
+        bonusCards: ['running-shoes', 'sports-drink']
+    },
+
+    'gym-dodgeball': {
+        id: 'gym-dodgeball',
+        name: 'Gym: Dodgeball Drill',
+        theme: 'gym',
+        intro: 'The ball cart is loaded and it is aimed right at you.',
+        winText: 'The cart is empty. Only the PACER Test is left.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'gym-dodgeball-enemy',
+        bonusCards: ['basketball-pass', 'stacked-mats']
     },
 
     gym: {
@@ -113,5 +164,28 @@ SC.levels = {
             'vacuum',
             'gloves'
         ]
+    },
+    
+    library: {
+    id: 'library',
+    name: 'Library',
+    intro: 'Shhh! Silence is golden. Someone is whispering too loudly, keep it down!',
+    winText: 'Alas, silence has been restored. You may now read in peace.',
+    sanity: 30,
+    energy: 3,
+    refillEnergy: true,
+    handSize: 5,
+    enemy: 'library-enemy',
+    
+
+    bonusCards: [
+            'hardcover-slam',
+            'quiet-corner',
+            'herbal-tea',
+            'research-notes',
+            'library-rules'
+        ]
+    
     }
+
 };
