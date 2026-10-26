@@ -73,6 +73,35 @@ SC.levels = {
         ]
     },
 
+    // ----- Gym zones (left basket, center court). The boss is `gym` below. -----
+    'gym-warmup': {
+        id: 'gym-warmup',
+        name: 'Gym: Jump Rope Warm-Up',
+        theme: 'gym',             // uses the gym's battle look
+        intro: 'Grab a rope. Fifty jumps, no tripping!',
+        winText: 'Fifty jumps done. On to the drills.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'gym-warmup-enemy',
+        bonusCards: ['running-shoes', 'sports-drink']
+    },
+
+    'gym-dodgeball': {
+        id: 'gym-dodgeball',
+        name: 'Gym: Dodgeball Drill',
+        theme: 'gym',
+        intro: 'The ball cart is loaded and it is aimed right at you.',
+        winText: 'The cart is empty. Only the PACER Test is left.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'gym-dodgeball-enemy',
+        bonusCards: ['basketball-pass', 'stacked-mats']
+    },
+
     gym: {
         id: 'gym',
         name: 'Gym Class',

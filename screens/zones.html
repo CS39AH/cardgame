@@ -1,0 +1,26 @@
+<!--
+    SCREEN: Zone Map
+    The mini-map inside one location (like the Gym's clipboard).
+    Opens when you click a location on the day map that has `zones`
+    in js/content/days.js.
+
+    This file is only the empty frame. The rest is built at runtime:
+      - setupZones() in js/main.js reads the save and picks the location
+      - SC.buildZoneMap() in js/ui/zones.js draws the picture, the
+        zone markers, and the dotted play arrows between them
+    Styles are in styles.css under "Zone Map Screen".
+-->
+
+<section class="zone-screen">
+
+    <a href="#map" class="map-screen__back">← Back to Map</a>
+
+    <header class="map-screen__header">
+        <h1 class="map-screen__title" id="zone-title"></h1>
+        <p class="map-screen__subtitle" id="zone-subtitle"></p>
+    </header>
+
+    <!-- Left empty on purpose: SC.buildZoneMap() fills this in -->
+    <div class="zone-map" id="zone-map"></div>
+
+</section>
