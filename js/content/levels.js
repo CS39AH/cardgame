@@ -107,8 +107,11 @@ SC.levels = {
         hero: 'janitor',      // this level always uses the Janitor
 
         bonusCards: [
-            'mop',
-            'broom',
+            'wet-floor-sign',
+            'disinfectant-spray',
+            'janitor-key',
+            'vacuum',
+            'gloves'
         ]
     }
 };
