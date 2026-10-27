@@ -1535,12 +1535,11 @@ window.SC = window.SC || {};
         });
     }
 
-    // SC.ALWAYS_ANIMATE (index.html) = ignore the computer's "reduce motion"
+    // The game's own "Reduce animations" setting (Settings screen, js/ui/settings.js).
+    // The computer's "reduce motion" setting is ignored on purpose.
     function reducedMotion() {
-        return !SC.ALWAYS_ANIMATE &&
-            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        return Boolean(SC.REDUCE_ANIMATIONS);
     }
-
     SC.battleFx = {
         reset: reset,
         mark: mark,

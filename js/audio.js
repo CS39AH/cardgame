@@ -557,22 +557,11 @@ window.SC = window.SC || {};
         // Storage blocked (private window, etc.). Use the default.
     }
 
-    function volumeIcon(value) {
-        if (value === 0)  { return '🔇'; }
-        if (value < 0.34) { return '🔈'; }
-        if (value < 0.67) { return '🔉'; }
-        return '🔊';
-    }
-
     function updateVolumeUI() {
         const percent = Math.round(musicVolume * 100);
-        const button = document.getElementById('volume-toggle');
         const slider = document.getElementById('music-volume');
         const label = document.getElementById('music-volume-value');
 
-        if (button) {
-            button.textContent = volumeIcon(musicVolume);
-        }
         if (slider) {
             slider.value = percent;
             slider.setAttribute('aria-valuetext', percent + '%');
@@ -600,22 +589,10 @@ window.SC = window.SC || {};
         updateVolumeUI();
     };
 
-    const volumeControl = document.getElementById('volume-control');
-    const volumeButton = document.getElementById('volume-toggle');
+    // The sliders live in the Settings screen (index.html, js/ui/settings.js)
     const volumeSlider = document.getElementById('music-volume');
 
-    function setPanelOpen(open) {
-        volumeControl.classList.toggle('is-open', open);
-        volumeButton.setAttribute('aria-expanded', open);
-    }
-
-    if (volumeControl && volumeButton && volumeSlider) {
-        // Speaker button opens and closes the slider
-        volumeButton.addEventListener('click', function (e) {
-            e.stopPropagation();
-            setPanelOpen(!volumeControl.classList.contains('is-open'));
-        });
-
+    if (volumeSlider) {
         // Moving the slider changes the music volume
         volumeSlider.addEventListener('input', function () {
             SC.setMusicVolume(volumeSlider.value / 100);
@@ -637,17 +614,6 @@ window.SC = window.SC || {};
             });
         }
 
-        // Close when clicking anywhere else, or pressing Escape
-        document.addEventListener('click', function (e) {
-            if (!volumeControl.contains(e.target)) {
-                setPanelOpen(false);
-            }
-        });
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                setPanelOpen(false);
-            }
-        });
     }
 
     // ------- SOUND EFFECTS VOLUME SLIDER -------

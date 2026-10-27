@@ -55,9 +55,11 @@
     // so we can put it back when the player returns.
     const TITLE_HTML = SCREEN.innerHTML;
 
-    // SC.ALWAYS_ANIMATE (index.html) = ignore the computer's "reduce motion"
-    const reduceMotion = !SC.ALWAYS_ANIMATE &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // The game's own "Reduce animations" setting (Settings screen, js/ui/settings.js).
+    // The computer's "reduce motion" setting is ignored on purpose.
+    function reduceMotion() {
+        return Boolean(SC.REDUCE_ANIMATIONS);
+    }
 
     let currentScreen = null;
     let routeId = 0;
@@ -294,7 +296,7 @@
     // The map grows from that spot and fades, then done() switches screens
     // (the zone map then zooms in on arrival, see .zone-map in styles.css).
     function zoomInto(container, node, done) {
-        if (reduceMotion || !node.pos) {
+        if (reduceMotion() || !node.pos) {
             done();
             return;
         }
@@ -883,7 +885,7 @@
 
     function wait(ms) {
         return new Promise(function (resolve) {
-            setTimeout(resolve, reduceMotion ? 0 : ms);
+            setTimeout(resolve, reduceMotion() ? 0 : ms);
         });
     }
 
