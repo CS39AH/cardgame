@@ -132,7 +132,7 @@ window.SC = window.SC || {};
             });
         } else if (kind === 'enemyCard') {
             // An enemy card just LANDED (it already flew over): hits happen now
-            const outcome = hitOutcome(before.fields.player, state.player.field);
+            const outcome = blockedOutcome(hitOutcome(before.fields.player, state.player.field), 'player');
             const landedCard = takeFlight();
             const guards = defenderDamage(before.fields.player, state.player.field, 'player');
             const split = splitPowerDamage(fires, 'enemy', guards, playerLoss);
@@ -156,6 +156,7 @@ window.SC = window.SC || {};
                 showRelaxHit(cardHits, '.battle__hero', split.cardLoss > 0 ? 250 : 0);
             }
             later(doneAt, function () { afterHit(outcome, landedCard); });
+            blockHits(cardHits, 'player', doneAt);
             showPowerFires(fires, doneAt + 350, split.target);
 
             // The enemy healing or gaining Relaxation
@@ -170,7 +171,7 @@ window.SC = window.SC || {};
             // You played a card. 'impact' = an attack that already flew
             // to its target, so its hits happen right now.
             const landed = kind === 'impact';
-            const outcome = hitOutcome(before.fields.enemy, state.enemy.field);
+            const outcome = blockedOutcome(hitOutcome(before.fields.enemy, state.enemy.field), 'enemy');
             const landedCard = landed ? takeFlight() : null;
 
             leftHand.forEach(function (old) {
@@ -203,6 +204,7 @@ window.SC = window.SC || {};
             }
             if (landed) {
                 later(doneAt, function () { afterHit(outcome, landedCard); });
+                blockHits(cardHits, 'enemy', doneAt);
             }
 
             // Your Powers go off just after the card's last hit
@@ -369,8 +371,12 @@ window.SC = window.SC || {};
 
         const isAttack = (card.effects || []).some(function (e) { return e.type === 'damage'; });
 
+        // Your blocking Powers (Track Record) jump in front first,
+        // and the attack hits them instead
+        const guardAt = isAttack && aimAt ? sendBlockers('player', old.center, aimAt) : null;
+
         slot.style.visibility = 'hidden';       // it left the row
-        enemyAttack(old, aimAt, isAttack);
+        enemyAttack(old, guardAt || aimAt, isAttack);
         return ms(450);
     }
 
@@ -388,7 +394,8 @@ window.SC = window.SC || {};
         slot.style.visibility = 'hidden';       // it left your hand
         if (SC.playSound) SC.playSound('whoosh');
 
-        const to = centerOf(target);
+        // The enemy's blocking Powers (Padded Walls) jump in front first
+        const to = sendBlockers('enemy', old.center, centerOf(target)) || centerOf(target);
         const end = { x: to.x - old.center.x, y: to.y - old.center.y, scale: 0.75, rot: 8 };
         const ghost = makeGhost(old.node, old.center, HAND_W);
         const duration = 650;
@@ -480,10 +487,11 @@ window.SC = window.SC || {};
     }
 
     // A floating number at a point on the screen
-    function floatAt(point, text) {
+    function floatAt(point, text, extraClass, color) {
         const num = document.createElement('div');
-        num.className = 'fx-damage';
+        num.className = 'fx-damage' + (extraClass ? ' ' + extraClass : '');
         num.textContent = text;
+        if (color) num.style.color = color;
         num.style.left = point.x + 'px';
         num.style.top = point.y + 'px';
         document.body.appendChild(num);
@@ -720,6 +728,153 @@ window.SC = window.SC || {};
                 { rotate: '360deg', scale: '1' }
             ], { duration: ms(500), easing: 'ease-out' });
         }
+    }
+
+    // ---------- Powers that block hits (Track Record, Padded Walls) ----------
+
+    // The blocking Power cards out in front of their side right now
+    let blockers = [];
+
+    // Powers on this side that take damage off every hit
+    function blockingPowers(side) {
+        return (SC.combat.state[side].powers || []).filter(function (card) {
+            return (card.effects || []).some(function (e) {
+                return e.type === 'power' && e.trigger === 'Attacked' && e.effect &&
+                    typeof e.effect.amount === 'number' && e.effect.amount < 0;
+            });
+        });
+    }
+
+    function powerSlotOf(side, card) {
+        const i = (SC.combat.state[side].powers || []).indexOf(card);
+        return i === -1 ? null : document.querySelectorAll('.battle__powers--' + side + ' > .power-slot')[i];
+    }
+
+    // An attack is on its way: this side's blocking Powers jump out of their
+    // spots and stand between the attacker and the target. Returns where
+    // the attack should hit (the front blocker), or null if there are none.
+    function sendBlockers(side, attackerAt, targetAt) {
+        const cards = blockingPowers(side);
+        if (!cards.length || reducedMotion()) return null;
+
+        let firstAt = null;
+        cards.forEach(function (card, k) {
+            const slot = powerSlotOf(side, card);
+            const cardEl = slot && slot.querySelector('.card');
+            if (!cardEl) return;
+
+            // A little way out from the target, toward the attacker
+            const at = {
+                x: targetAt.x + (attackerAt.x - targetAt.x) * 0.3 + k * 18,
+                y: targetAt.y + (attackerAt.y - targetAt.y) * 0.3 - k * 22
+            };
+            if (!firstAt) firstAt = at;
+
+            const from = centerOf(slot);
+            const ring = getComputedStyle(slot).getPropertyValue('--ring').trim() || '#a0a0a0';
+            const ghost = makeGhost(cardEl.cloneNode(true), from, POWER_W);
+            ghost.classList.add('fly-ghost--power');
+            slot.style.visibility = 'hidden';
+
+            if (SC.playSound && k === 0) SC.playSound('whoosh');
+            const dx = at.x - from.x;
+            const dy = at.y - from.y;
+            ghost.animate([
+                { transform: 'translate(0, 0) scale(1) rotate(0deg)' },
+                { transform: 'translate(0, -40px) scale(1.15) rotate(-6deg)', offset: 0.3 },
+                { transform: 'translate(' + dx + 'px, ' + dy + 'px) scale(1.1) rotate(3deg)' }
+            ], { duration: ms(380), easing: 'cubic-bezier(.3, .7, .3, 1)', fill: 'forwards' });
+
+            hold(ms(2000));
+            blockers.push({ side: side, card: card, ghost: ghost, from: from, at: at, ring: ring });
+        });
+        return firstAt;
+    }
+
+    // An attack blocked by a Power bounces off it instead of just "hitting"
+    function blockedOutcome(outcome, side) {
+        const out = blockers.some(function (b) { return b.side === side; });
+        return out && outcome === 'hit' ? 'bounce' : outcome;
+    }
+
+    // The attack landed: each hit a blocker soaked up makes it pulse in its
+    // rarity color with a "-2 🛡", then they all go home after the last hit
+    function blockHits(cardHits, side, doneAt) {
+        const mine = blockers.filter(function (b) { return b.side === side; });
+        if (!mine.length) return;
+
+        // render() rebuilt the Power spots, so hide the new ones while they're out
+        mine.forEach(function (b) {
+            const slot = powerSlotOf(side, b.card);
+            if (slot) slot.style.visibility = 'hidden';
+        });
+
+        const count = cardHits.length;
+        const gap = count > 1 ? Math.min(300, BOB_MAX_TOTAL / (count - 1)) : 0;
+        cardHits.forEach(function (h, i) {
+            (h.blocks || []).forEach(function (blk) {
+                const b = mine.find(function (x) { return x.card === blk.card; });
+                if (b) later(i * gap, function () { pulseBlocker(b, blk.amount); });
+            });
+        });
+
+        later(doneAt + 450, function () {
+            mine.forEach(sendHome);
+            blockers = blockers.filter(function (b) { return mine.indexOf(b) === -1; });
+        });
+    }
+
+    function pulseBlocker(b, amount) {
+        if (SC.playSound) SC.playSound('mitigate');
+        hold(ms(600));
+
+        const card = b.ghost.querySelector('.card');
+        if (card) {
+            card.animate([
+                { boxShadow: '0 0 0 4px ' + b.ring + ', 0 0 20px 6px ' + b.ring },
+                { boxShadow: '0 0 0 14px ' + b.ring + ', 0 0 80px 30px ' + b.ring, offset: 0.25 },
+                { boxShadow: '0 0 0 4px ' + b.ring + ', 0 0 20px 6px ' + b.ring }
+            ], { duration: ms(500), easing: 'ease-out' });
+        }
+
+        const face = b.ghost.querySelector('.fly-ghost__face');
+        if (face) {
+            face.animate([
+                { scale: '1' },
+                { scale: '1.12', offset: 0.25 },
+                { scale: '1' }
+            ], { duration: ms(400), easing: 'ease-out' });
+        }
+
+        floatAt(centerOf(b.ghost), '-' + amount + ' 🛡', 'fx-block', b.ring);
+    }
+
+    // Back to its spot, then slam down like when it was first played
+    function sendHome(b) {
+        const slot = powerSlotOf(b.side, b.card);
+        const home = slot ? centerOf(slot) : b.from;
+        const dx = home.x - b.from.x;
+        const dy = home.y - b.from.y;
+        const ax = b.at.x - b.from.x;
+        const ay = b.at.y - b.from.y;
+        hold(ms(800));
+
+        b.ghost.animate([
+            { transform: 'translate(' + ax + 'px, ' + ay + 'px) scale(1.1) rotate(3deg)' },
+            { transform: 'translate(' + dx + 'px, ' + (dy - 50) + 'px) scale(1.2) rotate(-4deg)', offset: 0.75, easing: 'cubic-bezier(.7, 0, 1, .5)' },
+            { transform: 'translate(' + dx + 'px, ' + dy + 'px) scale(1) rotate(0deg)' }
+        ], { duration: ms(550), fill: 'forwards' })
+            .finished.then(function () {
+                b.ghost.remove();
+                if (!slot) return;
+                slot.style.visibility = '';
+                if (SC.playSound) SC.playSound('slam');
+                slot.animate([
+                    { scale: '1.12 0.85' },
+                    { scale: '0.96 1.06', offset: 0.45 },
+                    { scale: '1' }
+                ], { duration: ms(300), easing: 'ease-out' });
+            });
     }
 
     // ---------- After an attack lands ----------
@@ -965,6 +1120,7 @@ window.SC = window.SC || {};
     function clear() {
         busyUntil = 0;
         flight = null;
+        blockers = [];
         document.querySelectorAll('.fly-ghost, .fx-damage, .tear-half').forEach(function (el) {
             el.remove();
         });

@@ -351,6 +351,16 @@ window.SC = window.SC || {};
             blast(t + 0.22, 0.45);    // TWEEEET
         },
 
+        // A Power soaking up a hit (Track Record, Padded Walls): a soft padded
+        // "bwomp" with a low hum, then a little rising chime as it holds
+        mitigate: function (ac) {
+            const t = ac.currentTime + 0.01;
+            stroke(ac, t, 0.12, 320, 90, VOLUME * 1.1);      // padded bwomp
+            tone(ac, t, 150, 0.22, VOLUME * 0.3);            // low hum
+            tone(ac, t + 0.05, 660, 0.25, VOLUME * 0.09);    // chime up
+            tone(ac, t + 0.10, 990, 0.30, VOLUME * 0.07);
+        },
+
         // A card slapped onto the chalkboard: low thud plus a tiny paper snap
         slam: function (ac) {
             const t = ac.currentTime + 0.01;
