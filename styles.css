@@ -1612,20 +1612,14 @@ h1, h2, h3 {
     transform: rotate(-4deg);
 }
 
-/* ---------- 10. MUSIC VOLUME ---------- */
+/* ---------- 10. SETTINGS (js/ui/settings.js) ---------- */
 
-/* Speaker button with the slider hanging below it */
-.volume-control {
+/* Gear button, top-right on every screen */
+.settings-toggle {
     position: fixed;
     top: var(--space-4);
     right: var(--space-4);
     z-index: 150;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.volume-toggle {
     width: 2.75rem;
     height: 2.75rem;
     display: flex;
@@ -1639,69 +1633,169 @@ h1, h2, h3 {
     font-size: 1.25rem;
     cursor: pointer;
     box-shadow: var(--shadow-sm);
-    transition: transform 0.15s ease, border-color 0.15s ease;
+    transition: transform 0.2s ease, border-color 0.15s ease;
 }
 
-.volume-toggle:hover,
-.volume-toggle:focus-visible,
-.volume-control.is-open .volume-toggle {
-    transform: scale(1.08);
+.settings-toggle:hover,
+.settings-toggle:focus-visible {
+    transform: rotate(45deg) scale(1.08);
     border-color: var(--color-chalk);
     outline: none;
 }
 
-/* The drop-down panel, hidden until the button is clicked */
-.volume-panel {
-    display: flex;
-    flex-direction: column;
+/* Dark see-through cover over the whole game */
+.settings {
+    position: fixed;
+    inset: 0;
+    z-index: 300;                   /* above the battle and flying cards */
+    display: grid;
+    place-items: center;
+    padding: var(--space-4);
+    background: rgba(5, 12, 8, 0.7);
+    animation: settings-fade 0.2s ease;
+}
+
+.settings[hidden] {
+    display: none;
+}
+
+/* The window itself: a sheet of paper, like the cards */
+.settings__panel {
+    position: relative;
+    width: min(420px, 100%);
+    padding: var(--space-5) var(--space-5) var(--space-4);
+    border-radius: 12px;
+    background:
+        repeating-linear-gradient(180deg, transparent 0 27px, rgba(90, 130, 200, 0.18) 27px 28px),
+        #fbf7ea;
+    color: #2a2a35;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    animation: settings-pop 0.25s cubic-bezier(.3, 1.4, .5, 1);
+}
+
+.settings__title {
+    margin: 0 0 var(--space-3);
+    font-family: var(--font-title);
+    font-size: 2rem;
+    text-align: center;
+    color: #2a2a35;              /* headings are chalk-white elsewhere */
+    text-shadow: none;
+}
+
+.settings__close {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: #2a2a35;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.settings__close:hover {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.settings__section {
+    margin-bottom: var(--space-4);
+}
+
+.settings__heading {
+    text-shadow: none;
+    margin: 0 0 var(--space-2);
+    padding-bottom: 2px;
+    border-bottom: 2px solid rgba(217, 72, 72, 0.5);   /* red margin line */
+    font-family: var(--font-title);
+    font-size: 1.15rem;
+    color: #a82020;
+}
+
+/* "Music  [=====o---]  15%" */
+.settings__row {
+    display: grid;
+    grid-template-columns: 6rem 1fr 3rem;
     align-items: center;
     gap: var(--space-2);
-    margin-top: var(--space-2);
-    padding: var(--space-3) var(--space-2);
-    background: rgba(10, 24, 16, 0.85);
-    border: 2px solid var(--color-chalk-faint);
-    border-radius: 999px;
-    box-shadow: var(--shadow-md);
-
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translateY(-8px) scaleY(0.6);
-    transform-origin: top center;
-    transition:
-        opacity 0.2s ease,
-        transform 0.2s ease,
-        visibility 0s linear 0.2s;
+    margin-bottom: var(--space-2);
 }
 
-.volume-control.is-open .volume-panel {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: none;
-    transition:
-        opacity 0.2s ease,
-        transform 0.2s ease,
-        visibility 0s;
+.settings__label {
+    font-family: var(--font-title);
+    font-size: 1.05rem;
 }
 
-.volume-panel__value,
-.volume-panel__label {
-    font-size: 0.75rem;
-    color: var(--color-chalk-dim);
-}
-
-/* Vertical slider: top is loudest */
-.volume-panel__slider {
-    writing-mode: vertical-lr;
-    direction: rtl;
-    width: 1.5rem;
-    height: 8rem;
+.settings__slider {
+    width: 100%;
     margin: 0;
     cursor: pointer;
-    accent-color: var(--color-accent);
+    accent-color: #2a6b4a;
 }
 
+.settings__value {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    text-align: right;
+}
+
+/* Checkbox with a short explanation under it */
+.settings__check {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+    cursor: pointer;
+}
+
+.settings__check input {
+    width: 1.3rem;
+    height: 1.3rem;
+    margin-top: 0.2rem;
+    accent-color: #2a6b4a;
+    cursor: pointer;
+}
+
+.settings__check strong {
+    display: block;
+    font-family: var(--font-title);
+    font-size: 1.05rem;
+}
+
+.settings__check small {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #555;
+}
+
+.settings__done {
+    display: block;
+    margin: 0 auto;
+    min-width: 10rem;
+}
+
+@keyframes settings-fade {
+    from { opacity: 0; }
+}
+
+@keyframes settings-pop {
+    from { transform: scale(0.85); opacity: 0; }
+}
+
+/* ----- "Reduce animations" turned on (html.reduce-animations) -----
+   Makes every CSS animation and transition finish instantly. The battle's
+   flying cards are turned off in js/ui/battle-fx.js. */
+html.reduce-animations *,
+html.reduce-animations *::before,
+html.reduce-animations *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+}
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 600px) {
@@ -3692,29 +3786,6 @@ h1, h2, h3 {
 @media (max-width: 1450px) {
     .board-arrow--prev { left: 6px; }
     .board-arrow--next { right: 6px; }
-}
-/* =========================================================
-   VOLUME PANEL: Music and Sounds sliders side by side
-   ========================================================= */
-.volume-panel {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: var(--space-3);
-    padding: var(--space-3) var(--space-3);
-    border-radius: 28px;
-}
-
-.volume-panel__group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
-    min-width: 2.6rem;
-}
-
-/* Wider panel: line it up with the right edge so it stays on screen */
-.volume-control {
-    align-items: flex-end;
 }
 
 /* =========================================================
