@@ -397,7 +397,7 @@ SC.cards = [
         image: 'graphics/cards/blackout.jpg',
         imageAlt: 'A black marker censoring stuff.',
         imageScale: 1.2,
-        description: 'Lower damage taken by 1',
+        description: 'Mitigate damage taken by 1',
         effects: [
             { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -1 } }
         ]
