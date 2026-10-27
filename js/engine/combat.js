@@ -364,12 +364,37 @@ window.SC = window.SC || {};
     // ------- CARD EFFECTS -------
 
     // Runs every effect on a card for whoever played it
-    function resolveCard(card, who) {
-        const ctx = { lastDamage: 0, sanityDamageDealt: 0 };
-        (card.effects || []).forEach(function (effect) {
+    function resolveCard(card, who) 
+    {
+        const ctx = { lastDamage: 0, sanityDamageDealt: 0, bonusPending: 0 };
+
+        // Powers like Teacher's Pet add to this Attack's damage instead of hitting separately
+        if (isAttack(card) && card.type !== 'Power') {
+            const bonus = playAttackBonus(who);
+            ctx.bonusPending = bonus.total;
+        }
+
+        (card.effects || []).forEach(function (effect) 
+        {
             resolveEffect(effect, who, card, ctx);
         });
         return ctx;
+    }
+
+    function playAttackBonus(who) {
+        let total = 0;
+        const cards = [];
+        sideOf(who).powers.forEach(function (card) {
+            (card.effects || []).forEach(function (effect) {
+                if (effect.type === 'power' && effect.trigger === 'playAttack' &&
+                    effect.effect && effect.effect.type === 'damage') {
+                    const amount = amountOf(effect.effect.amount);
+                    total += amount;
+                    if (amount > 0) cards.push(card);
+                }
+            });
+        });
+        return { total: total, cards: cards };
     }
 
     function resolveEffect(effect, who, card, ctx) {
@@ -381,7 +406,7 @@ window.SC = window.SC || {};
         switch (effect.type) {
             
             case 'damage': {
-                const total = Math.max(0, amount + attackBonus(who));
+                const total = Math.max(0, amount + attackBonus(who) +(ctx.bonusPending || 0));
 
                 // "times" = hit that many times, e.g. once per card you played.
                 // Leave it out for a normal single hit.
@@ -571,6 +596,7 @@ window.SC = window.SC || {};
         const side = sideOf(who);
         side.powers.forEach(function (card) {
             (card.effects || []).forEach(function (effect) {
+                if (trigger === 'playAttack' && effect.effect && effect.effect.type === 'damage') return;
                 if (effect.type === 'power' && effect.trigger === trigger && effect.effect) {
                     const foe = sideOf(who === 'player' ? 'enemy' : 'player');
                     const sanityBefore = foe.sanity;
