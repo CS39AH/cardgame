@@ -59,9 +59,15 @@ window.SC = window.SC || {};
             || 'tutorial';
             
         // Apply cafeteria styling only during Cafeteria Duty.
-        root.classList.toggle('battle-screen--cafeteria', levelId === 'cafeteria');
-        root.classList.toggle('battle-screen--gym', levelId === 'gym');
-        root.classList.toggle('battle-screen--library', levelId === 'library');
+        // A level can borrow another level's look (theme: 'gym' on the gym zones)
+        const theme = (SC.levels[levelId] && SC.levels[levelId].theme) || levelId;
+        root.classList.toggle('battle-screen--cafeteria', theme === 'cafeteria');
+        root.classList.toggle('battle-screen--gym', theme === 'gym');
+        root.classList.toggle('battle-screen--library', theme === 'library');
+
+        // Page background behind the battle, e.g. body.scene--gym = the gym photo
+        // (main.js clears these when you leave, so other screens get the classroom)
+        document.body.classList.add('scene--' + theme);
 
         if (SC.stopMusic) {
             SC.stopMusic();
@@ -69,8 +75,8 @@ window.SC = window.SC || {};
 
         // Back link goes to the map for map fights, the title for the tutorial
         const backLink = root.querySelector('.battle__back');
-        backLink.href = fromMap() ? '#map' : '#';
-        backLink.textContent = fromMap() ? '← Back to Map' : '← Back to Title';
+        backLink.href = backHref();
+        backLink.textContent = backText();
 
         // Teacher Ability Button Listener.
 
@@ -151,6 +157,25 @@ window.SC = window.SC || {};
         return Boolean(SC.currentBattle && typeof SC.currentBattle.nodeIndex === 'number');
     }
 
+    // A zone fight (inside a location like the Gym), not a plain map fight
+    function fromZones() {
+        return fromMap() && typeof SC.currentBattle.zoneIndex === 'number';
+    }
+
+    // Where "Back" goes: the zone map, the day map, or the title
+    function backHref() {
+        if (fromZones()) return '#zones';
+        return fromMap() ? '#map' : '#';
+    }
+
+    function backText() {
+        if (fromZones()) {
+            const node = SC.days.current.nodes[SC.currentBattle.nodeIndex];
+            return '← Back to ' + (node ? node.label : 'Map');
+        }
+        return fromMap() ? '← Back to Map' : '← Back to Title';
+    }
+
     // The teacher picked on the title screen. How to Play passes it in
     // directly; map fights read it from the save made by Start a New Day.
     // A level can set its own teacher (hero: 'gym-teacher' in levels.js).
@@ -190,6 +215,26 @@ window.SC = window.SC || {};
             const deck = (save.playerDeck || (hero && hero.startingDeck) || []).slice();
             if (rewardId) deck.push(rewardId);
 
+            // A zone inside a location (like the Gym) with more zones left:
+            // stay in the location and go back to its zone map
+            const zones = day.nodes[battle.nodeIndex] && day.nodes[battle.nodeIndex].zones;
+            if (zones && typeof battle.zoneIndex === 'number' && battle.zoneIndex + 1 < zones.length) {
+                localStorage.setItem('sc-save', JSON.stringify(
+                    Object.assign({}, save, {
+                        dayId: day.id,
+                        nodeIndex: battle.nodeIndex,
+                        zoneNode: battle.nodeIndex,
+                        zoneIndex: battle.zoneIndex + 1,
+                        playerDeck: deck
+                    })
+                ));
+                SC.currentLocation = { nodeIndex: battle.nodeIndex };
+                SC.currentBattle = null;
+                window.location.hash = 'zones';
+                return;
+            }
+
+            // Otherwise the location is done: on to the next one on the day map
             const nextIndex = battle.nodeIndex + 1;
             if (nextIndex >= day.nodes.length) {
                 localStorage.removeItem('sc-save');
@@ -198,6 +243,8 @@ window.SC = window.SC || {};
                     Object.assign({}, save, {
                         dayId: day.id,
                         nodeIndex: nextIndex,
+                        zoneNode: null,          // no zones in progress
+                        zoneIndex: 0,
                         playerDeck: deck
                     })
                 ));
@@ -224,8 +271,15 @@ window.SC = window.SC || {};
 
     function isFinalNode() {
         const day = SC.days && SC.days.current;
-        return Boolean(day && SC.currentBattle &&
-            SC.currentBattle.nodeIndex + 1 >= day.nodes.length);
+        const battle = SC.currentBattle;
+        if (!day || !battle) return false;
+
+        // Zones still left in this location: not the end of the day
+        const zones = day.nodes[battle.nodeIndex] && day.nodes[battle.nodeIndex].zones;
+        if (zones && typeof battle.zoneIndex === 'number' && battle.zoneIndex + 1 < zones.length) {
+            return false;
+        }
+        return battle.nodeIndex + 1 >= day.nodes.length;
     }
     // ------- DRAWING -------
 
@@ -470,6 +524,11 @@ window.SC = window.SC || {};
             const img = document.createElement('img');
             img.src = unit.image;
             img.alt = unit.name || 'Enemy artwork';
+
+            // imageScale from enemies.js / cards.js: zoom the picture in or out
+            if (unit.imageScale && unit.imageScale !== 1) {
+                img.style.transform = 'scale(' + unit.imageScale + ')';
+            }
 
             // Use the emoji if the image cannot load.
             img.onerror = function () {
@@ -903,8 +962,8 @@ window.SC = window.SC || {};
 
                 const back = document.createElement('a');
                 back.className = 'cards-screen__back';
-                back.href = fromMap() ? '#map' : '#';
-                back.textContent = fromMap() ? '← Back to Map' : '← Back to Title';
+                back.href = backHref();
+                back.textContent = backText();
                 box.appendChild(back);
             }
 

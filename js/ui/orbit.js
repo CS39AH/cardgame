@@ -118,7 +118,8 @@ window.SC = window.SC || {};
             return; // not on the title screen
         }
 
-        reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        // The game's "Reduce animations" setting (Settings screen)
+        reduceMotion = Boolean(SC.REDUCE_ANIMATIONS);
 
         // Build one element per supply, spaced evenly around the ellipse.
         // Each gets its own random wobble so they don't move in lockstep.

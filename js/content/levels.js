@@ -51,6 +51,28 @@ SC.levels = {
         handSize: 5,
         enemy: 'class-clown'
     },
+    'homeroom-computer': {
+        id: 'homeroom-computer',
+        name: 'A virus is spreading',
+        intro: 'Oh no someone has downloaded a virus',
+        winText: "Good we were able to stop it before it corrupted anything vital.",
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'class-computer'
+    },
+    'homeroom-markers': {
+        id: 'homeroom-markers',
+        name: 'Did those markers MOVE',
+        intro: 'There is something wrong with these markers.',
+        winText: "The markers have stopped moving. What a weird school",
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'marker-horde'
+    },
 
 
     cafeteria: {
@@ -73,6 +95,35 @@ SC.levels = {
         ]
     },
 
+    // ----- Gym zones (left basket, center court). The boss is `gym` below. -----
+    'gym-warmup': {
+        id: 'gym-warmup',
+        name: 'Gym: Jump Rope Warm-Up',
+        theme: 'gym',             // uses the gym's battle look
+        intro: 'Grab a rope. Fifty jumps, no tripping!',
+        winText: 'Fifty jumps done. On to the drills.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'gym-warmup-enemy',
+        bonusCards: ['running-shoes', 'sports-drink']
+    },
+
+    'gym-dodgeball': {
+        id: 'gym-dodgeball',
+        name: 'Gym: Dodgeball Drill',
+        theme: 'gym',
+        intro: 'The ball cart is loaded and it is aimed right at you.',
+        winText: 'The cart is empty. Only the PACER Test is left.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'gym-dodgeball-enemy',
+        bonusCards: ['basketball-pass', 'stacked-mats']
+    },
+
     gym: {
         id: 'gym',
         name: 'Gym Class',
@@ -83,7 +134,7 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-enemy',
-        //hero: 'gym-teacher',      // this level always uses the Gym Teacher
+        hero: 'gym-teacher',      // this level always uses the Gym Teacher
 
         bonusCards: [
             'basketball-pass',
@@ -94,6 +145,26 @@ SC.levels = {
         ]
     },
 
+    hallway: {
+        id: 'hallway',
+        name: 'hallway',
+        intro: 'The hallway is a mess. You need to get it under control.',
+        winText: 'The hallway is finally under control!',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'hallway-enemy',
+
+        bonusCards: [
+            'wet-floor-sign',
+            'disinfectant-spray',
+            'janitor-key',
+            'vacuum',
+            'gloves'
+        ]
+    },
+    
     library: {
     id: 'library',
     name: 'Library',

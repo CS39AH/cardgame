@@ -23,7 +23,7 @@
 
     // ------- CONFIG -------
 
-    const SCREENS = ['tutorial', 'cards', 'credits', 'map', 'battle'];
+    const SCREENS = ['tutorial', 'cards', 'credits', 'map', 'zones', 'battle'];
 
     // Screen-specific setup that runs after a screen is swapped in
     const SCREEN_SETUP = {
@@ -31,6 +31,7 @@
         cards: setupCards,
         credits: setupCredits,
         map: setupMap,
+        zones: setupZones,
         battle: function () { SC.setupBattle(); }
     };
 
@@ -54,7 +55,11 @@
     // so we can put it back when the player returns.
     const TITLE_HTML = SCREEN.innerHTML;
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // The game's own "Reduce animations" setting (Settings screen, js/ui/settings.js).
+    // The computer's "reduce motion" setting is ignored on purpose.
+    function reduceMotion() {
+        return Boolean(SC.REDUCE_ANIMATIONS);
+    }
 
     let currentScreen = null;
     let routeId = 0;
@@ -180,6 +185,14 @@
         // Zoom the room toward the chalkboard (only for Cards)
         document.body.classList.toggle('scene--board', name === 'cards');
 
+        // A location's own background (like the gym) only shows on its zone
+        // map; every other screen goes back to the classroom
+        document.body.classList.forEach(function (cls) {
+            if (cls.indexOf('scene--') === 0 && cls !== 'scene--board') {
+                document.body.classList.remove(cls);
+            }
+        });
+
         // Eraser sound as the camera moves to the chalkboard
         if (name === 'cards' && SC.playSound) {
             SC.playSound('eraser');
@@ -238,6 +251,17 @@
         SC.buildDayPath(container, day, nodeIndex, function (node, index) {
             console.log('Encounter started:', node.id);
 
+            // Locations with mini-zones open their zone map (js/ui/zones.js),
+            // with the location's sound and a zoom into it
+            if (node.zones) {
+                SC.currentLocation = { nodeIndex: index };
+                if (node.sound && SC.playSound) SC.playSound(node.sound);
+                zoomInto(container, node, function () {
+                    window.location.hash = 'zones';
+                });
+                return;
+            }
+
             // Combat nodes that have a level in js/content/levels.js open
             // the battle screen. Winning advances the map
             // (see completeEncounter in js/ui/battle.js).
@@ -268,6 +292,91 @@
             setupMap();
         });
     }
+    // Day map -> zone map: the camera dives into the clicked location.
+    // The map grows from that spot and fades, then done() switches screens
+    // (the zone map then zooms in on arrival, see .zone-map in styles.css).
+    function zoomInto(container, node, done) {
+        if (reduceMotion() || !node.pos) {
+            done();
+            return;
+        }
+
+        const ZOOM_MS = 650;
+        container.style.pointerEvents = 'none';             // no double clicks
+        container.style.transformOrigin = node.pos.x + '% ' + node.pos.y + '%';
+        document.documentElement.style.overflow = 'hidden'; // no scrollbars while it's huge
+
+        container.animate([
+            { transform: 'scale(1)', opacity: 1, filter: 'blur(0px)' },
+            { transform: 'scale(3.2)', opacity: 0, filter: 'blur(3px)' }
+        ], { duration: ZOOM_MS, easing: 'cubic-bezier(.5, 0, .9, .4)', fill: 'forwards' });
+
+        // The title and subtitle fade out at the same time
+        const header = SCREEN.querySelector('.map-screen__header');
+        if (header) {
+            header.animate([{ opacity: 1 }, { opacity: 0 }],
+                { duration: ZOOM_MS * 0.6, fill: 'forwards' });
+        }
+
+        setTimeout(function () {
+            document.documentElement.style.overflow = '';
+            done();
+        }, ZOOM_MS - 50);
+    }
+
+    /*
+     * setupZones()
+     * Runs after screens/zones.html is loaded. Draws the zone map for the
+     * location the player clicked (like the Gym's clipboard).
+     *
+     * Zone progress is saved with the rest of the save:
+     *   { ..., zoneNode: 3, zoneIndex: 1 }
+     *   zoneNode  = which location (index in the day) the zones belong to
+     *   zoneIndex = how many of its zones are finished
+     */
+    function setupZones() {
+        const container = document.getElementById('zone-map');
+        if (!container) return;
+
+        const day = SC.days.current;
+        const save = JSON.parse(localStorage.getItem('sc-save') || 'null');
+
+        // Which location: the one just clicked, or the one in the save
+        let nodeIndex = SC.currentLocation ? SC.currentLocation.nodeIndex : null;
+        if (nodeIndex === null && save && typeof save.zoneNode === 'number') {
+            nodeIndex = save.zoneNode;
+        }
+        const location = nodeIndex !== null ? day.nodes[nodeIndex] : null;
+
+        // Nothing to show (e.g. the page was reloaded): back to the day map
+        if (!location || !location.zones) {
+            window.location.hash = 'map';
+            return;
+        }
+
+        // Swap the page background to this location's (body.scene--gym in styles.css)
+        document.body.classList.add('scene--' + location.id);
+
+        document.getElementById('zone-title').textContent = location.label;
+        document.getElementById('zone-subtitle').textContent =
+            'Win every zone. The last one is the boss.';
+
+        const zoneIndex = (save && save.dayId === day.id && save.zoneNode === nodeIndex)
+            ? save.zoneIndex || 0
+            : 0;
+
+        SC.buildZoneMap(container, location, zoneIndex, function (zone, index) {
+            console.log('Zone started:', zone.id);
+
+            if (!SC.levels || !SC.levels[zone.id]) {
+                console.warn('No level in levels.js for zone:', zone.id);
+                return;
+            }
+            SC.currentBattle = { levelId: zone.id, nodeIndex: nodeIndex, zoneIndex: index };
+            window.location.hash = 'battle';
+        });
+    }
+
     // ------- TITLE SCREEN -------
 
     function setupTitle() {
@@ -279,8 +388,8 @@
         const teacherIds = [
             'substitute-teacher',
             'janitor',
-            'gym-teacher',
             'lunch-lady',
+            'gym-teacher',
             'librarian',
             'principal'
         ];
@@ -302,22 +411,58 @@
 
             // Save the currently selected teacher on the element.
             demoSlot.dataset.selectedTeacher = teacher.id;
+
+            // Make the pick obvious: "Playing as Janitor", the dots,
+            // and "Start as Janitor" on the start button
+            const nameEl = document.getElementById('teacher-name');
+            if (nameEl) nameEl.textContent = teacher.name;
+
+            document.querySelectorAll('.teacher-pick__dot').forEach(function (dot, i) {
+                const on = i === selectedTeacherIndex;
+                dot.classList.toggle('is-selected', on);
+                dot.setAttribute('aria-selected', on);
+            });
+
+            const btnStartLabel = document.getElementById('btn-start');
+            if (btnStartLabel) btnStartLabel.textContent = 'Start as ' + teacher.name;
+
+            // Little "picked" bounce on the card
+            demoSlot.classList.remove('is-picked');
+            void demoSlot.offsetWidth;
+            demoSlot.classList.add('is-picked');
+        }
+
+        function selectTeacher(index) {
+            selectedTeacherIndex = (index + teacherIds.length) % teacherIds.length;
+            if (SC.playSound) SC.playSound('chalkClick', true);
+            renderSelectedTeacher();
+        }
+
+        // One dot per teacher; click a dot to jump straight to them
+        const dotsBox = document.getElementById('teacher-dots');
+        if (dotsBox) {
+            dotsBox.innerHTML = '';
+            teacherIds.forEach(function (id, i) {
+                const teacher = SC.getCard ? SC.getCard(id) : null;
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'teacher-pick__dot';
+                dot.setAttribute('role', 'tab');
+                dot.setAttribute('aria-label', teacher ? teacher.name : id);
+                dot.title = teacher ? teacher.name : id;
+                dot.addEventListener('click', function () { selectTeacher(i); });
+                dotsBox.appendChild(dot);
+            });
         }
 
         renderSelectedTeacher();
 
         btnTeacherPrev.addEventListener('click', function () {
-            selectedTeacherIndex =
-                (selectedTeacherIndex - 1 + teacherIds.length) % teacherIds.length;
-
-            renderSelectedTeacher();
+            selectTeacher(selectedTeacherIndex - 1);
         });
 
         btnTeacherNext.addEventListener('click', function () {
-            selectedTeacherIndex =
-                (selectedTeacherIndex + 1) % teacherIds.length;
-
-            renderSelectedTeacher();
+            selectTeacher(selectedTeacherIndex + 1);
         });
 
         // Orbiting supplies
@@ -740,7 +885,7 @@
 
     function wait(ms) {
         return new Promise(function (resolve) {
-            setTimeout(resolve, reduceMotion ? 0 : ms);
+            setTimeout(resolve, reduceMotion() ? 0 : ms);
         });
     }
 

@@ -71,6 +71,7 @@ window.SC = window.SC || {};
                 name: enemyDef.name,
                 art: enemyDef.art,
                 image: enemyDef.image || null,
+                imageScale: enemyDef.imageScale || 1,   // zoom the picture (enemies.js)
                 sanity: enemyDef.sanity,
                 maxSanity: enemyDef.sanity,
                 relaxation: 0,
@@ -423,6 +424,7 @@ window.SC = window.SC || {};
                     art: effect.art || card.art,
                     rarity: card.rarity || 'Common',             // for its rarity color on the table
                     image: effect.image || card.image || null,   // the card's picture, if it has one
+                    imageScale: card.imageScale || 1,
                     sanity: amount,
                     maxSanity: amount,
                     attackBonus: effect.attackBonus || 0
@@ -497,7 +499,10 @@ window.SC = window.SC || {};
         const fieldBefore = fieldSanity(target);
         const startSanity = target.sanity;
         const startRelax = target.relaxation;
-        // Powers like Track Record soften every hit
+
+        // Powers like Track Record soften every hit (remember which ones did,
+        // so the battle screen can show them blocking)
+        const blocks = blockedBy(targetWho, amount);
         amount = Math.max(0, amount + powerTotal(targetWho, 'Attacked'));
 
         // 1. Defenders, front one first
@@ -530,11 +535,30 @@ window.SC = window.SC || {};
             defender: fieldBefore - fieldSanity(target),   // damage to defenders
             sanity: startSanity - target.sanity,          // damage to the enemy/hero
             relax: startRelax - target.relaxation,        // soaked up by Relaxation
+            blocks: blocks,                               // Powers that took some of it
             fromPower: firingPower                        // a Power did it, not the card
         });
 
         // Return the actual Sanity damage dealt.
         return sanityBefore - target.sanity;
+    }
+
+    // Which 'Attacked' Powers (Track Record, Padded Walls...) take part
+    // of this hit, and how much each one stops: [{ card, amount }]
+    function blockedBy(who, incoming) {
+        const list = [];
+        let left = incoming;
+        sideOf(who).powers.forEach(function (card) {
+            (card.effects || []).forEach(function (effect) {
+                if (effect.type !== 'power' || effect.trigger !== 'Attacked' || !effect.effect) return;
+                const stops = -amountOf(effect.effect.amount);
+                if (stops <= 0 || left <= 0) return;
+                const amount = Math.min(stops, left);
+                left -= amount;
+                list.push({ card: card, amount: amount });
+            });
+        });
+        return list;
     }
 
     // ------- POWERS -------
@@ -700,7 +724,7 @@ combat.rewardChoices = function (count, bossId) {
     }
 
     const pool = SC.cards.filter(function (card) {
-        return !card.demo && !card.hero && card.rarity !== 'Enemy' && !card.rewardOnly;
+        return !card.demo && !card.hero && card.rarity !== 'Enemy' && card.rarity !== 'Legendary' &&!card.rewardOnly;
     });
     return shuffle(pool.slice()).slice(0, count).map(function (card) {
         return Object.assign({}, card);

@@ -36,6 +36,7 @@ SC.enemies = {
         name: 'Class Clown',
         art: '🤡',
         image: 'graphics/cards/class-clown.png',
+        imageScale: 1.4,
         sanity: 40,
         energy: 3,
         order: 'inOrder',
@@ -51,6 +52,52 @@ SC.enemies = {
             'bin-dump',
             'stapler-shot',
             'eraser'
+        ]
+    },
+    'class-computer': {
+        id: 'class-computer',
+        name: 'Infected Computer',
+        art: '🖥️',
+        image: 'graphics/cards/infected-computer.png',
+        imageScale: 1.5,
+        sanity: 25,
+        energy: 4,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'critical-error',       
+            'safeguard',             
+            'cyber-wall',           
+            'safeguard',   
+            'restoring-data',   
+            'increase-power',
+            'restoring-data',
+            'cyber-wall',
+            'safeguard',
+            'critical-error'
+        ]
+    },
+    'marker-horde': {
+        id: 'marker-horde',
+        name: 'Horde of Markers',
+        art: '🖊️🖊️🖊️🖊️🖊️',
+        image: 'graphics/cards/marker-horde.png',
+        imageScale: 1.5,
+        sanity: 50,
+        energy: 2,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'marked-up',       
+            'blackout',             
+            'incorrect-strikes',           
+            'blue-barrier',   
+            'healing-green-ink',   
+            'incorrect-strikes', 
+            'incorrect-strikes', 
+            'blue-barrier',
+            'healing-green0ink',
+            'incorrect-strikes'
         ]
     },
 
@@ -73,6 +120,41 @@ SC.enemies = {
 
     },
 
+    // ----- Gym zone enemies (the boss is gym-enemy below) -----
+    'gym-warmup-enemy': {
+        id: 'gym-warmup-enemy',
+        name: 'Runaway Jump Rope',
+        art: '🪢',
+        image: 'graphics/cards/jump_rope.png',
+        sanity: 30,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'medicine-ball',
+            'water-break',
+            'dodgeball-barrage',
+            'water-break'
+        ]
+    },
+
+    'gym-dodgeball-enemy': {
+        id: 'gym-dodgeball-enemy',
+        name: 'The Ball Cart',
+        art: '🛒',
+        sanity: 40,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'dodgeball-barrage',
+            'dodgeball-barrage',
+            'medicine-ball',
+            'bleacher-wall',
+            'water-break'
+        ]
+    },
+
     'gym-enemy': {
         id: 'gym-enemy',
         name: 'The PACER Test',
@@ -90,6 +172,24 @@ SC.enemies = {
             'bleacher-wall',       // 1 Coffee: 6 Sanity defender
             'padded-walls',        // 2 Coffee: Power, takes 1 less per hit
             'water-break'          // 1 Coffee: recover 5 Sanity
+        ]
+    },
+
+    'hallway-enemy': {
+        id: 'hallway-enemy',
+        name: 'spilled-liquid',
+        art: '🧹',
+        image: 'graphics/cards/spill.jpg',
+        sanity: 50,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'mop',
+            'broom',
+            'dustpan',
+            'locker',
+            'trash-can'
         ]
     },
     

@@ -171,9 +171,9 @@ SC.cards = [
         image: 'graphics/cards/track_record.png',
         imageAlt: 'Proof of good performance as a substitute',
         imageScale: 1.0,
-        description: 'Whenever you are hit by an Attack, Mitigate 2 damage',
+        description: 'Whenever you are hit by an Attack, Mitigate 1 damage',
         effects: [
-            { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -2 } }
+            { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -1 } }
         ]
     },
         {
@@ -245,7 +245,7 @@ SC.cards = [
         name: 'Serving Spoon',
         cost: 2,
         type: 'Attack',
-        rarity: 'Uncommon',
+        rarity: 'Rare',
         art: '🥄',                                  // fallback if the image is missing
         image: 'graphics/cards/cafeteria/serving_spoon.png',
         description: 'Deal 6 damage. Heal for half the Sanity damage dealt.',
@@ -259,7 +259,7 @@ SC.cards = [
         name: 'Clean Tray',
         cost: 1,
         type: 'Defense',
-        rarity: 'Common',
+        rarity: 'Uncommon',
         art: '🍽️',                                  // fallback if the image is missing
         image: 'graphics/cards/cafeteria/clean_tray.png',
         description: 'Place a 6 Sanity defender. While active, your attacks deal +1 damage.',
@@ -323,7 +323,165 @@ SC.cards = [
         ]
     },
 
-        {
+    //marker horde cards
+    {
+        id: 'blue-barrier',
+        name: 'Blue Barrier',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🛡️',                                   // fallback if the image is missing
+        image: 'graphics/cards/blue-barrier.jpg',
+        imageAlt: 'A stapler shooting a staple.',
+        imageScale: 1.2,
+        description: 'Gain a 10 sanity barrier',
+        effects: [
+            { type: 'defender', amount: 10, name: 'Blue Barrier', art: '🛡️' }
+        ]
+    },
+    {
+        id: 'healing-green-ink',
+        name: 'Healing Green Ink',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '💚',                                   // fallback if the image is missing
+        image: 'graphics/cards/healing-green-ink.jpg',
+        imageAlt: 'Green marker with a glowing aura.',
+        imageScale: 1.2,
+        description: 'Restore 5 sanity',
+        effects: [
+            {type: 'heal', amount: 5}
+        ]
+    },
+    {
+        id: 'marked-up',
+        name: 'Marked Up',
+        cost: 2,
+        type: 'power',
+        rarity: 'Enemy',
+        art: '👍',                                   // fallback if the image is missing
+        image: 'graphics/cards/marked-up.jpg',
+        imageAlt: 'Purple marker with 3 +1',
+        imageScale: 1.2,
+        description: '+1 to sanity and relaxation when you play a Defense Card. +1 to Attack Cards.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 1 } },
+            { type: 'power', trigger: 'playDefense', effect: { type: 'block', amount: 1 } },
+            { type: 'power', trigger: 'playDefense', effect: { type: 'heal', amount: 1 } }
+        ]
+    },
+    {
+        id: 'incorrect-strikes',
+        name: 'Incorrect Strikes',
+        cost: 0,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '❌',                                   // fallback if the image is missing
+        image: 'graphics/cards/incorrect-strikes.jpg',
+        imageAlt: 'Red marker with 3 Xs',
+        imageScale: 1.2,
+        description: 'Deal 1 damage 6 times',
+        effects: [
+            {type: 'damage', amount: 1},
+            { type: 'multiplier', amount: 6}
+        ]
+    },
+    {
+        id: 'blackout',
+        name: 'Blackout',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '⚫',                                   // fallback if the image is missing
+        image: 'graphics/cards/blackout.jpg',
+        imageAlt: 'A black marker censoring stuff.',
+        imageScale: 1.2,
+        description: 'Mitigate damage taken by 1',
+        effects: [
+            { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -1 } }
+        ]
+    },
+
+    //infected computer cards
+    {
+        id: 'restoring-data',
+        name: 'Restoring Data',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '⚫',                                   // fallback if the image is missing
+        image: 'graphics/cards/restoring-data.jpg',
+        imageAlt: 'A black marker censoring stuff.',
+        imageScale: 1.4,
+        description: 'Restores 10 sanity',
+        effects: [
+            { type: 'heal', amount: 10 }
+        ]
+    },
+    {
+        id: 'safeguard',
+        name: 'Safeguard',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '⚫',                                   // fallback if the image is missing
+        image: 'graphics/cards/safeguard.jpg',
+        imageAlt: 'a shield on a monitor.',
+        imageScale: 1.4,
+        description: 'gain 5 relaxation',
+        effects: [
+            { type: 'block',  amount: 5  }
+        ]
+    },
+    {
+        id: 'critical-error',
+        name: 'Critical Error',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '⚫',                                   // fallback if the image is missing
+        image: 'graphics/cards/critical-error-screen.jpg',
+        imageAlt: 'A screen with an error message.',
+        imageScale: 1.4,
+        description: 'Deal 10 damage',
+        effects: [
+            { type: 'damage', amount: 10 }
+        ]
+    },
+    {
+        id: 'increase-power',
+        name: 'Leveled Up',
+        cost: 3,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '⚫',                                   // fallback if the image is missing
+        image: 'graphics/cards/increased-power.jpg',
+        imageAlt: 'computer screen with a level up message.',
+        imageScale: 1.4,
+        description: 'increase damage daelt by Attack cards by 3',
+        effects: [
+             { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 3 } }
+        ]
+    },
+    {
+        id: 'cyber-wall',
+        name: 'Blackout',
+        cost: 3,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '⚫',                                   // fallback if the image is missing
+        image: 'graphics/cards/cyber-wall.jpg',
+        imageAlt: 'A digital wall',
+        imageScale: 1.4,
+        description: 'add a defender with 5 sanity',
+        effects: [
+            { type: 'defender', amount: 20, name: 'Blue Barrier', art: '🛡️' }
+        ]
+    },
+
+    //class-clown cards
+    {
         id: 'stapler-shot',
         name: 'Stapler Shot',
         cost: 1,
@@ -500,7 +658,7 @@ SC.cards = [
         name: 'Sports Drink',
         cost: 0,
         type: 'Skill',
-        rarity: 'Common',
+        rarity: 'Uncommon',
         art: '🧃',
         description: 'Gain 1 Coffee. Recover 2 Sanity.',
         effects: [
@@ -513,7 +671,7 @@ SC.cards = [
         name: 'Stacked Mats',
         cost: 2,
         type: 'Defense',
-        rarity: 'Common',
+        rarity: 'Uncommon',
         art: '🟦',
         description: 'Place a 10 Sanity defender.',
         effects: [
@@ -608,8 +766,149 @@ SC.cards = [
         ]
     },
 
-    
+    // ---------- HALLWAY: enemy cards ----------
+    {
+        id: 'mop',
+        name: 'Mop',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🧼',
+        image: 'graphics/cards/mop.jpg',
+        description: 'Deal 3 damage.',
+        effects: [
+            { type: 'damage', amount: 3 }
+        ]
+    },
 
+    {
+        id: 'broom',
+        name: 'Broom',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🧹',
+        image: 'graphics/cards/broom.jpg',
+        description: 'Deal 2 damage.',
+        effects: [
+            { type: 'damage', amount: 2 }
+        ]
+    },
+
+    {
+        id: 'dustpan',
+        name: 'Dustpan',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🧹',
+        image: 'graphics/cards/dustpan.jpg',
+        description: 'Gain 4 Relaxation.',
+        effects: [
+            { type: 'block', amount: 4 }
+        ]
+    },
+
+    {
+        id: 'locker',
+        name: 'Locker',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🚪',
+        image: 'graphics/cards/evil-locker.jpg',
+        description: 'Place a 5 Sanity defender.',
+        effects: [
+            { type: 'defender', amount: 5, name: 'Locker', art: '🚪' }
+        ]
+    },
+
+    {
+        id: 'trash-can',
+        name: 'Trash Can',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🗑️',
+        image: 'graphics/cards/evil-trashcan.jpg',
+        description: 'Deal 1 damage.',
+        effects: [
+            { type: 'damage', amount: 1 }
+        ]
+    },
+
+    // --------- Hallway: player bonus cards ----------
+    {
+        id: 'wet-floor-sign',
+        name: 'Wet Floor Sign',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Rare',
+        art: '⚠️',
+        image: 'graphics/cards/wet-floor-sign.jpg',
+        description: 'Gain 10 Relaxation.',
+        effects: [
+            { type: 'block', amount: 10 }
+        ]
+    },
+
+    {
+        id: 'disinfectant-spray',
+        name: 'Disinfectant Spray',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '🧴',
+        image: 'graphics/cards/disinfectant-spray.jpg',
+        description: 'Recover 4 Sanity.',
+        effects: [
+            { type: 'heal', amount: 4 }
+        ]
+    },
+
+    {
+        id: 'janitor-key',
+        name: 'Janitor Key',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Common',
+        art: '🗝️',
+        image: 'graphics/cards/janitor-keys.jpg',
+        description: 'Draw 2 cards.',
+        effects: [
+            { type: 'draw', amount: 2 }
+        ]
+    },
+
+    {
+        id: 'vacuum',
+        name: 'Vacuum',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Common',
+        art: '🧹',
+        image: 'graphics/cards/vacuum.jpg',
+        description: 'Deal 4 damage.',
+        effects: [
+            { type: 'damage', amount: 4 }
+        ]
+    },
+
+    {
+        id: 'gloves',
+        name: 'Gloves',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Uncommon',
+        art: '🧤',
+        image: 'graphics/cards/gloves.jpg',
+        description: 'Deal 4 damage.',
+        effects: [
+            { type: 'damage', amount: 4 }
+        ]
+    },
+
+    
     {
         // Title screen showcase only. demo: true keeps it off the Cards board.
         id: 'substitute-teacher',
@@ -661,16 +960,16 @@ SC.cards = [
         startingSanity: 30,
         startingEnergy: 3,
         startingDeck: [
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee',
-            'teachers-pet',
-            'red-pen-markup',
-            'desk-key',
-            'coffee-refill',
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee'
+            'wet-floor-sign',
+            'disinfectant-spray',
+            'janitor-key',
+            'vacuum',
+            'gloves',
+            'gloves',
+            'wet-floor-sign',
+            'disinfectant-spray',
+            'disinfectant-spray',
+            'janitor-key',
         ],
         badgeText: 'Staff · Janitor',
         badgeColor: '#4f6f81',
@@ -761,19 +1060,19 @@ SC.cards = [
         description: 'Gain 12 Relaxation. Draw 2 cards.',
         demo: true,
         hero: true,
-        startingSanity: 30,
-        startingEnergy: 3,
+        startingSanity: 35,
+        startingEnergy: 4,
         startingDeck: [
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee',
-            'teachers-pet',
-            'red-pen-markup',
-            'desk-key',
-            'coffee-refill',
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee'
+            'hardcover-slam',
+            'quiet-corner',
+            'herbal-tea',
+            'research-notes',
+            'library-rules',
+            'hardcover-slam',
+            'quiet-corner',
+            'herbal-tea',
+            'research-notes',
+            'hardcover-slam',
         ],
         badgeText: 'Staff · Librarian',
         badgeColor: '#3f7d55',
@@ -795,7 +1094,7 @@ SC.cards = [
         description: 'Whenever you play an Attack card, apply 1 Called Out. Confiscated.',
         demo: true,
         hero: true,
-        startingSanity: 30,
+        startingSanity: 50,
         startingEnergy: 3,
         startingDeck: [
             'red-pen-markup',

@@ -168,7 +168,8 @@ window.SC = window.SC || {};
     // sound starts, then play through the same Sounds slider as the rest.
     const SOUND_FILES = {
         shieldUp: { src: 'audio/shieldsound.mp3', volume: 0.4 },
-        petJump:  { src: 'audio/hamster_jump.mp3', volume: 0.3 }
+        petJump:  { src: 'audio/hamster_jump.mp3', volume: 0.3 },
+        'home-bell': {src: 'audio/bell.mp3', volume: 0.4}
     };
     const fileBuffers = {};
 
@@ -178,7 +179,7 @@ window.SC = window.SC || {};
                 .then(function (res) { return res.arrayBuffer(); })
                 .then(function (data) { return ac.decodeAudioData(data); })
                 .then(function (buffer) { fileBuffers[name] = buffer; })
-                .catch(function () { /* missing file: the made-up sound plays instead */ });
+                .catch(function (err) { console.warn('Sound Failed to load:, name, err'); });
         });
     }
 
@@ -311,6 +312,55 @@ window.SC = window.SC || {};
             tone(ac, t + 0.10, 1760, 0.35, VOLUME * 0.06);
         },
 
+        // Coach's whistle: "tweet-TWEEEET". A high tone with a fast wobble
+        // (that's the little ball rattling inside), plus a bit of breath
+        whistle: function (ac) {
+            const t = ac.currentTime + 0.01;
+
+            function blast(start, length) {
+                const osc = ac.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(2900, start);
+
+                // The rattle: wobble the pitch up and down ~38 times a second
+                const rattle = ac.createOscillator();
+                rattle.frequency.value = 38;
+                const rattleDepth = ac.createGain();
+                rattleDepth.gain.value = 170;
+                rattle.connect(rattleDepth);
+                rattleDepth.connect(osc.frequency);
+
+                const gain = ac.createGain();
+                gain.gain.setValueAtTime(0.0001, start);
+                gain.gain.exponentialRampToValueAtTime(VOLUME * 0.28, start + 0.02);
+                gain.gain.setValueAtTime(VOLUME * 0.28, start + length - 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.0001, start + length);
+
+                osc.connect(gain);
+                gain.connect(getSfxBus(ac));
+                osc.start(start);
+                rattle.start(start);
+                osc.stop(start + length + 0.05);
+                rattle.stop(start + length + 0.05);
+
+                // Breath through the whistle
+                stroke(ac, start, length, 2600, 3400, VOLUME * 0.22);
+            }
+
+            blast(t, 0.16);           // tweet
+            blast(t + 0.22, 0.45);    // TWEEEET
+        },
+
+        // A Power soaking up a hit (Track Record, Padded Walls): a soft padded
+        // "bwomp" with a low hum, then a little rising chime as it holds
+        mitigate: function (ac) {
+            const t = ac.currentTime + 0.01;
+            stroke(ac, t, 0.12, 320, 90, VOLUME * 1.1);      // padded bwomp
+            tone(ac, t, 150, 0.22, VOLUME * 0.3);            // low hum
+            tone(ac, t + 0.05, 660, 0.25, VOLUME * 0.09);    // chime up
+            tone(ac, t + 0.10, 990, 0.30, VOLUME * 0.07);
+        },
+
         // A card slapped onto the chalkboard: low thud plus a tiny paper snap
         slam: function (ac) {
             const t = ac.currentTime + 0.01;
@@ -373,6 +423,10 @@ window.SC = window.SC || {};
             const end = t + strikes * gap;
             tone(ac, end, base,        0.9, VOLUME * 0.15);
             tone(ac, end, base * 2.76, 0.5, VOLUME * 0.06);
+        },
+        'home-bell': function (ac) {
+            if (playFile(ac, 'home-bell')) return;
+            SOUNDS.bell(ac);
         }
     };
 
@@ -382,6 +436,7 @@ window.SC = window.SC || {};
     // Use it for hover sounds, so they don't pile up and all play
     // at once on the player's first click.
     SC.playSound = function (name, ifReady) {
+        if (name === 'bell') console.trace('bell requested');
         if (!SC.soundEnabled || !SOUNDS[name]) {
             return;
         }
@@ -502,22 +557,11 @@ window.SC = window.SC || {};
         // Storage blocked (private window, etc.). Use the default.
     }
 
-    function volumeIcon(value) {
-        if (value === 0)  { return '🔇'; }
-        if (value < 0.34) { return '🔈'; }
-        if (value < 0.67) { return '🔉'; }
-        return '🔊';
-    }
-
     function updateVolumeUI() {
         const percent = Math.round(musicVolume * 100);
-        const button = document.getElementById('volume-toggle');
         const slider = document.getElementById('music-volume');
         const label = document.getElementById('music-volume-value');
 
-        if (button) {
-            button.textContent = volumeIcon(musicVolume);
-        }
         if (slider) {
             slider.value = percent;
             slider.setAttribute('aria-valuetext', percent + '%');
@@ -545,22 +589,10 @@ window.SC = window.SC || {};
         updateVolumeUI();
     };
 
-    const volumeControl = document.getElementById('volume-control');
-    const volumeButton = document.getElementById('volume-toggle');
+    // The sliders live in the Settings screen (index.html, js/ui/settings.js)
     const volumeSlider = document.getElementById('music-volume');
 
-    function setPanelOpen(open) {
-        volumeControl.classList.toggle('is-open', open);
-        volumeButton.setAttribute('aria-expanded', open);
-    }
-
-    if (volumeControl && volumeButton && volumeSlider) {
-        // Speaker button opens and closes the slider
-        volumeButton.addEventListener('click', function (e) {
-            e.stopPropagation();
-            setPanelOpen(!volumeControl.classList.contains('is-open'));
-        });
-
+    if (volumeSlider) {
         // Moving the slider changes the music volume
         volumeSlider.addEventListener('input', function () {
             SC.setMusicVolume(volumeSlider.value / 100);
@@ -582,17 +614,6 @@ window.SC = window.SC || {};
             });
         }
 
-        // Close when clicking anywhere else, or pressing Escape
-        document.addEventListener('click', function (e) {
-            if (!volumeControl.contains(e.target)) {
-                setPanelOpen(false);
-            }
-        });
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                setPanelOpen(false);
-            }
-        });
     }
 
     // ------- SOUND EFFECTS VOLUME SLIDER -------
@@ -629,5 +650,8 @@ window.SC = window.SC || {};
 
     updateVolumeUI();
     updateSfxUI();
+
+    // Start loading sound files right away instead of waiting for the first click
+    try { getContext(); } catch (e) { /* no audio support */ }
 
 })();
