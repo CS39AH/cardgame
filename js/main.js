@@ -384,8 +384,8 @@
         const teacherIds = [
             'substitute-teacher',
             'janitor',
-            'gym-teacher',
             'lunch-lady',
+            'gym-teacher',
             'librarian',
             'principal'
         ];
@@ -407,22 +407,58 @@
 
             // Save the currently selected teacher on the element.
             demoSlot.dataset.selectedTeacher = teacher.id;
+
+            // Make the pick obvious: "Playing as Janitor", the dots,
+            // and "Start as Janitor" on the start button
+            const nameEl = document.getElementById('teacher-name');
+            if (nameEl) nameEl.textContent = teacher.name;
+
+            document.querySelectorAll('.teacher-pick__dot').forEach(function (dot, i) {
+                const on = i === selectedTeacherIndex;
+                dot.classList.toggle('is-selected', on);
+                dot.setAttribute('aria-selected', on);
+            });
+
+            const btnStartLabel = document.getElementById('btn-start');
+            if (btnStartLabel) btnStartLabel.textContent = 'Start as ' + teacher.name;
+
+            // Little "picked" bounce on the card
+            demoSlot.classList.remove('is-picked');
+            void demoSlot.offsetWidth;
+            demoSlot.classList.add('is-picked');
+        }
+
+        function selectTeacher(index) {
+            selectedTeacherIndex = (index + teacherIds.length) % teacherIds.length;
+            if (SC.playSound) SC.playSound('chalkClick', true);
+            renderSelectedTeacher();
+        }
+
+        // One dot per teacher; click a dot to jump straight to them
+        const dotsBox = document.getElementById('teacher-dots');
+        if (dotsBox) {
+            dotsBox.innerHTML = '';
+            teacherIds.forEach(function (id, i) {
+                const teacher = SC.getCard ? SC.getCard(id) : null;
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'teacher-pick__dot';
+                dot.setAttribute('role', 'tab');
+                dot.setAttribute('aria-label', teacher ? teacher.name : id);
+                dot.title = teacher ? teacher.name : id;
+                dot.addEventListener('click', function () { selectTeacher(i); });
+                dotsBox.appendChild(dot);
+            });
         }
 
         renderSelectedTeacher();
 
         btnTeacherPrev.addEventListener('click', function () {
-            selectedTeacherIndex =
-                (selectedTeacherIndex - 1 + teacherIds.length) % teacherIds.length;
-
-            renderSelectedTeacher();
+            selectTeacher(selectedTeacherIndex - 1);
         });
 
         btnTeacherNext.addEventListener('click', function () {
-            selectedTeacherIndex =
-                (selectedTeacherIndex + 1) % teacherIds.length;
-
-            renderSelectedTeacher();
+            selectTeacher(selectedTeacherIndex + 1);
         });
 
         // Orbiting supplies

@@ -61,6 +61,9 @@
                 <p class="title-screen__subtitle">Survive the school day. Restore order. Escape before the bell.</p>
             </div>
 
+            <!-- "Choose your teacher" heading over the staff card -->
+            <p class="teacher-pick__heading">Choose Your Teacher</p>
+
             <div class="card-stage">
                 <!-- Orbiting school supplies (filled in by js/ui/orbit.js) -->
                 <div id="orbit" class="orbit" aria-hidden="true"></div>
@@ -83,6 +86,14 @@
                         aria-label="Next staff member">
                     ›
                 </button>
+            </div>
+
+            <!-- Who you picked: name, "2 of 6", and a dot per teacher (js/main.js) -->
+            <div class="teacher-pick" aria-live="polite">
+                <p class="teacher-pick__name">
+                    Playing as <strong id="teacher-name"></strong>
+                </p>
+                <div class="teacher-pick__dots" id="teacher-dots" role="tablist" aria-label="Teachers"></div>
             </div>
 
             <div class="title-screen__menu">
