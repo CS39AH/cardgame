@@ -245,7 +245,7 @@ SC.cards = [
         name: 'Serving Spoon',
         cost: 2,
         type: 'Attack',
-        rarity: 'Uncommon',
+        rarity: 'Rare',
         art: '🥄',                                  // fallback if the image is missing
         image: 'graphics/cards/cafeteria/serving_spoon.png',
         description: 'Deal 6 damage. Heal for half the Sanity damage dealt.',
@@ -259,7 +259,7 @@ SC.cards = [
         name: 'Clean Tray',
         cost: 1,
         type: 'Defense',
-        rarity: 'Common',
+        rarity: 'Uncommon',
         art: '🍽️',                                  // fallback if the image is missing
         image: 'graphics/cards/cafeteria/clean_tray.png',
         description: 'Place a 6 Sanity defender. While active, your attacks deal +1 damage.',
@@ -658,7 +658,7 @@ SC.cards = [
         name: 'Sports Drink',
         cost: 0,
         type: 'Skill',
-        rarity: 'Common',
+        rarity: 'Uncommon',
         art: '🧃',
         description: 'Gain 1 Coffee. Recover 2 Sanity.',
         effects: [
@@ -671,7 +671,7 @@ SC.cards = [
         name: 'Stacked Mats',
         cost: 2,
         type: 'Defense',
-        rarity: 'Common',
+        rarity: 'Uncommon',
         art: '🟦',
         description: 'Place a 10 Sanity defender.',
         effects: [

@@ -36,6 +36,7 @@ SC.enemies = {
         name: 'Class Clown',
         art: '🤡',
         image: 'graphics/cards/class-clown.png',
+        imageScale: 1.4,
         sanity: 40,
         energy: 3,
         order: 'inOrder',

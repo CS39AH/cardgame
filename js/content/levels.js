@@ -155,7 +155,6 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'hallway-enemy',
-        hero: 'janitor',      // this level always uses the Janitor
 
         bonusCards: [
             'wet-floor-sign',
