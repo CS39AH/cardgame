@@ -55,7 +55,9 @@
     // so we can put it back when the player returns.
     const TITLE_HTML = SCREEN.innerHTML;
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // SC.ALWAYS_ANIMATE (index.html) = ignore the computer's "reduce motion"
+    const reduceMotion = !SC.ALWAYS_ANIMATE &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     let currentScreen = null;
     let routeId = 0;

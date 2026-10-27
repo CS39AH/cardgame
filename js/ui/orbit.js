@@ -118,7 +118,8 @@ window.SC = window.SC || {};
             return; // not on the title screen
         }
 
-        reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        reduceMotion = !SC.ALWAYS_ANIMATE &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         // Build one element per supply, spaced evenly around the ellipse.
         // Each gets its own random wobble so they don't move in lockstep.

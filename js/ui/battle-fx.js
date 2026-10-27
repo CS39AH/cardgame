@@ -1535,8 +1535,10 @@ window.SC = window.SC || {};
         });
     }
 
+    // SC.ALWAYS_ANIMATE (index.html) = ignore the computer's "reduce motion"
     function reducedMotion() {
-        return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        return !SC.ALWAYS_ANIMATE &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
 
     SC.battleFx = {

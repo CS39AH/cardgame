@@ -112,6 +112,12 @@
 
     </main>
 
+    <!-- ONE switch for the whole game: true = always play animations, even when
+         the computer has "reduce motion" turned on. false = respect that setting. -->
+    <script>
+        window.SC = window.SC || {};
+        SC.ALWAYS_ANIMATE = true;
+    </script>
     <script src="js/content/cards.js"></script>
     <script src="js/content/credits.js"></script>
     <script src="js/content/days.js"></script>

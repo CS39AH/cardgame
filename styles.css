@@ -620,7 +620,7 @@ h1, h2, h3 {
 }
 
 /* Reduced motion: keep the gold look, skip the shine */
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) and (scripting: none) {
     .card--legendary::after {
         display: none;
     }
@@ -819,7 +819,7 @@ h1, h2, h3 {
     transform: scale(1.3);
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) and (scripting: none) {
     #demo-card.is-picked {
         animation: none;
     }
@@ -964,7 +964,7 @@ h1, h2, h3 {
 }
 
 /* Reduced motion: keep the foil, stop it drifting */
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) and (scripting: none) {
     .card--hero::after {
         animation: none;
     }
@@ -1732,7 +1732,7 @@ h1, h2, h3 {
 
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) and (scripting: none) {
     *,
     *::before,
     *::after {
@@ -1923,7 +1923,7 @@ h1, h2, h3 {
 }
 
 /* Respect users who turn off animations */
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) and (scripting: none) {
     .day-node--current .day-node__button { animation: none; }
 }
 
@@ -1969,7 +1969,7 @@ h1, h2, h3 {
     to   { transform: none;        opacity: 1; filter: none; }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) and (scripting: none) {
     .zone-map {
         animation: none;
     }
@@ -2135,7 +2135,7 @@ h1, h2, h3 {
     opacity: 0.35;
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) and (scripting: none) {
     .zone-map__play,
     .zone-node--current .zone-node__mark,
     .zone-node--open .zone-node__mark,
@@ -2768,7 +2768,7 @@ h1, h2, h3 {
     60%, 100% { transform: translateX(60%); }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) and (scripting: none) {
     .defender--legendary .def-shine::after {
         animation: none;
     }
@@ -3432,7 +3432,7 @@ h1, h2, h3 {
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) and (scripting: none) {
     .reward-slot,
     .hand-slot,
     .hand-slot .card {
@@ -3929,7 +3929,7 @@ h1, h2, h3 {
     display: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) and (scripting: none) {
     .is-ripping,
     .is-ripping > .tear-marks {
         animation: none;
