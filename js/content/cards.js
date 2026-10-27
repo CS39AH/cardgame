@@ -171,9 +171,9 @@ SC.cards = [
         image: 'graphics/cards/track_record.png',
         imageAlt: 'Proof of good performance as a substitute',
         imageScale: 1.0,
-        description: 'Whenever you are hit by an Attack, Mitigate 2 damage',
+        description: 'Whenever you are hit by an Attack, Mitigate 1 damage',
         effects: [
-            { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -2 } }
+            { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -1 } }
         ]
     },
         {
@@ -323,7 +323,165 @@ SC.cards = [
         ]
     },
 
-        {
+    //marker horde cards
+    {
+        id: 'blue-barrier',
+        name: 'Blue Barrier',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🛡️',                                   // fallback if the image is missing
+        image: 'graphics/cards/blue-barrier.jpg',
+        imageAlt: 'A stapler shooting a staple.',
+        imageScale: 1.2,
+        description: 'Gain a 10 sanity barrier',
+        effects: [
+            { type: 'defender', amount: 10, name: 'Blue Barrier', art: '🛡️' }
+        ]
+    },
+    {
+        id: 'healing-green-ink',
+        name: 'Healing Green Ink',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '💚',                                   // fallback if the image is missing
+        image: 'graphics/cards/healing-green-ink.jpg',
+        imageAlt: 'Green marker with a glowing aura.',
+        imageScale: 1.2,
+        description: 'Restore 5 sanity',
+        effects: [
+            {type: 'heal', amount: 5}
+        ]
+    },
+    {
+        id: 'marked-up',
+        name: 'Marked Up',
+        cost: 2,
+        type: 'power',
+        rarity: 'Enemy',
+        art: '👍',                                   // fallback if the image is missing
+        image: 'graphics/cards/marked-up.jpg',
+        imageAlt: 'Purple marker with 3 +1',
+        imageScale: 1.2,
+        description: '+1 to sanity and relaxation when you play a Defense Card. +1 to Attack Cards.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 1 } },
+            { type: 'power', trigger: 'playDefense', effect: { type: 'block', amount: 1 } },
+            { type: 'power', trigger: 'playDefense', effect: { type: 'heal', amount: 1 } }
+        ]
+    },
+    {
+        id: 'incorrect-strikes',
+        name: 'Incorrect Strikes',
+        cost: 0,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '❌',                                   // fallback if the image is missing
+        image: 'graphics/cards/incorrect-strikes.jpg',
+        imageAlt: 'Red marker with 3 Xs',
+        imageScale: 1.2,
+        description: 'Deal 1 damage 6 times',
+        effects: [
+            {type: 'damage', amount: 1},
+            { type: 'multiplier', amount: 6}
+        ]
+    },
+    {
+        id: 'blackout',
+        name: 'Blackout',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '⚫',                                   // fallback if the image is missing
+        image: 'graphics/cards/blackout.jpg',
+        imageAlt: 'A black marker censoring stuff.',
+        imageScale: 1.2,
+        description: 'Lower damage taken by 1',
+        effects: [
+            { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -1 } }
+        ]
+    },
+
+    //infected computer cards
+    {
+        id: 'restoring-data',
+        name: 'Restoring Data',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '⚫',                                   // fallback if the image is missing
+        image: 'graphics/cards/restoring-data.jpg',
+        imageAlt: 'A black marker censoring stuff.',
+        imageScale: 1.4,
+        description: 'Restores 10 sanity',
+        effects: [
+            { type: 'heal', amount: 10 }
+        ]
+    },
+    {
+        id: 'safeguard',
+        name: 'Safeguard',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '⚫',                                   // fallback if the image is missing
+        image: 'graphics/cards/safeguard.jpg',
+        imageAlt: 'a shield on a monitor.',
+        imageScale: 1.4,
+        description: 'gain 5 relaxation',
+        effects: [
+            { type: 'block',  amount: 5  }
+        ]
+    },
+    {
+        id: 'critical-error',
+        name: 'Critical Error',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '⚫',                                   // fallback if the image is missing
+        image: 'graphics/cards/critical-error-screen.jpg',
+        imageAlt: 'A screen with an error message.',
+        imageScale: 1.4,
+        description: 'Deal 10 damage',
+        effects: [
+            { type: 'damage', amount: 10 }
+        ]
+    },
+    {
+        id: 'increase-power',
+        name: 'Leveled Up',
+        cost: 3,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '⚫',                                   // fallback if the image is missing
+        image: 'graphics/cards/increased-power.jpg',
+        imageAlt: 'computer screen with a level up message.',
+        imageScale: 1.4,
+        description: 'increase damage daelt by Attack cards by 3',
+        effects: [
+             { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 3 } }
+        ]
+    },
+    {
+        id: 'cyber-wall',
+        name: 'Blackout',
+        cost: 3,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '⚫',                                   // fallback if the image is missing
+        image: 'graphics/cards/cyber-wall.jpg',
+        imageAlt: 'A digital wall',
+        imageScale: 1.4,
+        description: 'add a defender with 5 sanity',
+        effects: [
+            { type: 'defender', amount: 20, name: 'Blue Barrier', art: '🛡️' }
+        ]
+    },
+
+    //class-clown cards
+    {
         id: 'stapler-shot',
         name: 'Stapler Shot',
         cost: 1,
