@@ -64,16 +64,16 @@ SC.enemies = {
         order: 'inOrder',
         shuffleEnemyDeck: true,
         startingDeck: [
-            'stapler-shot',       // 1 Coffee: deal 2
-            'eraser',             // 1 Coffee: gain 4 Relaxation
-            'bin-dump',           // 1 Coffee: 1 damage per card in your discard pile
-            'pencil-sharpener',   // 2 Coffee: Power, its attacks deal +1
-            'scattered-pencils',   // 2 Coffee: deal 2, four times
-            'stapler-shot',
-            'eraser',
-            'bin-dump',
-            'stapler-shot',
-            'eraser'
+            'critical-error',       
+            'safeguard',             
+            'cyber-wall',           
+            'safeguard',   
+            'restoring-data',   
+            'increase-power',
+            'restoring-data',
+            'cyber-wall',
+            'safeguard',
+            'critical-error'
         ]
     },
     'marker-horde': {
@@ -87,16 +87,16 @@ SC.enemies = {
         order: 'inOrder',
         shuffleEnemyDeck: true,
         startingDeck: [
-            'stapler-shot',       // 1 Coffee: deal 2
-            'eraser',             // 1 Coffee: gain 4 Relaxation
-            'bin-dump',           // 1 Coffee: 1 damage per card in your discard pile
-            'pencil-sharpener',   // 2 Coffee: Power, its attacks deal +1
-            'scattered-pencils',   // 2 Coffee: deal 2, four times
-            'stapler-shot',
-            'eraser',
-            'bin-dump',
-            'stapler-shot',
-            'eraser'
+            'marked-up',       
+            'blackout',             
+            'incorrect-strikes',           
+            'blue-barrier',   
+            'healing-green-ink',   
+            'incorrect-strikes', 
+            'incorrect-strikes', 
+            'blue-barrier',
+            'healing-green0ink',
+            'incorrect-strikes'
         ]
     },
 

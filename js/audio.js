@@ -168,7 +168,8 @@ window.SC = window.SC || {};
     // sound starts, then play through the same Sounds slider as the rest.
     const SOUND_FILES = {
         shieldUp: { src: 'audio/shieldsound.mp3', volume: 0.4 },
-        petJump:  { src: 'audio/hamster_jump.mp3', volume: 0.3 }
+        petJump:  { src: 'audio/hamster_jump.mp3', volume: 0.3 },
+        'home-bell': {src: 'audio/bell.mp3', volume: 0.4}
     };
     const fileBuffers = {};
 
@@ -178,7 +179,7 @@ window.SC = window.SC || {};
                 .then(function (res) { return res.arrayBuffer(); })
                 .then(function (data) { return ac.decodeAudioData(data); })
                 .then(function (buffer) { fileBuffers[name] = buffer; })
-                .catch(function () { /* missing file: the made-up sound plays instead */ });
+                .catch(function (err) { console.warn('Sound Failed to load:, name, err'); });
         });
     }
 
@@ -412,6 +413,10 @@ window.SC = window.SC || {};
             const end = t + strikes * gap;
             tone(ac, end, base,        0.9, VOLUME * 0.15);
             tone(ac, end, base * 2.76, 0.5, VOLUME * 0.06);
+        },
+        'home-bell': function (ac) {
+            if (playFile(ac, 'home-bell')) return;
+            SOUNDS.bell(ac);
         }
     };
 
@@ -421,6 +426,7 @@ window.SC = window.SC || {};
     // Use it for hover sounds, so they don't pile up and all play
     // at once on the player's first click.
     SC.playSound = function (name, ifReady) {
+        if (name === 'bell') console.trace('bell requested');
         if (!SC.soundEnabled || !SOUNDS[name]) {
             return;
         }
@@ -668,5 +674,8 @@ window.SC = window.SC || {};
 
     updateVolumeUI();
     updateSfxUI();
+
+    // Start loading sound files right away instead of waiting for the first click
+    try { getContext(); } catch (e) { /* no audio support */ }
 
 })();

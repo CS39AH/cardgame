@@ -31,11 +31,11 @@ SC.days = {
             nodes: [
                 { id: 'homeroom-boss',  label: 'Homeroom',      icon: '📝', type: 'combat', pos: { x: 15.4, y: 28.3 }, 
                     zoneMap: 'graphics/screens/homeroom-map.jpg',
-                    sound: 'bell',
+                    sound: 'home-bell',
                     zones: [
-                        { id: 'homeroom-markers', label: 'Did those markers MOVE', mark: 'X', type: 'combat', pos: {x:20, y: 45}},
-                        { id: 'homeroom-computer', label: 'A virus is spreading', mark: 'X', type: 'combat', pos: {x:58, y: 40}},
-                        { id: 'homeroom-boss', label: 'Disruption in class', mark: 'X', type: 'boss', pos: {x: 87, y: 50}}
+                        { id: 'homeroom-markers', label: 'Did those markers MOVE', mark: 'x', type: 'combat', pos: {x:20, y: 45}},
+                        { id: 'homeroom-computer', label: 'A virus is spreading', mark: 'x', type: 'combat', pos: {x:58, y: 40}},
+                        { id: 'homeroom-boss', label: 'Disruption in class', mark: 'x', type: 'boss', pos: {x: 87, y: 50}}
                     ]
                 },
                 { id: 'hallway',   label: 'Hallway Patrol',     icon: '🚪', type: 'combat', pos: { x: 38.9, y: 28.3 } },
