@@ -358,7 +358,7 @@ SC.cards = [
         id: 'marked-up',
         name: 'Marked Up',
         cost: 2,
-        type: 'power',
+        type: 'Power',
         rarity: 'Enemy',
         art: '👍',                                   // fallback if the image is missing
         image: 'graphics/cards/marked-up.jpg',

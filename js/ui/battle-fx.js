@@ -157,7 +157,8 @@ window.SC = window.SC || {};
             }
             later(doneAt, function () { afterHit(outcome, landedCard); });
             blockHits(cardHits, 'player', doneAt);
-            showPowerFires(fires, doneAt + 350, split.target);
+            showPowerFires(fires.filter(function (f) { return f.boost; }), 0, split.target);
+            showPowerFires(fires.filter(function (f) { return !f.boost; }), doneAt + 350, split.target);
 
             // The enemy healing or gaining Relaxation
             const enemyRelaxGain = state.enemy.relaxation - before.enemyRelax;
@@ -208,7 +209,8 @@ window.SC = window.SC || {};
             }
 
             // Your Powers go off just after the card's last hit
-            showPowerFires(fires, doneAt + 350, split.target);
+           showPowerFires(fires.filter(function (f) { return f.boost; }), enemyHitAt, split.target);
+            showPowerFires(fires.filter(function (f) { return !f.boost; }), doneAt + 350, split.target);
 
             heroHitAt = landed ? 0 : (leftHand.length ? 650 : 0);
             if (playerLoss > 0) {
@@ -381,6 +383,7 @@ window.SC = window.SC || {};
     }
 
     // Your attack card from your hand, at the enemy's front defender or the enemy
+    // Your attack card from your hand, at the enemy's front defender or the enemy
     function attackFly(handIndex) {
         const slot = document.querySelectorAll('.battle__hand .hand-slot')[handIndex];
         const card = SC.combat.state.hand[handIndex];
@@ -392,7 +395,6 @@ window.SC = window.SC || {};
         if (!old.node || !target) return 0;
 
         slot.style.visibility = 'hidden';       // it left your hand
-        if (SC.playSound) SC.playSound('whoosh');
 
         // The enemy's blocking Powers (Padded Walls) jump in front first
         const to = sendBlockers('enemy', old.center, centerOf(target)) || centerOf(target);
@@ -400,17 +402,29 @@ window.SC = window.SC || {};
         const ghost = makeGhost(old.node, old.center, HAND_W);
         const duration = 650;
 
+        // NEW: boosting Powers pulse and wrap the card in auras before it takes off
+        const auraTime = applyAuras(ghost, 'player');
+
+        // NEW: the whoosh now plays when the card actually takes off
+        later(auraTime, function () {
+            if (SC.playSound) SC.playSound('whoosh');
+        });
+
         // Stays fully visible; afterHit() takes over when it lands
         ghost.animate([
             { transform: 'translate(0, 0) scale(1) rotate(0deg)', opacity: 1 },
             { transform: 'translate(0, -150px) scale(1.3) rotate(0deg)', opacity: 1, offset: 0.3 },
             { transform: 'translate(0, -150px) scale(1.3) rotate(0deg)', opacity: 1, offset: 0.45, easing: 'cubic-bezier(.6, 0, 1, .6)' },
             { transform: moveTo(end), opacity: 1 }
-        ], { duration: ms(duration), fill: 'forwards' });
+        ], {
+            delay: ms(auraTime),                // NEW: wait for the auras first
+            duration: ms(duration),
+            fill: 'forwards'
+        });
 
         flight = { ghost: ghost, end: end, from: old.center, home: '.pile--discard .pile__stack' };
 
-        return ms(duration);
+        return ms(auraTime + duration);         // CHANGED: was ms(duration)
     }
 
     // ---------- Cards that hit more than once ----------
@@ -748,6 +762,50 @@ window.SC = window.SC || {};
     function powerSlotOf(side, card) {
         const i = (SC.combat.state[side].powers || []).indexOf(card);
         return i === -1 ? null : document.querySelectorAll('.battle__powers--' + side + ' > .power-slot')[i];
+    }
+
+    // Powers that add damage to this side's Attacks (Teacher's Pet, Yard Stick)
+    function boostingPowers(side) {
+        return (SC.combat.state[side].powers || []).filter(function (card) {
+            return (card.effects || []).some(function (e) {
+                return e.type === 'power' && e.trigger === 'playAttack' && e.effect &&
+                    e.effect.type === 'damage' &&
+                    typeof e.effect.amount === 'number' && e.effect.amount > 0;
+            });
+        });
+    }
+
+    const AURA_STEP = 420;   // time between each Power's aura (before SLOW)
+
+    // Each boosting Power lights up, then wraps the flying card in an aura
+    // in its rarity color. Auras stack. Returns how long it all takes (before SLOW).
+    function applyAuras(ghost, side) {
+        const powers = boostingPowers(side);
+        const cardEl = ghost.querySelector('.card');
+        if (!powers.length || !cardEl || reducedMotion()) return 0;
+
+        const layers = [];
+        powers.forEach(function (power, k) {
+            const slot = powerSlotOf(side, power);
+            const ring = (slot && getComputedStyle(slot).getPropertyValue('--ring').trim()) || '#9a927e';
+
+            later(k * AURA_STEP, function () {
+                if (slot) pulsePower(slot);      // the Power flashes as it gives its boost
+
+                const before = layers.join(', ');
+                layers.push(
+                    '0 0 0 ' + (6 + k * 6) + 'px ' + ring + ', ' +
+                    '0 0 ' + (40 + k * 20) + 'px ' + (14 + k * 8) + 'px ' + ring
+                );
+                const after = layers.join(', ');
+                const start = (before ? before + ', ' : '') +
+                    '0 0 0 0 transparent, 0 0 0 0 transparent';
+
+                cardEl.animate([{ boxShadow: start }, { boxShadow: after }],
+                    { duration: ms(350), easing: 'ease-out', fill: 'forwards' });
+            });
+        });
+        return powers.length * AURA_STEP + 150;
     }
 
     // An attack is on its way: this side's blocking Powers jump out of their
