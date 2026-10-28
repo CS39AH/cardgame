@@ -412,8 +412,10 @@ window.SC = window.SC || {};
                 // Leave it out for a normal single hit.
                 const times = effect.times !== undefined ? amountOf(effect.times) : 1;
                 let dealt = 0;
+                // Called Out applies to Attack cards, not incidental Power damage.
+                const attackCtx = who === 'player' && card.type === 'Attack' ? ctx : null;
                 for (let i = 0; i < times && !s.result; i++) {
-                    dealt += hit(foeWho, total);
+                    dealt += hit(foeWho, total, attackCtx);
                 }
                 ctx.lastSanityDamage = dealt;
                 ctx.sanityDamageDealt = (ctx.sanityDamageDealt || 0) + dealt;
@@ -424,7 +426,8 @@ window.SC = window.SC || {};
             case 'multiplier':
                 // "Deal 2 damage 3 times" = damage once, then repeat 2 more times
                 for (let i = 1; i < amount && !s.result; i++) {
-                    ctx.sanityDamageDealt = (ctx.sanityDamageDealt || 0) + hit(foeWho, ctx.lastDamage);
+                    const attackCtx = who === 'player' && card.type === 'Attack' ? ctx : null;
+                    ctx.sanityDamageDealt = (ctx.sanityDamageDealt || 0) + hit(foeWho, ctx.lastDamage, attackCtx);
                 }
                 break;
 
@@ -493,7 +496,8 @@ window.SC = window.SC || {};
                 break;
 
             case 'status': {
-                // Tracked so the team can build it; no effect yet
+                // Called Out stacks are spent by the next player Attack that hits a Defender.
+                // Other statuses stay here for their own effects.
                 const target = sideOf(foeWho);
                 target.status[effect.status] = (target.status[effect.status] || 0) + amount;
                 break;
@@ -519,7 +523,7 @@ window.SC = window.SC || {};
     // ------- DAMAGE -------
 
     // Defenders first, then Relaxation, then Sanity
-    function hit(targetWho, amount) {
+    function hit(targetWho, amount, attackCtx) {
         const target = sideOf(targetWho);
         const fieldBefore = fieldSanity(target);
         const startSanity = target.sanity;
@@ -541,6 +545,34 @@ window.SC = window.SC || {};
                 target.field.shift();
                 addLog(defender.name + ' was knocked out.');
             }
+        }
+
+        // Called Out: one stack empowers the NEXT Attack card that hits an
+        // enemy Defender. The extra damage can hit Defenders ONLY; it never
+        // spills into Relaxation or the enemy's main Sanity.
+        // The shared attackCtx prevents multi-hit cards from spending more
+        // than one stack, even when they attack multiple times.
+        const hitDefender = fieldBefore > fieldSanity(target);
+        if (targetWho === 'enemy' && attackCtx && !attackCtx.calledOutConsumed &&
+            hitDefender && (target.status.calledOut || 0) > 0) {
+            target.status.calledOut -= 1;
+            attackCtx.calledOutConsumed = true;
+
+            let extra = 2;
+            while (extra > 0 && target.field.length) {
+                const defender = target.field[0];
+                const taken = Math.min(defender.sanity, extra);
+                defender.sanity -= taken;
+                extra -= taken;
+                if (defender.sanity <= 0) {
+                    target.field.shift();
+                    addLog(defender.name + ' was knocked out.');
+                }
+            }
+            const bonusDealt = 2 - extra;
+            addLog(bonusDealt > 0
+                ? 'Called Out! Enemy Defenders took ' + bonusDealt + ' extra damage.'
+                : 'Called Out triggered, but the Attack already cleared the Defenders.');
         }
 
         // 2. Relaxation
