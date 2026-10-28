@@ -108,7 +108,7 @@ SC.cards = [
         image: 'graphics/cards/redpen.png',
         imageAlt: 'A red pen with its cap off next to a red X',
         imageScale: 1.8,
-        description: 'Deal 6 damage.',
+        description: 'Deal 6 damage. Apply 1 Called Out.',
         effects: [
             { type: 'damage', amount: 6 },
             { type: 'status', status: 'calledOut', amount: 1 }
