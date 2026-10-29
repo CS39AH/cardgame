@@ -294,6 +294,7 @@ window.SC = window.SC || {};
         root.querySelector('.battle__turn').textContent = 'Turn ' + s.turn;
 
         renderEnemy(s);
+        renderCalledOut(s);
 
         // Both fields
         fillField(root.querySelector('.battle__field--enemy'), s.enemy.field);
@@ -412,6 +413,29 @@ window.SC = window.SC || {};
                 intentBox.appendChild(slot);
             });
         }
+    }
+
+    // Both sides can now receive Called Out. Reuse existing badges on redraw.
+    function renderCalledOut(s) {
+        ['enemy', 'player'].forEach(function (who) {
+            const side = root.querySelector('.battle__side--' + who);
+            if (!side) return;
+
+            let badge = side.querySelector('.battle__called-out');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'battle__called-out';
+                badge.setAttribute('role', 'status');
+                badge.setAttribute('aria-live', 'polite');
+                badge.title = 'The next opposing Attack card that hits your Defenders adds up to 2 extra Defender-only damage (1 stack per Attack).';
+                side.appendChild(badge);
+            }
+
+            const sideState = s[who];
+            const stacks = Math.max(0, Number(sideState.status && sideState.status.calledOut) || 0);
+            badge.hidden = stacks === 0;
+            badge.textContent = stacks > 0 ? '📣 Called Out ×' + stacks : '';
+        });
     }
 
     // Hero card (built once per fight; stats are updated separately)
