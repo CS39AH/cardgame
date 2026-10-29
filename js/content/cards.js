@@ -627,7 +627,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Enemy',
         art: '🟫',                                   // fallback if the image is missing
-        image: 'graphics/cards/desk_block.jpg',
+        image: 'graphics/cards/desk-block.jpg',
         imageAlt: 'A desk defender',
         imageScale: 1.0,
         description: 'Summon a desk to defend with sanity 15',
