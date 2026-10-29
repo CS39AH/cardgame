@@ -125,7 +125,7 @@ window.SC = window.SC || {};
 
         // Last resort: random deck from the card pool (code unchanged)
         const pool = SC.cards.filter(function (card) {
-            return !card.demo && !card.hero && card.rarity !== 'Enemy' && !card.rewardOnly;
+            return !card.demo && !card.hero && !card.enemyOnly && card.rarity !== 'Enemy' && !card.rewardOnly;
         });
 
         const deck = (level.guaranteedCards || []).map(copyCard).filter(Boolean);
@@ -312,10 +312,14 @@ window.SC = window.SC || {};
     // adding cards until the next one costs more than it has left.
     function pickEnemyCards() {
         const enemy = combat.state.enemy;
-        let coffee = enemy.maxEnergy;
-
         enemy.next = [];
+        queueEnemyCards(enemy, enemy.maxEnergy);
+    }
 
+    // Use any uncommitted Coffee to append actions to the existing intent.
+    // A card such as Malfunctioning Electric Can Opener can grant +1 Coffee
+    // mid-turn, which can now pay for an extra affordable enemy card.
+    function queueEnemyCards(enemy, coffee) {
         // A Power already in play (or already picked this turn) isn't played again
         function canPlay(card) {
             if (card.type !== 'Power') return true;
@@ -413,7 +417,7 @@ window.SC = window.SC || {};
                 const times = effect.times !== undefined ? amountOf(effect.times) : 1;
                 let dealt = 0;
                 // Called Out applies to Attack cards, not incidental Power damage.
-                const attackCtx = who === 'player' && card.type === 'Attack' ? ctx : null;
+                const attackCtx = card.type === 'Attack' && !firingPower ? ctx : null;
                 for (let i = 0; i < times && !s.result; i++) {
                     dealt += hit(foeWho, total, attackCtx);
                 }
@@ -426,7 +430,7 @@ window.SC = window.SC || {};
             case 'multiplier':
                 // "Deal 2 damage 3 times" = damage once, then repeat 2 more times
                 for (let i = 1; i < amount && !s.result; i++) {
-                    const attackCtx = who === 'player' && card.type === 'Attack' ? ctx : null;
+                    const attackCtx = card.type === 'Attack' && !firingPower ? ctx : null;
                     ctx.sanityDamageDealt = (ctx.sanityDamageDealt || 0) + hit(foeWho, ctx.lastDamage, attackCtx);
                 }
                 break;
@@ -464,6 +468,10 @@ window.SC = window.SC || {};
             case 'energy':
                 if (who === 'player') {
                     s.player.energy += amount;
+                } else {
+                    // Existing intent has already reserved its Coffee. Spend
+                    // this new Coffee on additional affordable actions.
+                    queueEnemyCards(s.enemy, s.enemy.energy + amount);
                 }
                 break;
        
@@ -496,7 +504,7 @@ window.SC = window.SC || {};
                 break;
 
             case 'status': {
-                // Called Out stacks are spent by the next player Attack that hits a Defender.
+                // Called Out stacks belong to the target, regardless of side.
                 // Other statuses stay here for their own effects.
                 const target = sideOf(foeWho);
                 target.status[effect.status] = (target.status[effect.status] || 0) + amount;
@@ -547,13 +555,12 @@ window.SC = window.SC || {};
             }
         }
 
-        // Called Out: one stack empowers the NEXT Attack card that hits an
-        // enemy Defender. The extra damage can hit Defenders ONLY; it never
-        // spills into Relaxation or the enemy's main Sanity.
-        // The shared attackCtx prevents multi-hit cards from spending more
-        // than one stack, even when they attack multiple times.
+        // Called Out works for both sides: 1 stack gives +2 damage to the
+        // target's Defenders on the next qualifying Attack card.
+        // It cannot spill into Relaxation or main Sanity. All hits in one
+        // card share attackCtx, so multi-hit cards spend at most 1 stack.
         const hitDefender = fieldBefore > fieldSanity(target);
-        if (targetWho === 'enemy' && attackCtx && !attackCtx.calledOutConsumed &&
+        if (attackCtx && !attackCtx.calledOutConsumed &&
             hitDefender && (target.status.calledOut || 0) > 0) {
             target.status.calledOut -= 1;
             attackCtx.calledOutConsumed = true;
@@ -571,7 +578,7 @@ window.SC = window.SC || {};
             }
             const bonusDealt = 2 - extra;
             addLog(bonusDealt > 0
-                ? 'Called Out! Enemy Defenders took ' + bonusDealt + ' extra damage.'
+                ? 'Called Out! ' + (targetWho === 'enemy' ? 'Enemy' : 'Player') + ' Defenders took ' + bonusDealt + ' extra damage.'
                 : 'Called Out triggered, but the Attack already cleared the Defenders.');
         }
 
@@ -678,16 +685,15 @@ window.SC = window.SC || {};
     function attackBonus(who) {
         const powerBonus = powerTotal(who, 'Attacks');
 
-        // Check if the player has an active Clean Tray defender.
-        const hasCleanTray = who === 'player' &&
-            sideOf(who).field.some(function (defender) {
-                return defender.name === 'Clean Tray' &&
-                    defender.sanity > 0 &&
-                    defender.attackBonus > 0;
-            });
-
-        // Multiple Clean Trays do not stack their bonuses.
-        return powerBonus + (hasCleanTray ? 1 : 0);
+        // Both Clean Tray (player) and Heavy Milk Container (enemy) boost
+        // their owner's attacks while the corresponding Defender survives.
+        // Multiple copies of the same Defender don't stack this bonus.
+        const defenderName = who === 'player' ? 'Clean Tray' : 'Heavy Milk Container';
+        const hasBoostingDefender = sideOf(who).field.some(function (defender) {
+            return defender.name === defenderName &&
+                defender.sanity > 0 && defender.attackBonus > 0;
+        });
+        return powerBonus + (hasBoostingDefender ? 1 : 0);
     }
 
 
@@ -782,7 +788,7 @@ combat.rewardChoices = function (count, bossId) {
     }
 
     const pool = SC.cards.filter(function (card) {
-        return !card.demo && !card.hero && card.rarity !== 'Enemy' && card.rarity !== 'Legendary' &&!card.rewardOnly;
+        return !card.demo && !card.hero && !card.enemyOnly && card.rarity !== 'Enemy' && card.rarity !== 'Legendary' && !card.rewardOnly;
     });
     return shuffle(pool.slice()).slice(0, count).map(function (card) {
         return Object.assign({}, card);

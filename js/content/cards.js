@@ -566,6 +566,8 @@ SC.cards = [
         cost: 1,
         type: 'Attack',
         rarity: 'Enemy',
+        enemyTier: 'Common',
+        enemyOnly: true,
         art: '🍅',                                  // fallback if the image is missing
         image: 'graphics/cards/cafeteria/rotten_produce.png',
         description: 'Deal 1 damage twice.',
@@ -580,11 +582,13 @@ SC.cards = [
         cost: 1,
         type: 'Defense',
         rarity: 'Enemy',
+        enemyTier: 'Common',
+        enemyOnly: true,
         art: '🍽️',                                  // fallback if the image is missing
         image: 'graphics/cards/cafeteria/dirty_tray.png',
-        description: 'Gain 5 Relaxation.',
+        description: 'Place a Defender with 6 Sanity.',
         effects: [
-            { type: 'block', amount: 5 }
+            { type: 'defender', amount: 6, name: 'Dirty Tray', art: '🍽️' }
         ]
     },
     {
@@ -613,6 +617,8 @@ SC.cards = [
         cost: 2,
         type: 'Attack',
         rarity: 'Enemy',
+        enemyTier: 'Uncommon',
+        enemyOnly: true,
         art: '🥘',                                  // fallback if the image is missing
         image: 'graphics/cards/cafeteria/vengeful_leftovers.png',
         description: 'Deal 6 damage. Recover 4 Sanity.',
@@ -638,6 +644,122 @@ SC.cards = [
     
 
     
+
+    // ----- CAFETERIA DUTY: additional enemy cards -----
+    // Enemy rarity gives these cards the red appearance and Enemy collection tab.
+    // enemyTier records their planned balance tier; enemyOnly blocks player rewards.
+    {
+        id: 'hardened-buns', name: 'Hardened Buns', cost: 1,
+        type: 'Attack', rarity: 'Enemy', enemyTier: 'Common', enemyOnly: true, art: '🥯',
+        description: 'Deal 3 damage.',
+        effects: [{ type: 'damage', amount: 3 }]
+    },
+    {
+        id: 'boiling-water', name: 'Boiling Water', cost: 3,
+        type: 'Attack', rarity: 'Enemy', enemyTier: 'Rare', enemyOnly: true, art: '♨️',
+        description: 'Deal 10 damage.',
+        effects: [{ type: 'damage', amount: 10 }]
+    },
+    {
+        id: 'hot-pan', name: 'Hot Pan', cost: 2,
+        type: 'Attack', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🍳',
+        description: 'Deal 4 damage. Gain 2 Relaxation.',
+        effects: [{ type: 'damage', amount: 4 }, { type: 'block', amount: 2 }]
+    },
+    {
+        id: 'undercooked-meat', name: 'Undercooked Meat', cost: 1,
+        type: 'Attack', rarity: 'Enemy', enemyTier: 'Common', enemyOnly: true, art: '🥩',
+        description: 'Deal 2 damage. Restore 5 Sanity. Apply 1 Called Out.',
+        effects: [
+            { type: 'damage', amount: 2 },
+            { type: 'heal', amount: 5 },
+            { type: 'status', status: 'calledOut', amount: 1 }
+        ]
+    },
+    {
+        id: 'sticky-juice-box', name: 'Sticky Juice Box', cost: 2,
+        type: 'Attack', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🧃',
+        description: 'Deal 1 damage. Reduce the player\'s Coffee by 1 next turn.',
+        effects: [
+            { type: 'damage', amount: 1 },
+            { type: 'reduceNextTurnEnergy', amount: 1 }
+        ]
+    },
+    {
+        id: 'evil-pizza-cutter', name: 'Evil Pizza Cutter', cost: 2,
+        type: 'Attack', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🍕',
+        description: 'Deal 2 damage three times. Apply 1 Called Out.',
+        effects: [
+            { type: 'damage', amount: 2, times: 3 },
+            { type: 'status', status: 'calledOut', amount: 1 }
+        ]
+    },
+    {
+        id: 'large-frozen-buns-box', name: 'Large Frozen Buns Box', cost: 2,
+        type: 'Defense', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '📦',
+        description: 'Place a Defender with 10 Sanity.',
+        effects: [{ type: 'defender', amount: 10, name: 'Large Frozen Buns Box', art: '📦' }]
+    },
+    {
+        id: 'inaccurate-probe-thermometer', name: 'Inaccurate Probe Thermometer', cost: 2,
+        type: 'Defense', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🌡️',
+        description: 'Gain 5 Relaxation. Apply 1 Called Out to the player.',
+        effects: [
+            { type: 'block', amount: 5 },
+            { type: 'status', status: 'calledOut', amount: 1 }
+        ]
+    },
+    {
+        id: 'heavy-milk-container', name: 'Heavy Milk Container', cost: 1,
+        type: 'Defense', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🥛',
+        description: 'Place a 4-Sanity Defender. While active, enemy attacks deal +1 damage.',
+        effects: [{ type: 'defender', amount: 4, name: 'Heavy Milk Container', art: '🥛', attackBonus: 1 }]
+    },
+    {
+        id: 'freezer-breeze', name: 'Freezer Breeze', cost: 2,
+        type: 'Defense', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '❄️',
+        description: 'Gain 5 Relaxation. Restore 5 Sanity.',
+        effects: [{ type: 'block', amount: 5 }, { type: 'heal', amount: 5 }]
+    },
+    {
+        id: 'malfunctioning-electric-can-opener', name: 'Malfunctioning Electric Can Opener', cost: 2,
+        type: 'Skill', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🥫',
+        description: 'Gain 1 Coffee. Reduce the player\'s Coffee by 1 next turn.',
+        effects: [
+            { type: 'energy', amount: 1 },
+            { type: 'reduceNextTurnEnergy', amount: 1 }
+        ]
+    },
+    {
+        id: 'wasted-napkins', name: 'Wasted Napkins', cost: 1,
+        type: 'Skill', rarity: 'Enemy', enemyTier: 'Common', enemyOnly: true, art: '🧻',
+        description: 'Restore 3 Sanity. Apply 1 Called Out to the player.',
+        effects: [
+            { type: 'heal', amount: 3 },
+            { type: 'status', status: 'calledOut', amount: 1 }
+        ]
+    },
+    {
+        id: 'broken-oven-fan', name: 'Broken Oven Fan', cost: 2,
+        type: 'Skill', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🌀',
+        description: 'Restore 8 Sanity.',
+        effects: [{ type: 'heal', amount: 8 }]
+    },
+    {
+        id: 'oven-heat', name: 'Oven Heat', cost: 3,
+        type: 'Power', rarity: 'Enemy', enemyTier: 'Rare', enemyOnly: true, art: '🔥',
+        description: 'Enemy attacks deal +1 damage. Incoming attacks deal 1 less damage.',
+        effects: [
+            { type: 'power', trigger: 'Attacks', effect: { type: 'damage', amount: 1 } },
+            { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -1 } }
+        ]
+    },
+    {
+        id: 'infestation', name: 'Infestation', cost: 2,
+        type: 'Power', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🪰',
+        description: 'Whenever the enemy plays an Attack card, gain 2 Relaxation.',
+        effects: [{ type: 'power', trigger: 'playAttack', effect: { type: 'block', amount: 2 } }]
+    },
 
     // ---------- GYM CLASS: player bonus cards ----------
     {

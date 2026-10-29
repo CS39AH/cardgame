@@ -109,13 +109,29 @@ SC.enemies = {
         sanity: 80,
         energy: 3,
         order: 'inOrder',
-        
+        shuffleEnemyDeck: true,
+
         startingDeck: [
             'rotten-produce',
             'dirty-tray',
             'dirty-rag',
             'vengeful-leftovers',
-            'spoiled-milk'
+            'spoiled-milk',
+            'hardened-buns',
+            'boiling-water',
+            'hot-pan',
+            'undercooked-meat',
+            'sticky-juice-box',
+            'evil-pizza-cutter',
+            'large-frozen-buns-box',
+            'inaccurate-probe-thermometer',
+            'heavy-milk-container',
+            'freezer-breeze',
+            'malfunctioning-electric-can-opener',
+            'wasted-napkins',
+            'broken-oven-fan',
+            'oven-heat',
+            'infestation'
         ]
 
     },

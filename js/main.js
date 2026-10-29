@@ -546,9 +546,9 @@
         // How many cards fit on one chalkboard before it gets a second page
         const CARDS_PER_PAGE = 6;
 
-        // Every playable card (demo cards stay on the title screen only)
+        // All collection cards, including enemy-only cards (but not demo cards)
         const boardCards = SC.cards.filter(function (card) {
-            return !card.demo;
+            return !card.demo && (!card.enemyOnly || card.rarity === 'Enemy');
         });
 
         function rarityOf(card) {
