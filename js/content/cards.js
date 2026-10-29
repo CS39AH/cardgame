@@ -332,7 +332,7 @@ SC.cards = [
         rarity: 'Enemy',
         art: '🛡️',                                   // fallback if the image is missing
         image: 'graphics/cards/blue-barrier.jpg',
-        imageAlt: 'A stapler shooting a staple.',
+        imageAlt: 'A shielding blue marker.',
         imageScale: 1.2,
         description: 'Gain a 10 sanity barrier',
         effects: [
@@ -557,6 +557,82 @@ SC.cards = [
         effects: [
             // 1 damage, once for every card you played on your turn
             { type: 'damage', amount: 1, times: 'cards played by player' }
+        ]
+    },
+    {
+        id: 'marker-saber',
+        name: 'Marker Saber',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '⚔️',                                   // fallback if the image is missing
+        image: 'graphics/cards/marker_saber.jpg',
+        imageAlt: 'A bunch of markers combined into one long stick.',
+        imageScale: 1.0,
+        description: 'Deal 10 damage',
+        effects: [
+            {type: 'damage', amount: 10}
+        ]
+    },
+    {
+        id: 'vitamins',
+        name: 'Vitamins',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '💊',                                   // fallback if the image is missing
+        image: 'graphics/cards/vitamin.jpg',
+        imageAlt: 'Some vitamins to consume.',
+        imageScale: 1.0,
+        description: 'Restore 5 sanity',
+        effects: [
+            {type: 'heal', amount: 5}
+        ]
+    },
+    {
+        id: 'caffeine-drink',
+        name: 'Caffeine Drink',
+        cost: 0,
+        type: 'Skill',
+        rarity: 'Enemy',
+        art: '🍾',                                   // fallback if the image is missing
+        image: 'graphics/cards/caffeine_drink.jpg',
+        imageAlt: 'An energy drink.',
+        imageScale: 1.0,
+        description: 'Gain 1 energy',
+        effects: [
+            {type: 'energy', amount: 1}
+        ]
+    },
+    {
+        id: 'whoopie-cushion',
+        name: 'Whoopie Cushion',
+        cost: 1,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '🎈',                                   // fallback if the image is missing
+        image: 'graphics/cards/whoopie_cushion.jpg',
+        imageAlt: 'A whoopie cushion.',
+        imageScale: 1.0,
+        description: 'When attacked mitigate 1 damage. When playing a defense card gain 1 relaxation.',
+        effects: [
+            { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -1 } },
+            { type: 'power', trigger: 'playDefense', effect: { type: 'block', amount: 1 } },
+        ]
+    },
+    {
+        id: 'desk-block',
+        name: 'Desk Block',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🟫',                                   // fallback if the image is missing
+        image: 'graphics/cards/desk_block.jpg',
+        imageAlt: 'A desk defender',
+        imageScale: 1.0,
+        description: 'Summon a desk to defend with sanity 15',
+        effects: [
+            { type: 'defender', amount: 15, name: 'Desk', art: '🟫' }
         ]
     },
 

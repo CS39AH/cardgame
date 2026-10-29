@@ -49,9 +49,14 @@ SC.enemies = {
             'scattered-pencils',   // 2 Coffee: deal 2, four times
             'stapler-shot',
             'eraser',
-            'bin-dump',
+            'caffeine-drink',
             'stapler-shot',
-            'eraser'
+            'desk-block',
+            'whoopie-cushion',
+            'desk-block',
+            'caffeine-drink',
+            'vitamins',
+            'marker-saber'
         ]
     },
     'class-computer': {
