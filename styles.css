@@ -2366,8 +2366,8 @@ html.reduce-animations *::after {
     color: rgba(244, 240, 229, 0.9);
 }
 
-/* Called Out status: visible only while the enemy has stacks.
-   Positioned above the intent area without moving the battle layout. */
+/* Called Out status: shown on either side only while stacks remain.
+   Positioned above the board without moving the battle layout. */
 .battle__called-out {
     position: absolute;
     top: 0.4rem;
