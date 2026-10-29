@@ -179,7 +179,7 @@ SC.enemies = {
         id: 'hallway-enemy',
         name: 'spilled-liquid',
         art: '🧹',
-        image: 'graphics/cards/spill.jpg',
+        image: 'graphics/cards/hallway/spill.jpg',
         sanity: 50,
         energy: 3,
         order: 'inOrder',

@@ -816,7 +816,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Enemy',
         art: '🚪',
-        image: 'graphics/cards/evil-locker.jpg',
+        image: 'graphics/cards/hallway/evil-locker.png',
         description: 'Place a 5 Sanity defender.',
         effects: [
             { type: 'defender', amount: 5, name: 'Locker', art: '🚪' }
@@ -830,7 +830,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Enemy',
         art: '🗑️',
-        image: 'graphics/cards/evil-trashcan.jpg',
+        image: 'graphics/cards/hallway/evil-trashcan.png',
         description: 'Deal 1 damage.',
         effects: [
             { type: 'damage', amount: 1 }
@@ -845,7 +845,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Rare',
         art: '⚠️',
-        image: 'graphics/cards/wet-floor-sign.jpg',
+        image: 'graphics/cards/hallway/wet-floor-sign.png',
         description: 'Gain 10 Relaxation.',
         effects: [
             { type: 'block', amount: 10 }
@@ -859,7 +859,7 @@ SC.cards = [
         type: 'Skill',
         rarity: 'Common',
         art: '🧴',
-        image: 'graphics/cards/disinfectant-spray.jpg',
+        image: 'graphics/cards/hallway/disinfectant-spray.png',
         description: 'Recover 4 Sanity.',
         effects: [
             { type: 'heal', amount: 4 }
@@ -873,7 +873,7 @@ SC.cards = [
         type: 'Skill',
         rarity: 'Common',
         art: '🗝️',
-        image: 'graphics/cards/janitor-keys.jpg',
+        image: 'graphics/cards/hallway/janitor-keys.png',
         description: 'Draw 2 cards.',
         effects: [
             { type: 'draw', amount: 2 }
@@ -887,7 +887,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Common',
         art: '🧹',
-        image: 'graphics/cards/vacuum.jpg',
+        image: 'graphics/cards/hallway/vacuum.png',
         description: 'Deal 4 damage.',
         effects: [
             { type: 'damage', amount: 4 }
@@ -901,7 +901,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Uncommon',
         art: '🧤',
-        image: 'graphics/cards/gloves.jpg',
+        image: 'graphics/cards/hallway/gloves.png',
         description: 'Deal 4 damage.',
         effects: [
             { type: 'damage', amount: 4 }
