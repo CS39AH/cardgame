@@ -39,7 +39,16 @@ SC.days = {
                     ]
                 },
                 { id: 'hallway',   label: 'Hallway Patrol',     icon: '🚪', type: 'combat', pos: { x: 38.9, y: 28.3 } },
-                { id: 'cafeteria', label: 'Cafeteria Duty',     icon: '🍎', type: 'combat',   pos: { x: 62.6, y: 28.5 } },
+                { id: 'cafeteria', label: 'Cafeteria Duty', icon: '🍎', type: 'combat', pos: { x: 62.6, y: 28.5 },
+                    // Enter through the trashcan, advance across the tables, then reach the kitchen.
+                    zoneMap: 'graphics/screens/cafeteria-map.png',
+                    showZonePaths: true, // show the same dotted play arrows as Homeroom and Gym
+                    zones: [
+                        { id: 'cafeteria', label: 'Bad Food on the Loose', mark: 'O', type: 'combat', pos: { x: 18, y: 68 } },
+                        { id: 'cafeteria-food-fight', label: 'FOOD FIGHT!', mark: 'X', type: 'combat', pos: { x: 53, y: 55 } },
+                        { id: 'cafeteria-oven', label: "If You Can't Stand the Heat...", mark: 'X', type: 'boss', pos: { x: 84, y: 40 } }
+                    ]
+                },
                 { id: 'gym',       label: 'Gym Class',          icon: '🏀', type: 'combat', pos: { x: 39.1, y: 67.9 },
                   // The coach's clipboard: left basket -> center court -> right basket (boss)
                   zoneMap: 'graphics/screens/gym-map.png',

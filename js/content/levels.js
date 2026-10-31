@@ -77,9 +77,9 @@ SC.levels = {
 
     cafeteria: {
         id: 'cafeteria',
-        name: 'Cafeteria Duty',
+        name: 'Bad Food on the Loose',
         intro: 'The lunch rush is getting out of control!',
-        winText: 'The cafeteria is finally under control!',
+        winText: 'The burnt pizza is defeated! But the sounds of a chaotic food fight echo through the cafeteria...',
         sanity: 30,
         energy: 3,
         refillEnergy: true,
@@ -93,6 +93,32 @@ SC.levels = {
             'serving-spoon',
             'clean-tray'
         ]
+    },
+
+    'cafeteria-food-fight': {
+        id: 'cafeteria-food-fight',
+        name: 'FOOD FIGHT!',
+        theme: 'cafeteria',
+        intro: 'A whole group of students starts throwing food across the tables. Duck!',
+        winText: 'The students finally stop throwing food. Something is wrong in the kitchen...',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'cafeteria-food-fight-enemy'
+    },
+
+    'cafeteria-oven': {
+        id: 'cafeteria-oven',
+        name: "If You Can't Stand the Heat...",
+        theme: 'cafeteria',
+        intro: 'A dark purple glow fills the kitchen. The Evil Possessed Oven is heating up!',
+        winText: 'The oven finally cools down, and the cafeteria is safe again!',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'cafeteria-oven-enemy'
     },
 
     // ----- Gym zones (left basket, center court). The boss is `gym` below. -----

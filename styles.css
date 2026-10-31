@@ -2219,6 +2219,55 @@ html.reduce-animations *::after {
     pointer-events: none;
 }
 
+/* The cafeteria illustration is busier than the classroom and gym maps.
+   Strengthen the existing blue chalk trails with a light outline, without
+   changing the shared arrow appearance or marching animation elsewhere. */
+.zone-map--cafeteria .zone-map__play,
+.zone-map--cafeteria .zone-map__arrowhead {
+    stroke: #192d8a;
+    stroke-width: 5;
+    filter: drop-shadow(0 0 2px #fff9e5) drop-shadow(0 0 3px #fff9e5);
+}
+
+.zone-map--cafeteria .zone-map__play {
+    stroke-dasharray: 4 7;
+}
+
+/* Keep the same handwriting and font size as Homeroom/Gym, but add
+   a brighter outline so names remain readable over tables and the kitchen. */
+.zone-map--cafeteria .zone-node__label {
+    max-width: 23cqw;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.12;
+    text-shadow:
+        -1px -1px 0 #fff9e7,
+         1px -1px 0 #fff9e7,
+        -1px  1px 0 #fff9e7,
+         1px  1px 0 #fff9e7,
+         0 0 4px #fff9e7,
+         0 0 9px #fff9e7;
+}
+
+.zone-map--cafeteria .zone-node__mark {
+    text-shadow: 0 0 4px #fff5de, 0 0 8px #fff5de;
+}
+
+/* Planned sublevels: visible on the map but unavailable until implemented. */
+.zone-node--pending {
+    cursor: not-allowed;
+}
+.zone-node--pending .zone-node__mark,
+.zone-node--pending .zone-node__label {
+    opacity: 0.65;
+}
+
+/* "Coming soon" still communicates that these levels are unavailable;
+   their names need not be faded over the detailed cafeteria art. */
+.zone-map--cafeteria .zone-node--pending .zone-node__label {
+    opacity: 1;
+}
+
 /* Not reachable yet */
 .zone-node--locked {
     cursor: not-allowed;

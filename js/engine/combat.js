@@ -757,7 +757,7 @@ window.SC = window.SC || {};
 // Boss reward tables: boss id -> the specific cards offered after defeating them
 combat.bossRewards = {
     'class-clown':   ['dismissal-bell', 'yard-stick', 'golden-apple'],
-    'cafeteria-enemy':    ['golden-spork', 'bottomless-chocolate-milk', 'lunch-ladys-legendary-special'],
+    'cafeteria-oven-enemy': ['golden-spork', 'bottomless-chocolate-milk', 'lunch-ladys-legendary-special'],
     'gym-enemy':   ['team-spirit', 'basketball-pass', 'stacked-mats']
 };
 

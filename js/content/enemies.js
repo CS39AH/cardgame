@@ -111,7 +111,7 @@ SC.enemies = {
         name: 'Living Burnt Pizza',
         art: '🍕',
         image: 'graphics/cards/cafeteria/burnt_pizza.png',
-        sanity: 80,
+        sanity: 30,
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
@@ -139,6 +139,69 @@ SC.enemies = {
             'infestation'
         ]
 
+    },
+
+    // ----- Cafeteria Zone 2: a group of students throwing food -----
+    'cafeteria-food-fight-enemy': {
+        id: 'cafeteria-food-fight-enemy',
+        name: 'Food Fight Students',
+        art: '🧒🧑🧒',  // Placeholder until the team adds enemy artwork
+        sanity: 50,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        // Fast, disruptive attacks with a few lunch-tray defenses.
+        // Leave oven-specific powers for the final Cafeteria encounter.
+        startingDeck: [
+            'rotten-produce',
+            'rotten-produce',
+            'hardened-buns',
+            'hardened-buns',
+            'sticky-juice-box',
+            'sticky-juice-box',
+            'evil-pizza-cutter',
+            'evil-pizza-cutter',
+            'dirty-tray',
+            'dirty-tray',
+            'wasted-napkins',
+            'undercooked-meat',
+            'heavy-milk-container',
+            'vengeful-leftovers',
+            'infestation'
+        ]
+    },
+
+    // ----- Cafeteria Zone 3: final boss in the kitchen -----
+    'cafeteria-oven-enemy': {
+        id: 'cafeteria-oven-enemy',
+        name: 'Evil Possessed Oven',
+        art: '🔥',  // Placeholder until the team adds its enemy artwork
+        sanity: 80,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        // Heat-heavy offense backed by Powers and kitchen-themed defenses.
+        // Uses existing Cafeteria cards, so no new combat effects are needed.
+        startingDeck: [
+            'oven-heat',
+            'infestation',
+            'boiling-water',
+            'boiling-water',
+            'hot-pan',
+            'hot-pan',
+            'hot-pan',
+            'evil-pizza-cutter',
+            'evil-pizza-cutter',
+            'large-frozen-buns-box',
+            'heavy-milk-container',
+            'inaccurate-probe-thermometer',
+            'malfunctioning-electric-can-opener',
+            'broken-oven-fan',
+            'freezer-breeze',
+            'undercooked-meat',
+            'sticky-juice-box',
+            'wasted-napkins'
+        ]
     },
 
     // ----- Gym zone enemies (the boss is gym-enemy below) -----
