@@ -25,6 +25,7 @@ window.SC = window.SC || {};
 
 SC.buildZoneMap = function (container, location, currentZone, onPlay) {
     container.innerHTML = '';
+    container.classList.toggle('zone-map--cafeteria', location.id === 'cafeteria');
 
     // The location's picture. The markers sit on top of it, placed in %,
     // so they stay in the right spot at any size.
@@ -45,8 +46,10 @@ SC.buildZoneMap = function (container, location, currentZone, onPlay) {
         if (old) old.remove();
         container.insertBefore(drawPlays(location.zones, currentZone, aspect), art.nextSibling);
     }
-    if (art.complete) addPlays();
-    else art.addEventListener('load', addPlays);
+    if (location.showZonePaths !== false) {
+        if (art.complete) addPlays();
+        else art.addEventListener('load', addPlays);
+    }
 
     location.zones.forEach(function (zone, index) {
         // Same states as the day map
@@ -54,7 +57,9 @@ SC.buildZoneMap = function (container, location, currentZone, onPlay) {
         if (index < currentZone) state = 'complete';
         else if (index === currentZone) state = 'current';
         if (SC.UNLOCK_ALL_NODES && state === 'locked') state = 'open';
-        const playable = state === 'current' || SC.UNLOCK_ALL_NODES;
+        // Planned encounters stay visible but cannot start until their levels exist.
+        if (zone.pending && state !== 'complete') state = 'pending';
+        const playable = !zone.pending && (state === 'current' || SC.UNLOCK_ALL_NODES);
 
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -63,7 +68,7 @@ SC.buildZoneMap = function (container, location, currentZone, onPlay) {
         btn.style.top = zone.pos.y + '%';
         btn.disabled = !playable;
 
-        const stateLabel = state === 'locked' ? ' (locked)' : state === 'complete' ? ' (completed)' : '';
+        const stateLabel = state === 'pending' ? ' (coming soon)' : state === 'locked' ? ' (locked)' : state === 'complete' ? ' (completed)' : '';
         btn.setAttribute('aria-label', zone.label + stateLabel);
 
         // The big marker letter, drawn like a coach's marker
@@ -85,7 +90,12 @@ SC.buildZoneMap = function (container, location, currentZone, onPlay) {
         label.textContent = zone.label;
         btn.appendChild(label);
 
-        if (zone.type === 'boss') {
+        if (state === 'pending') {
+            const tag = document.createElement('span');
+            tag.className = 'zone-node__boss';
+            tag.textContent = 'Coming soon';
+            btn.appendChild(tag);
+        } else if (zone.type === 'boss') {
             const tag = document.createElement('span');
             tag.className = 'zone-node__boss';
             tag.textContent = 'Boss';
