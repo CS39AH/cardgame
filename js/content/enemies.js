@@ -291,5 +291,43 @@ SC.enemies = {
         'eraser',
         'stapler-shot'
     ]
-},
+    },
+    'mastermind': {
+        id: 'mastermind',
+        name: 'Robo Principal',
+        art: '🤖',
+        image: 'graphics/cards/robo-principal.jpg',
+        imageScale: 1.2,
+        sanity: 80,
+        energy: 4,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'blue-barrier',         //homeroom cards
+            'scattered-pencils',
+            'blackout',
+            'marked-up',
+            'critical-error',
+            'vengeful-leftovers',   //lunchroom cards
+            'spoiled-milk',
+            'boiling-water',
+            'undercooked-meat',
+            'malfunctioning-electric-can-opener',
+            'water-break',          //gym cards
+            '',
+            '',
+            '',
+            '',
+            'locker',               //hallway cards
+            '',
+            '',
+            '',
+            '',
+            '', //library cards
+            '',
+            '',
+            '',
+            '',
+        ]
+    },
 };

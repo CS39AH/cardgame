@@ -210,6 +210,18 @@ SC.levels = {
             'library-rules'
         ]
     
+    },
+    principal: {
+    id: 'principal',
+    name: 'Principal\'s Office',
+    intro: 'Time to uncover who really runs this school!',
+    winText: 'Order has been restored! Time to go home.',
+    sanity: 30,
+    energy: 3,
+    refillEnergy: true,
+    handSize: 5,
+    enemy: 'mastermind',
+    
     }
 
 };
