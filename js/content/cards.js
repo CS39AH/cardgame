@@ -1035,6 +1035,76 @@ SC.cards = [
         ]
     },
 
+    {
+        id: 'combination-lock',
+        name: 'Combination Lock',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🔒',
+        image: 'graphics/cards/hallway/combination-lock.png',
+        description: 'Gain 6 Relaxation.',
+        effects: [
+            { type: 'block', amount: 6 }
+        ]
+    },
+
+    {
+        id: 'moldy-sandwich',
+        name: 'Moldy Sandwich',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🥪',
+        image: 'graphics/cards/hallway/moldy-sandwich.png',
+        description: 'Deal 4 damage.',
+        effects: [
+            { type: 'damage', amount: 4 }
+        ]
+    },
+
+    {
+        id: 'umbrella',
+        name: 'Umbrella',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '☂️',
+        image: 'graphics/cards/hallway/umbrella.png',
+        description: 'Deal 3 damage.',
+        effects: [
+            { type: 'damage', amount: 3 }
+        ]
+    },
+
+    {
+        id: 'dentention-notice',
+        name: 'Detention Notice',
+        cost: 2,
+        type: 'Skill',
+        rarity: 'Enemy',
+        art: '📄',
+        image: 'graphics/cards/hallway/detention-notice.png',
+        description: 'Reduce the player\'s Coffee by 1 next turn.',
+        effects: [
+            { type: 'reduceNextTurnEnergy', amount: 1 }
+        ]
+    },
+
+    {
+        id: 'trophy',
+        name: 'Trophy',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '🏆',
+        image: 'graphics/cards/hallway/trophy.png',
+        description: 'add +1 damage to all future attacks.',
+        effects: [
+            { type: 'damage', amount: 1, times: 'all future attacks' }
+        ]
+    },
+
     // --------- Hallway: player bonus cards ----------
     {
         id: 'wet-floor-sign',

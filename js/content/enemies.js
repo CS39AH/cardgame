@@ -289,8 +289,11 @@ SC.enemies = {
         order: 'inOrder',
         shuffleEnemyDeck: true,
         startingDeck: [
-            'locker-door',       // 1 Coffee: 5 Sanity defender
-            'notebook'
+            'moldy-sandwich',       // 1 Coffee: 5 Sanity defender
+            'combination-lock',
+            'umbrella',
+            'deodorant-spray',
+            'trophy'
         ]
     },
 
