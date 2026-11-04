@@ -259,6 +259,8 @@ SC.enemies = {
         ]
     },
 
+    // ----- Hallway zone enemies
+
     'hallway-enemy': {
         id: 'hallway-enemy',
         name: 'spilled-liquid',
@@ -274,6 +276,37 @@ SC.enemies = {
             'dustpan',
             'locker',
             'trash-can'
+        ]
+    },
+
+    'hallway-lockers-enemy': {
+        id: 'hallway-lockers-enemy',
+        name: 'The Locker',
+        art: '🗄️',
+        image: 'graphics/cards/hallway/locker.png',
+        sanity: 60,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'locker-door',       // 1 Coffee: 5 Sanity defender
+            'notebook'
+        ]
+    },
+
+    'hallway-boss-enemy': {
+        id: 'hallway-boss-enemy',
+        name: 'The Fountain',
+        art: '⛲',
+        image: 'graphics/cards/hallway/fountain.png',
+        sanity: 80,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'fountain-spray',       // 2 Coffee: deal 3, three times
+            'water-bottle',
+
         ]
     },
     

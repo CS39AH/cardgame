@@ -38,7 +38,14 @@ SC.days = {
                         { id: 'homeroom-boss', label: 'Disruption in class', mark: 'x', type: 'boss', pos: {x: 87, y: 50}}
                     ]
                 },
-                { id: 'hallway',   label: 'Hallway Patrol',     icon: '🚪', type: 'combat', pos: { x: 38.9, y: 28.3 } },
+                { id: 'hallway',   label: 'Hallway Patrol',     icon: '🚪', type: 'combat', pos: { x: 38.9, y: 28.3 },
+                zoneMap: 'graphics/screens/hallway-map.png',
+                zones: [
+                    { id: 'hallway', label: 'Hallway Spill', mark: 'O', type: 'combat', pos: { x: 50, y: 50 } },
+                    { id: 'hallway-lockers', label: 'Locker Lockdown', mark: 'X', type: 'combat', pos: { x: 20, y: 50 } },
+                    { id: 'hallway-boss', label: 'Hall Monitor', mark: 'X', type: 'boss', pos: { x: 80, y: 50 } }
+                ]
+                },
                 { id: 'cafeteria', label: 'Cafeteria Duty', icon: '🍎', type: 'combat', pos: { x: 62.6, y: 28.5 },
                     // Enter through the trashcan, advance across the tables, then reach the kitchen.
                     zoneMap: 'graphics/screens/cafeteria-map.png',
