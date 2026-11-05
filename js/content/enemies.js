@@ -276,6 +276,39 @@ SC.enemies = {
             'trash-can'
         ]
     },
+
+        'library-returns-enemy': {
+        id: 'library-returns-enemy',
+        name: 'Overdue Book Stack',
+        art: '📚',
+        sanity: 40,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'stapler-shot',
+            'eraser',
+            'bin-dump',
+            'stapler-shot'
+        ]
+    },
+
+    'library-study-enemy': {
+        id: 'library-study-enemy',
+        name: 'Phone on Speaker',
+        art: '📱',
+        sanity: 55,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'stapler-shot',
+            'pencil-sharpener',
+            'eraser',
+            'scattered-pencils',
+            'stapler-shot'
+        ]
+    },
     
     'library-enemy': {
     id: 'library-enemy',

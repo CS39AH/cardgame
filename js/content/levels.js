@@ -189,6 +189,30 @@ SC.levels = {
             'gloves'
         ]
     },
+
+    'library-returns': {
+        id: 'library-returns',
+        name: 'Overdue Returns',
+        intro: 'The return cart is overflowing, and the overdue books are fighting back!',
+        winText: 'Books have been returned, overdue fines have been paid. On to the study tables.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'library-returns-enemy'
+    },
+
+        'library-study': {
+        id: 'library-study',
+        name: 'Ringing in the Stacks',
+        intro: 'Someone left a phone blasting on speaker between the shelves. Make it stop!',
+        winText: 'The phone is finally silent. Only the reading room is left.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'library-study-enemy'
+    },
     
     library: {
     id: 'library',
