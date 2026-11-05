@@ -4116,3 +4116,32 @@ html.reduce-animations *::after {
             transparent 70%),
         linear-gradient(145deg, #526a7b, #303c4b);
 }
+/* ---- Principal enemy side: serving counter image ---- */
+.battle-screen--principal .battle__side--enemy {
+    position: relative;
+    overflow: hidden;
+
+    /* Remove the original chalkboard image */
+    border-image: none;
+    border: 6px solid #66747a;
+    border-radius: 12px;
+
+    /* Stainless-steel serving counter */
+    background:
+        linear-gradient(
+            rgba(20, 28, 33, 0.15),
+            rgba(20, 28, 33, 0.30)
+        ),
+        url('graphics/screens/principal_battlefield_enemy.jpg') center / cover no-repeat;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+/* Library hero side: librarian's desk image */
+.battle-screen--principal .battle__side--player {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.25)),
+        url('graphics/screens/principal_battlefield_hero.jpg') center 75% / cover no-repeat,
+        linear-gradient(180deg, #8a5a30 0%, #53341a 100%);
+
+    border-top: 10px solid #6b4423;
+}
