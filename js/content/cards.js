@@ -1226,9 +1226,9 @@ SC.cards = [
         rarity: 'Common',
         art: '🧹',
         image: 'graphics/cards/hallway/vacuum.png',
-        description: 'Deal 4 damage.',
+        description: 'Deal 8 damage.',
         effects: [
-            { type: 'damage', amount: 4 }
+            { type: 'damage', amount: 8 }
         ]
     },
 
