@@ -302,7 +302,7 @@ SC.enemies = {
         name: 'The Monitor',
         art: '🧑‍🏫',
         image: 'graphics/cards/hallway/hall-monitor.png',
-        sanity: 80,
+        sanity: 70,
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,

@@ -1246,7 +1246,58 @@ SC.cards = [
         ]
     },
 
-    
+    // ---------- Hallway: boss rewards cards ----------
+
+    {
+        id: 'battle-cart',
+        name: 'Battle Cart',
+        cost: 3,
+        type: 'Attack',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🛒',
+        image: 'graphics/cards/hallway/battle-cart.png',
+        description: 'Deal 15 damage. add 1 coffee.',
+        effects: [
+            { type: 'damage', amount: 15 },
+            { type: 'energy', amount: 1 }
+        ]
+    },
+
+    {
+        id: 'wall-of-lockers',
+        name: 'Wall of Lockers',
+        cost: 3,    
+        type: 'Power',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🚪',
+        image: 'graphics/cards/hallway/wall-of-lockers.png',
+        description: 'place 10 sanity on defender. all future attacks deal +2 damage.',
+        effects: [
+            { type: 'defender', amount: 10, name: 'Wall of Lockers', art: '🚪' },
+            { type: 'power', trigger: 'Attacks', effect: { type: 'damage', amount: 2 } }
+        ]
+    },
+
+    {
+        id: 'hall-pass',
+        name: 'Hall Pass',
+        cost: 2,
+        type: 'Skill',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '📝',
+        image: 'graphics/cards/hallway/hall-pass.png',
+        description: 'Draw 3 cards. Gain 5 Relaxation.',
+        effects: [
+            { type: 'draw', amount: 3 },
+            { type: 'block', amount: 5 }
+        ]
+    },
+
+
+
     {
         // Title screen showcase only. demo: true keeps it off the Cards board.
         id: 'substitute-teacher',
