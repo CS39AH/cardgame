@@ -299,16 +299,19 @@ SC.enemies = {
 
     'hallway-boss-enemy': {
         id: 'hallway-boss-enemy',
-        name: 'The Fountain',
-        art: '⛲',
-        image: 'graphics/cards/hallway/fountain.png',
+        name: 'The Monitor',
+        art: '🧑‍🏫',
+        image: 'graphics/cards/hallway/hall-monitor.png',
         sanity: 80,
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
         startingDeck: [
-            'fountain-spray',       // 2 Coffee: deal 3, three times
+            'water-splash',       // 2 Coffee: deal 3, three times
             'water-bottle',
+            'fire-extinguisher',
+            'chewed-gum',
+            'school-bell'
 
         ]
     },

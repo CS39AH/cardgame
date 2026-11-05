@@ -1105,6 +1105,76 @@ SC.cards = [
         ]
     },
 
+    {
+        id: 'water-splash',
+        name: 'Water Splash',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '💦',
+        image: 'graphics/cards/hallway/water-splash.png',
+        description: 'Deal 3 damage.',
+        effects: [
+            { type: 'damage', amount: 3 }
+        ]
+    },
+
+    {
+        id: 'water-bottle',
+        name: 'Water Bottle',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Enemy',
+        art: '💧',
+        image: 'graphics/cards/hallway/water-bottle.png',
+        description: 'Recover 3 Sanity.',
+        effects: [
+            { type: 'heal', amount: 3 }
+        ]
+    },
+
+    {
+        id: 'school-bell',
+        name: 'School Bell',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '🔔',
+        image: 'graphics/cards/hallway/school-bell.png',
+        description: 'Gain 1 Relaxation whenever you play a Defense card.',
+        effects: [
+            { type: 'power', trigger: 'playDefense', effect: { type: 'block', amount: 1 } }
+        ]
+    },
+
+    {
+        id: 'chewing-gum',
+        name: 'Chewing Gum',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🍬',
+        image: 'graphics/cards/hallway/chewing-gum.png',
+        description: 'Gain 5 Relaxation.',
+        effects: [
+            { type: 'block', amount: 5 }
+        ]
+    },
+
+    {
+        id: 'fire-extinguisher',
+        name: 'Fire Extinguisher',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🧯',
+        image: 'graphics/cards/hallway/fire-extinguisher.png',
+        description: 'Deal 10 damage.',
+        effects: [
+            { type: 'damage', amount: 10 }
+        ]
+    },
+
     // --------- Hallway: player bonus cards ----------
     {
         id: 'wet-floor-sign',
