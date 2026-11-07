@@ -74,7 +74,7 @@ SC.levels = {
         enemy: 'marker-horde'
     },
 
-
+    // ----- CAFETERIA ZONES -----
     cafeteria: {
         id: 'cafeteria',
         name: 'Bad Food on the Loose',
@@ -105,7 +105,15 @@ SC.levels = {
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'cafeteria-food-fight-enemy'
+        enemy: 'cafeteria-food-fight-enemy',
+
+        bonusCards: [
+            'fresh-fruits',
+            'chocolate-milk',
+            'protective-apron',
+            'serving-spoon',
+            'clean-tray'
+        ]
     },
 
     'cafeteria-oven': {
@@ -118,7 +126,15 @@ SC.levels = {
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'cafeteria-oven-enemy'
+        enemy: 'cafeteria-oven-enemy',
+
+        bonusCards: [
+            'fresh-fruits',
+            'chocolate-milk',
+            'protective-apron',
+            'serving-spoon',
+            'clean-tray'
+        ]
     },
 
     // ----- Gym zones (left basket, center court). The boss is `gym` below. -----
