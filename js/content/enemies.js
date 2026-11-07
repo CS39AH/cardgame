@@ -106,6 +106,7 @@ SC.enemies = {
         ]
     },
 
+    //========== CAFETERIA ENEMIES ============
     'cafeteria-enemy': {
         id: 'cafeteria-enemy',
         name: 'Living Burnt Pizza',
@@ -145,7 +146,8 @@ SC.enemies = {
     'cafeteria-food-fight-enemy': {
         id: 'cafeteria-food-fight-enemy',
         name: 'Food Fight Students',
-        art: '🧒🧑🧒',  // Placeholder until the team adds enemy artwork
+        art: '🧒🧑🧒', 
+        image: 'graphics/cards/cafeteria/food_fight_students.png',
         sanity: 50,
         energy: 3,
         order: 'inOrder',
@@ -175,7 +177,8 @@ SC.enemies = {
     'cafeteria-oven-enemy': {
         id: 'cafeteria-oven-enemy',
         name: 'Evil Possessed Oven',
-        art: '🔥',  // Placeholder until the team adds its enemy artwork
+        art: '🔥', 
+        image: 'graphics/cards/cafeteria/evil_possessed_oven.png',
         sanity: 80,
         energy: 3,
         order: 'inOrder',
