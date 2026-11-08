@@ -1001,6 +1001,140 @@ SC.cards = [
         ]
     },
 
+    // ---------- GYM CLASS: zone 1 rewards (Jump Rope Warm-Up) ----------
+    // rewardOnly keeps them out of the random reward pool, so they only
+    // show up as the gym's zone 1 reward (rewards: in levels.js)
+    {
+        id: 'fast-break',
+        name: 'Fast Break',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '💨',
+        description: 'Deal 3 damage 2 times.',
+        effects: [
+            { type: 'damage', amount: 3 },
+            { type: 'multiplier', amount: 2 }
+        ]
+    },
+    {
+        id: 'knee-pads',
+        name: 'Knee Pads',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '🦵',
+        description: 'Gain 7 Relaxation.',
+        effects: [
+            { type: 'block', amount: 7 }
+        ]
+    },
+    {
+        id: 'coaches-whistle',
+        name: "Coach's Whistle",
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '📯',
+        description: 'Gain 1 Coffee. Draw 2 cards.',
+        effects: [
+            { type: 'energy', amount: 1 },
+            { type: 'draw', amount: 2 }
+        ]
+    },
+
+    // ---------- GYM CLASS: zone 2 rewards (Dodgeball Drill) ----------
+    // Rares: a step up from the Commons and Uncommons
+    {
+        id: 'full-court-press',
+        name: 'Full-Court Press',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🏃',
+        description: 'Deal 4 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 4 },
+            { type: 'multiplier', amount: 3 }
+        ]
+    },
+    {
+        id: 'ice-bath',
+        name: 'Ice Bath',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🧊',
+        description: 'Gain 10 Relaxation. Recover 4 Sanity.',
+        effects: [
+            { type: 'block', amount: 10 },
+            { type: 'heal', amount: 4 }
+        ]
+    },
+    {
+        id: 'assistant-coach',
+        name: 'Assistant Coach',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '📋',
+        description: 'Your Attack cards deal +2 damage on every hit.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 2 } }
+        ]
+    },
+
+    // ---------- GYM CLASS: PACER Test boss rewards ----------
+    // Legendaries (bossRewards['gym-enemy'] in combat.js)
+    {
+        id: 'slam-dunk',
+        name: 'Slam Dunk',
+        cost: 3,
+        type: 'Attack',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🏀',
+        description: 'Deal 20 damage.',
+        effects: [
+            { type: 'damage', amount: 20 }
+        ]
+    },
+    {
+        id: 'bleacher-fortress',
+        name: 'Bleacher Fortress',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🏟️',
+        description: 'Place a 20 Sanity defender. Gain 5 Relaxation.',
+        effects: [
+            { type: 'defender', amount: 20, name: 'Bleacher Fortress', art: '🏟️' },
+            { type: 'block', amount: 5 }
+        ]
+    },
+    {
+        id: 'technical-foul',
+        name: 'Technical Foul',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🟥',
+        description: 'Choose an enemy Power and remove it. Confiscated.',
+        target: 'enemyPower',          // you click an enemy Power to choose it (battle.js)
+        effects: [
+            { type: 'removePower' },
+            { type: 'confiscate' }
+        ]
+    },
+
     // ---------- GYM CLASS: enemy cards ----------
     {
         id: 'dodgeball-barrage',
