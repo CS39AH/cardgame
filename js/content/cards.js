@@ -1198,6 +1198,98 @@ SC.cards = [
         ]
     },
 
+    // ----- Runaway Jump Rope (zone 1) -----
+    {
+        id: 'skip-slap',
+        name: 'Skip Slap',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🪢',
+        description: 'Deal 2 damage 2 times.',
+        effects: [
+            { type: 'damage', amount: 2 },
+            { type: 'multiplier', amount: 2 }
+        ]
+    },
+    {
+        id: 'tangle',
+        name: 'Tangle',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '➰',
+        description: 'Gain 5 Relaxation.',
+        effects: [
+            { type: 'block', amount: 5 }
+        ]
+    },
+
+    // ----- The Ball Cart (zone 2) -----
+    {
+        id: 'ball-avalanche',
+        name: 'Ball Avalanche',
+        cost: 3,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '⚽',
+        description: 'Deal 3 damage 4 times.',
+        effects: [
+            { type: 'damage', amount: 3 },
+            { type: 'multiplier', amount: 4 }
+        ]
+    },
+    {
+        id: 'rolling-rack',
+        name: 'Rolling Rack',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🛒',
+        description: 'Place a 10 Sanity defender.',
+        effects: [
+            { type: 'defender', amount: 10, name: 'Rolling Rack', art: '🛒' }
+        ]
+    },
+
+    // ----- The PACER Test (boss) -----
+    {
+        id: 'beep',
+        name: 'Beep!',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🔊',
+        description: 'Deal 4 damage.',
+        effects: [
+            { type: 'damage', amount: 4 }
+        ]
+    },
+    {
+        id: 'level-up',
+        name: 'Level Up',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '📈',
+        description: 'Its Attack cards deal +1 damage on every hit.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 1 } }
+        ]
+    },
+    {
+        id: 'final-lap',
+        name: 'Final Lap',
+        cost: 3,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🏁',
+        description: 'Deal 15 damage.',
+        effects: [
+            { type: 'damage', amount: 15 }
+        ]
+    },
+
     // ---------- HALLWAY: enemy cards ----------
     {
         id: 'mop',
