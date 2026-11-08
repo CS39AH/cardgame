@@ -217,10 +217,13 @@ SC.enemies = {
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
-        startingDeck: [
+        startingDeck: [            // 7 cards
+            'skip-slap',
+            'skip-slap',
+            'skip-slap',
+            'tangle',
+            'tangle',
             'medicine-ball',
-            'water-break',
-            'dodgeball-barrage',
             'water-break'
         ]
     },
@@ -233,11 +236,21 @@ SC.enemies = {
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
-        startingDeck: [
+        startingDeck: [            // 15 cards
+            'dodgeball-barrage',
+            'dodgeball-barrage',
             'dodgeball-barrage',
             'dodgeball-barrage',
             'medicine-ball',
+            'medicine-ball',
+            'medicine-ball',
+            'ball-avalanche',
+            'ball-avalanche',
+            'rolling-rack',
+            'rolling-rack',
             'bleacher-wall',
+            'bleacher-wall',
+            'water-break',
             'water-break'
         ]
     },
@@ -251,14 +264,27 @@ SC.enemies = {
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
-        startingDeck: [
+        startingDeck: [            // 20 cards
+            'beep',                // 1 Coffee: deal 4
+            'beep',
+            'beep',
+            'beep',
+            'beep',
             'dodgeball-barrage',   // 2 Coffee: deal 2, three times
+            'dodgeball-barrage',
             'dodgeball-barrage',
             'medicine-ball',       // 2 Coffee: deal 7
             'medicine-ball',
+            'medicine-ball',
+            'water-break',         // 1 Coffee: recover 5 Sanity
+            'water-break',
+            'water-break',
+            'final-lap',           // 3 Coffee: deal 15
+            'final-lap',
             'bleacher-wall',       // 1 Coffee: 6 Sanity defender
-            'padded-walls',        // 2 Coffee: Power, takes 1 less per hit
-            'water-break'          // 1 Coffee: recover 5 Sanity
+            'bleacher-wall',
+            'level-up',            // 2 Coffee: Power, its Attacks +1 per hit
+            'padded-walls'         // 2 Coffee: Power, takes 1 less per hit
         ]
     },
 

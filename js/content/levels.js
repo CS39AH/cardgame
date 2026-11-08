@@ -149,7 +149,10 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-warmup-enemy',
-        bonusCards: ['running-shoes', 'sports-drink']
+        bonusCards: ['running-shoes', 'sports-drink'],
+
+        // Win this zone: pick 1 of these 3 (instead of 3 random cards)
+        rewards: ['fast-break', 'knee-pads', 'coaches-whistle']
     },
 
     'gym-dodgeball': {
@@ -163,7 +166,10 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-dodgeball-enemy',
-        bonusCards: ['basketball-pass', 'stacked-mats']
+        bonusCards: ['basketball-pass', 'stacked-mats'],
+
+        // Win this zone: pick 1 of these 3 Rares
+        rewards: ['full-court-press', 'ice-bath', 'assistant-coach']
     },
 
     gym: {
