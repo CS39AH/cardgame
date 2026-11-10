@@ -378,10 +378,10 @@ SC.enemies = {
             'undercooked-meat',
             'malfunctioning-electric-can-opener',
             'water-break',          //gym cards
-            '',
-            '',
-            '',
-            '',
+            'level-up',
+            'final-lap',
+            'tangle',
+            'ball-avalanche',
             'locker',               //hallway cards
             '',
             '',

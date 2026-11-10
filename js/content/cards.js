@@ -1620,17 +1620,18 @@ SC.cards = [
         hero: true,
         startingSanity: 50,
         startingEnergy: 3,
-        startingDeck: [
-            'red-pen-markup',
+        startingDeck: [            
+            'pencil-of-destiny',
+            'assistant-coach',
+            'fast-break',
+            'sports-drink',
+            'worksheets',           
             'backpack-wall',
-            'morning-coffee',
-            'teachers-pet',
-            'red-pen-markup',
-            'desk-key',
+            'research-notes',
+            'quiet-corner',
             'coffee-refill',
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee'
+            'janitor-key',
+            'disinfectant-spray'
         ],
         badgeText: 'Staff · Principal',
         badgeColor: '#7b4aa3',
