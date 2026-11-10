@@ -781,7 +781,10 @@ window.SC = window.SC || {};
 combat.bossRewards = {
     'class-clown':   ['dismissal-bell', 'yard-stick', 'golden-apple'],
     'cafeteria-oven-enemy': ['golden-spork', 'bottomless-chocolate-milk', 'lunch-ladys-legendary-special'],
-    'gym-enemy':   ['slam-dunk', 'bleacher-fortress', 'technical-foul']
+    'gym-enemy':   ['slam-dunk', 'bleacher-fortress', 'technical-foul'],
+    'hallway-boss-enemy': ['wall-of-lockers', 'battle-cart', 'hall-pass']
+
+
 };
 
 // Boss rewards: fixed cards for a given boss

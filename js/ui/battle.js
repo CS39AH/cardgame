@@ -71,7 +71,14 @@ window.SC = window.SC || {};
         root.classList.toggle('battle-screen--cafeteria', theme === 'cafeteria');
         root.classList.toggle('battle-screen--gym', theme === 'gym');
         root.classList.toggle('battle-screen--library', theme === 'library');
+<<<<<<< HEAD
+        root.classList.toggle('battle-screen--hallway', theme === 'hallway');
+
+        //Apply the specific theme for this battle
+        root.classList.add('battle-screen--' + theme);
+=======
         root.classList.toggle('battle-screen--principal', theme === 'principal')
+>>>>>>> origin/dev
 
         // Page background behind the battle, e.g. body.scene--gym = the gym photo
         // (main.js clears these when you leave, so other screens get the classroom)

@@ -4194,6 +4194,73 @@ html.reduce-animations *::after {
             transparent 70%),
         linear-gradient(145deg, #526a7b, #303c4b);
 }
+<<<<<<< HEAD
+
+/* Zone 2: Locker gauntlet — blue steel lockers */
+.battle-screen--hallway-lockers .battle__side--enemy {
+    border-image: none;
+    border: 6px solid #526c91;
+    border-radius: 12px;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 72px,
+            rgba(12, 25, 50, 0.75) 72px 78px
+        ),
+        repeating-linear-gradient(
+            180deg,
+            #5477a7 0 92px,
+            #304f79 92px 98px
+        );
+}
+
+.battle-screen--hallway-lockers .battle__side--player {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(20, 35, 50, 0.15) 0 3px,
+            transparent 3px 45px
+        ),
+        linear-gradient(145deg, #8198ae, #394f69);
+    border-top: 10px solid #a8bacb;
+}
+
+
+/* Zone 3: Hallway showdown — dramatic boss arena */
+.battle-screen--hallway-boss .battle__side--enemy {
+    border-image: none;
+    border: 6px solid #a44b48;
+    border-radius: 12px;
+    background:
+        radial-gradient(
+            ellipse at 50% 20%,
+            rgba(255, 85, 65, 0.42),
+            transparent 70%
+        ),
+        linear-gradient(145deg, #472d3a, #191b29);
+    box-shadow:
+        inset 0 0 25px rgba(220, 50, 50, 0.16),
+        0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+.battle-screen--hallway-boss .battle__side--player {
+    background:
+        radial-gradient(
+            ellipse at 50% 0%,
+            rgba(120, 190, 220, 0.25),
+            transparent 70%
+        ),
+        linear-gradient(145deg, #455a70, #202c3c);
+    border-top: 10px solid #91b6cc;
+}
+
+.battle-screen--hallway-lockers .battle__side--enemy .battle__side-label,
+.battle-screen--hallway-lockers .battle__side--enemy .battle__intent,
+.battle-screen--hallway-boss .battle__side--enemy .battle__side-label,
+.battle-screen--hallway-boss .battle__side--enemy .battle__intent {
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+=======
 /* ---- Principal enemy side: serving counter image ---- */
 .battle-screen--principal .battle__side--enemy {
     position: relative;
@@ -4222,4 +4289,5 @@ html.reduce-animations *::after {
         linear-gradient(180deg, #8a5a30 0%, #53341a 100%);
 
     border-top: 10px solid #6b4423;
+>>>>>>> origin/dev
 }

@@ -288,11 +288,13 @@ SC.enemies = {
         ]
     },
 
+    // ----- Hallway zone enemies
+
     'hallway-enemy': {
         id: 'hallway-enemy',
         name: 'spilled-liquid',
         art: '🧹',
-        image: 'graphics/cards/spill.jpg',
+        image: 'graphics/cards/hallway/spill.jpg',
         sanity: 50,
         energy: 3,
         order: 'inOrder',
@@ -306,16 +308,41 @@ SC.enemies = {
         ]
     },
 
+<<<<<<< HEAD
+    'hallway-lockers-enemy': {
+        id: 'hallway-lockers-enemy',
+        name: 'The Locker',
+        art: '🗄️',
+        image: 'graphics/cards/hallway/locker.png',
+        sanity: 60,
+=======
         'library-returns-enemy': {
         id: 'library-returns-enemy',
         name: 'Overdue Book Stack',
         art: '📚',
         image: 'graphics/cards/library/overdue-book-stack.png',
         sanity: 40,
+>>>>>>> origin/dev
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
         startingDeck: [
+<<<<<<< HEAD
+            'moldy-sandwich',       // 1 Coffee: 5 Sanity defender
+            'combination-lock',
+            'umbrella',
+            'deodorant-spray',
+            'trophy'
+        ]
+    },
+
+    'hallway-boss-enemy': {
+        id: 'hallway-boss-enemy',
+        name: 'The Monitor',
+        art: '🧑‍🏫',
+        image: 'graphics/cards/hallway/hall-monitor.png',
+        sanity: 70,
+=======
             'stapler-shot',
             'eraser',
             'bin-dump',
@@ -329,15 +356,25 @@ SC.enemies = {
         art: '📱',
         image: 'graphics/cards/library/phone-on-speaker.png',
         sanity: 55,
+>>>>>>> origin/dev
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
         startingDeck: [
+<<<<<<< HEAD
+            'water-splash',       // 2 Coffee: deal 3, three times
+            'water-bottle',
+            'fire-extinguisher',
+            'chewed-gum',
+            'school-bell'
+
+=======
             'stapler-shot',
             'pencil-sharpener',
             'eraser',
             'scattered-pencils',
             'stapler-shot'
+>>>>>>> origin/dev
         ]
     },
     

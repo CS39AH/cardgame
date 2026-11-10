@@ -192,6 +192,8 @@ SC.levels = {
         ]
     },
 
+    // ----- Hallway zones. The boss is `hallway-boss` below. -----
+
     hallway: {
         id: 'hallway',
         name: 'hallway',
@@ -212,15 +214,33 @@ SC.levels = {
         ]
     },
 
+<<<<<<< HEAD
+    'hallway-lockers': {
+        id: 'hallway-lockers',
+        name: 'Locker Lockdown',
+        intro: 'The lockers are jammed and students are panicking.',
+        winText: 'The lockers are finally unlocked and the students can get their things.',
+=======
     'library-returns': {
         id: 'library-returns',
         name: 'Overdue Returns',
         intro: 'The return cart is overflowing, and the overdue books are fighting back!',
         winText: 'Books have been returned, overdue fines have been paid. On to the study tables.',
+>>>>>>> origin/dev
         sanity: 30,
         energy: 3,
         refillEnergy: true,
         handSize: 5,
+<<<<<<< HEAD
+        enemy: 'hallway-lockers-enemy'
+    },
+
+    'hallway-boss': {
+        id: 'hallway-boss',
+        name: 'Hall Monitor',
+        intro: 'The hall monitor is out of control. You need to stop them.',
+        winText: 'The hall monitor is finally under control and the hallway is safe.',
+=======
         enemy: 'library-returns-enemy'
     },
 
@@ -229,13 +249,21 @@ SC.levels = {
         name: 'Ringing in the Stacks',
         intro: 'Someone left a phone blasting on speaker between the shelves. Make it stop!',
         winText: 'The phone is finally silent. Only the reading room is left.',
+>>>>>>> origin/dev
         sanity: 30,
         energy: 3,
         refillEnergy: true,
         handSize: 5,
+<<<<<<< HEAD
+        enemy: 'hallway-boss-enemy'
+    },
+
+
+=======
         enemy: 'library-study-enemy'
     },
     
+>>>>>>> origin/dev
     library: {
     id: 'library',
     name: 'Library',
