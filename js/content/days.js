@@ -66,7 +66,17 @@ SC.days = {
                       { id: 'gym',           label: 'The PACER Test',  mark: 'X', type: 'boss',   pos: { x: 79, y: 50 } }
                   ]
                 },
-                { id: 'library',   label: 'Library',            icon: '📚', type: 'combat',  pos: { x: 63.6, y: 67.5 } },
+                {
+                id: 'library', label: 'Library', icon: '📚', type: 'combat',
+            //
+                pos: { x: 63.6, y: 67.5 },
+                zoneMap: 'graphics/screens/library-map.jpg',
+                zones: [
+                { id: 'library-returns', label: 'Overdue Returns',      mark: 'X', type: 'combat', pos: { x: 22.5, y: 51 } },
+                { id: 'library-study',   label: 'Ringing in the Stacks', mark: 'X', type: 'combat', pos: { x: 48.5, y: 51 } },
+                { id: 'library',         label: 'The Library',          mark: 'X', type: 'boss',   pos: { x: 77.6, y: 50.5 } }
+                ]
+            },
                 { id: 'principal', label: "Principal's Office", icon: '🏆', type: 'combat',   pos: { x: 85.0, y: 66.6 } }
             ]
         }

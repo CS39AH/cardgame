@@ -192,7 +192,8 @@ SC.cards = [
         ]
     },
    
-    {   // Cafeteria related cards.
+    // ================ Cafeteria related cards. =====================
+    {   
         id: 'fresh-fruits',
         name: 'Fresh Fruits',
         cost: 1,
@@ -636,7 +637,8 @@ SC.cards = [
         ]
     },
 
-    {   // Cafeteria related enemy cards.
+    // ================= Cafeteria related enemy cards. ====================
+    {   
         id: 'rotten-produce',
         name: 'Rotten Produce',
         cost: 1,
@@ -716,35 +718,56 @@ SC.cards = [
             { type: 'reduceNextTurnEnergy', amount: 1 }
         ]
     },
-
     
-
-    
-
-    // ----- CAFETERIA DUTY: additional enemy cards -----
-    // Enemy rarity gives these cards the red appearance and Enemy collection tab.
-    // enemyTier records their planned balance tier; enemyOnly blocks player rewards.
     {
-        id: 'hardened-buns', name: 'Hardened Buns', cost: 1,
-        type: 'Attack', rarity: 'Enemy', enemyTier: 'Common', enemyOnly: true, art: '🥯',
+        id: 'hardened-buns', 
+        name: 'Hardened Buns', 
+        cost: 1,
+        type: 'Attack', 
+        rarity: 'Enemy', 
+        enemyTier: 'Common', 
+        enemyOnly: true, 
+        art: '🥯',
+        image: 'graphics/cards/cafeteria/hardened_buns.png',
         description: 'Deal 3 damage.',
         effects: [{ type: 'damage', amount: 3 }]
     },
     {
-        id: 'boiling-water', name: 'Boiling Water', cost: 3,
-        type: 'Attack', rarity: 'Enemy', enemyTier: 'Rare', enemyOnly: true, art: '♨️',
+        id: 'boiling-water', 
+        name: 'Boiling Water', 
+        cost: 3,
+        type: 'Attack', 
+        rarity: 'Enemy', 
+        enemyTier: 'Rare', 
+        enemyOnly: true, 
+        art: '♨️',
+        image: 'graphics/cards/cafeteria/boiling_water.png',
         description: 'Deal 10 damage.',
         effects: [{ type: 'damage', amount: 10 }]
     },
     {
-        id: 'hot-pan', name: 'Hot Pan', cost: 2,
-        type: 'Attack', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🍳',
+        id: 'hot-pan', 
+        name: 'Hot Pan', 
+        cost: 2,
+        type: 'Attack', 
+        rarity: 'Enemy', 
+        enemyTier: 'Uncommon', 
+        enemyOnly: true, 
+        art: '🍳',
+        image: 'graphics/cards/cafeteria/hot_pan.png',
         description: 'Deal 4 damage. Gain 2 Relaxation.',
         effects: [{ type: 'damage', amount: 4 }, { type: 'block', amount: 2 }]
     },
     {
-        id: 'undercooked-meat', name: 'Undercooked Meat', cost: 1,
-        type: 'Attack', rarity: 'Enemy', enemyTier: 'Common', enemyOnly: true, art: '🥩',
+        id: 'undercooked-meat', 
+        name: 'Undercooked Meat', 
+        cost: 1,
+        type: 'Attack', 
+        rarity: 'Enemy', 
+        enemyTier: 'Common', 
+        enemyOnly: true, 
+        art: '🥩',
+        image: 'graphics/cards/cafeteria/undercooked_meat.png',
         description: 'Deal 2 damage. Restore 5 Sanity. Apply 1 Called Out.',
         effects: [
             { type: 'damage', amount: 2 },
@@ -753,8 +776,15 @@ SC.cards = [
         ]
     },
     {
-        id: 'sticky-juice-box', name: 'Sticky Juice Box', cost: 2,
-        type: 'Attack', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🧃',
+        id: 'sticky-juice-box', 
+        name: 'Sticky Juice Box', 
+        cost: 2,
+        type: 'Attack', 
+        rarity: 'Enemy', 
+        enemyTier: 'Uncommon', 
+        enemyOnly: true, 
+        art: '🧃',
+        image: 'graphics/cards/cafeteria/sticky_juice_box.png',
         description: 'Deal 1 damage. Reduce the player\'s Coffee by 1 next turn.',
         effects: [
             { type: 'damage', amount: 1 },
@@ -762,8 +792,15 @@ SC.cards = [
         ]
     },
     {
-        id: 'evil-pizza-cutter', name: 'Evil Pizza Cutter', cost: 2,
-        type: 'Attack', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🍕',
+        id: 'evil-pizza-cutter', 
+        name: 'Evil Pizza Cutter', 
+        cost: 2,
+        type: 'Attack', 
+        rarity: 'Enemy', 
+        enemyTier: 'Uncommon', 
+        enemyOnly: true, 
+        art: '🍕',
+        image: 'graphics/cards/cafeteria/evil_pizza_cutter.png',
         description: 'Deal 2 damage three times. Apply 1 Called Out.',
         effects: [
             { type: 'damage', amount: 2, times: 3 },
@@ -771,14 +808,28 @@ SC.cards = [
         ]
     },
     {
-        id: 'large-frozen-buns-box', name: 'Large Frozen Buns Box', cost: 2,
-        type: 'Defense', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '📦',
+        id: 'large-frozen-buns-box', 
+        name: 'Large Frozen Buns Box', 
+        cost: 2,
+        type: 'Defense', 
+        rarity: 'Enemy', 
+        enemyTier: 'Uncommon', 
+        enemyOnly: true, 
+        art: '📦',
+        image: 'graphics/cards/cafeteria/large_frozen_buns_box.png',
         description: 'Place a Defender with 10 Sanity.',
         effects: [{ type: 'defender', amount: 10, name: 'Large Frozen Buns Box', art: '📦' }]
     },
     {
-        id: 'inaccurate-probe-thermometer', name: 'Inaccurate Probe Thermometer', cost: 2,
-        type: 'Defense', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🌡️',
+        id: 'inaccurate-probe-thermometer', 
+        name: 'Inaccurate Probe Thermometer', 
+        cost: 2,
+        type: 'Defense', 
+        rarity: 'Enemy', 
+        enemyTier: 'Uncommon', 
+        enemyOnly: true, 
+        art: '🌡️',
+        image: 'graphics/cards/cafeteria/inaccurate_probe_thermometer.png',
         description: 'Gain 5 Relaxation. Apply 1 Called Out to the player.',
         effects: [
             { type: 'block', amount: 5 },
@@ -786,20 +837,41 @@ SC.cards = [
         ]
     },
     {
-        id: 'heavy-milk-container', name: 'Heavy Milk Container', cost: 1,
-        type: 'Defense', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🥛',
+        id: 'heavy-milk-container', 
+        name: 'Heavy Milk Container', 
+        cost: 1,
+        type: 'Defense', 
+        rarity: 'Enemy', 
+        enemyTier: 'Uncommon', 
+        enemyOnly: true, 
+        art: '🥛',
+        image: 'graphics/cards/cafeteria/heavy_milk_container.png',
         description: 'Place a 4-Sanity Defender. While active, enemy attacks deal +1 damage.',
         effects: [{ type: 'defender', amount: 4, name: 'Heavy Milk Container', art: '🥛', attackBonus: 1 }]
     },
     {
-        id: 'freezer-breeze', name: 'Freezer Breeze', cost: 2,
-        type: 'Defense', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '❄️',
+        id: 'freezer-breeze', 
+        name: 'Freezer Breeze', 
+        cost: 2,
+        type: 'Defense', 
+        rarity: 'Enemy', 
+        enemyTier: 'Uncommon', 
+        enemyOnly: true, 
+        art: '❄️',
+        image: 'graphics/cards/cafeteria/freezer_breeze.png',
         description: 'Gain 5 Relaxation. Restore 5 Sanity.',
         effects: [{ type: 'block', amount: 5 }, { type: 'heal', amount: 5 }]
     },
     {
-        id: 'malfunctioning-electric-can-opener', name: 'Malfunctioning Electric Can Opener', cost: 2,
-        type: 'Skill', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🥫',
+        id: 'malfunctioning-electric-can-opener', 
+        name: 'Malfunctioning Electric Can Opener', 
+        cost: 2,
+        type: 'Skill', 
+        rarity: 'Enemy', 
+        enemyTier: 'Uncommon', 
+        enemyOnly: true, 
+        art: '🥫',
+        image: 'graphics/cards/cafeteria/malfunctioning_electric_can_opener.png',
         description: 'Gain 1 Coffee. Reduce the player\'s Coffee by 1 next turn.',
         effects: [
             { type: 'energy', amount: 1 },
@@ -807,8 +879,15 @@ SC.cards = [
         ]
     },
     {
-        id: 'wasted-napkins', name: 'Wasted Napkins', cost: 1,
-        type: 'Skill', rarity: 'Enemy', enemyTier: 'Common', enemyOnly: true, art: '🧻',
+        id: 'wasted-napkins', 
+        name: 'Wasted Napkins', 
+        cost: 1,
+        type: 'Skill', 
+        rarity: 'Enemy', 
+        enemyTier: 'Common', 
+        enemyOnly: true, 
+        art: '🧻',
+        image: 'graphics/cards/cafeteria/wasted_napkins.png',
         description: 'Restore 3 Sanity. Apply 1 Called Out to the player.',
         effects: [
             { type: 'heal', amount: 3 },
@@ -816,14 +895,28 @@ SC.cards = [
         ]
     },
     {
-        id: 'broken-oven-fan', name: 'Broken Oven Fan', cost: 2,
-        type: 'Skill', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🌀',
+        id: 'broken-oven-fan', 
+        name: 'Broken Oven Fan', 
+        cost: 2,
+        type: 'Skill', 
+        rarity: 'Enemy', 
+        enemyTier: 'Uncommon', 
+        enemyOnly: true, 
+        art: '🌀',
+        image: 'graphics/cards/cafeteria/broken_oven_fan.png',
         description: 'Restore 8 Sanity.',
         effects: [{ type: 'heal', amount: 8 }]
     },
     {
-        id: 'oven-heat', name: 'Oven Heat', cost: 3,
-        type: 'Power', rarity: 'Enemy', enemyTier: 'Rare', enemyOnly: true, art: '🔥',
+        id: 'oven-heat', 
+        name: 'Oven Heat', 
+        cost: 3,
+        type: 'Power', 
+        rarity: 'Enemy', 
+        enemyTier: 'Rare', 
+        enemyOnly: true, 
+        art: '🔥',
+        image: 'graphics/cards/cafeteria/oven_heat.png',
         description: 'Enemy attacks deal +1 damage. Incoming attacks deal 1 less damage.',
         effects: [
             { type: 'power', trigger: 'Attacks', effect: { type: 'damage', amount: 1 } },
@@ -831,8 +924,15 @@ SC.cards = [
         ]
     },
     {
-        id: 'infestation', name: 'Infestation', cost: 2,
-        type: 'Power', rarity: 'Enemy', enemyTier: 'Uncommon', enemyOnly: true, art: '🪰',
+        id: 'infestation', 
+        name: 'Infestation', 
+        cost: 2,
+        type: 'Power', 
+        rarity: 'Enemy', 
+        enemyTier: 'Uncommon', 
+        enemyOnly: true, 
+        art: '🪰',
+        image: 'graphics/cards/cafeteria/infestation.png',
         description: 'Whenever the enemy plays an Attack card, gain 2 Relaxation.',
         effects: [{ type: 'power', trigger: 'playAttack', effect: { type: 'block', amount: 2 } }]
     },
@@ -901,6 +1001,140 @@ SC.cards = [
         ]
     },
 
+    // ---------- GYM CLASS: zone 1 rewards (Jump Rope Warm-Up) ----------
+    // rewardOnly keeps them out of the random reward pool, so they only
+    // show up as the gym's zone 1 reward (rewards: in levels.js)
+    {
+        id: 'fast-break',
+        name: 'Fast Break',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '💨',
+        description: 'Deal 3 damage 2 times.',
+        effects: [
+            { type: 'damage', amount: 3 },
+            { type: 'multiplier', amount: 2 }
+        ]
+    },
+    {
+        id: 'knee-pads',
+        name: 'Knee Pads',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '🦵',
+        description: 'Gain 7 Relaxation.',
+        effects: [
+            { type: 'block', amount: 7 }
+        ]
+    },
+    {
+        id: 'coaches-whistle',
+        name: "Coach's Whistle",
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '📯',
+        description: 'Gain 1 Coffee. Draw 2 cards.',
+        effects: [
+            { type: 'energy', amount: 1 },
+            { type: 'draw', amount: 2 }
+        ]
+    },
+
+    // ---------- GYM CLASS: zone 2 rewards (Dodgeball Drill) ----------
+    // Rares: a step up from the Commons and Uncommons
+    {
+        id: 'full-court-press',
+        name: 'Full-Court Press',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🏃',
+        description: 'Deal 4 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 4 },
+            { type: 'multiplier', amount: 3 }
+        ]
+    },
+    {
+        id: 'ice-bath',
+        name: 'Ice Bath',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🧊',
+        description: 'Gain 10 Relaxation. Recover 4 Sanity.',
+        effects: [
+            { type: 'block', amount: 10 },
+            { type: 'heal', amount: 4 }
+        ]
+    },
+    {
+        id: 'assistant-coach',
+        name: 'Assistant Coach',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '📋',
+        description: 'Your Attack cards deal +2 damage on every hit.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 2 } }
+        ]
+    },
+
+    // ---------- GYM CLASS: PACER Test boss rewards ----------
+    // Legendaries (bossRewards['gym-enemy'] in combat.js)
+    {
+        id: 'slam-dunk',
+        name: 'Slam Dunk',
+        cost: 3,
+        type: 'Attack',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🏀',
+        description: 'Deal 20 damage.',
+        effects: [
+            { type: 'damage', amount: 20 }
+        ]
+    },
+    {
+        id: 'bleacher-fortress',
+        name: 'Bleacher Fortress',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🏟️',
+        description: 'Place a 20 Sanity defender. Gain 5 Relaxation.',
+        effects: [
+            { type: 'defender', amount: 20, name: 'Bleacher Fortress', art: '🏟️' },
+            { type: 'block', amount: 5 }
+        ]
+    },
+    {
+        id: 'technical-foul',
+        name: 'Technical Foul',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🟥',
+        description: 'Choose an enemy Power and remove it. Confiscated.',
+        target: 'enemyPower',          // you click an enemy Power to choose it (battle.js)
+        effects: [
+            { type: 'removePower' },
+            { type: 'confiscate' }
+        ]
+    },
+
     // ---------- GYM CLASS: enemy cards ----------
     {
         id: 'dodgeball-barrage',
@@ -961,6 +1195,98 @@ SC.cards = [
         description: 'Recover 5 Sanity.',
         effects: [
             { type: 'heal', amount: 5 }
+        ]
+    },
+
+    // ----- Runaway Jump Rope (zone 1) -----
+    {
+        id: 'skip-slap',
+        name: 'Skip Slap',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🪢',
+        description: 'Deal 2 damage 2 times.',
+        effects: [
+            { type: 'damage', amount: 2 },
+            { type: 'multiplier', amount: 2 }
+        ]
+    },
+    {
+        id: 'tangle',
+        name: 'Tangle',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '➰',
+        description: 'Gain 5 Relaxation.',
+        effects: [
+            { type: 'block', amount: 5 }
+        ]
+    },
+
+    // ----- The Ball Cart (zone 2) -----
+    {
+        id: 'ball-avalanche',
+        name: 'Ball Avalanche',
+        cost: 3,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '⚽',
+        description: 'Deal 3 damage 4 times.',
+        effects: [
+            { type: 'damage', amount: 3 },
+            { type: 'multiplier', amount: 4 }
+        ]
+    },
+    {
+        id: 'rolling-rack',
+        name: 'Rolling Rack',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🛒',
+        description: 'Place a 10 Sanity defender.',
+        effects: [
+            { type: 'defender', amount: 10, name: 'Rolling Rack', art: '🛒' }
+        ]
+    },
+
+    // ----- The PACER Test (boss) -----
+    {
+        id: 'beep',
+        name: 'Beep!',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🔊',
+        description: 'Deal 4 damage.',
+        effects: [
+            { type: 'damage', amount: 4 }
+        ]
+    },
+    {
+        id: 'level-up',
+        name: 'Level Up',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '📈',
+        description: 'Its Attack cards deal +1 damage on every hit.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 1 } }
+        ]
+    },
+    {
+        id: 'final-lap',
+        name: 'Final Lap',
+        cost: 3,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🏁',
+        description: 'Deal 15 damage.',
+        effects: [
+            { type: 'damage', amount: 15 }
         ]
     },
 
@@ -1485,17 +1811,18 @@ SC.cards = [
         hero: true,
         startingSanity: 50,
         startingEnergy: 3,
-        startingDeck: [
-            'red-pen-markup',
+        startingDeck: [            
+            'pencil-of-destiny',
+            'assistant-coach',
+            'fast-break',
+            'sports-drink',
+            'worksheets',           
             'backpack-wall',
-            'morning-coffee',
-            'teachers-pet',
-            'red-pen-markup',
-            'desk-key',
+            'research-notes',
+            'quiet-corner',
             'coffee-refill',
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee'
+            'janitor-key',
+            'disinfectant-spray'
         ],
         badgeText: 'Staff · Principal',
         badgeColor: '#7b4aa3',

@@ -148,7 +148,9 @@ window.SC = window.SC || {};
 
     // ------- PLAYER ACTIONS -------
 
-    combat.playCard = function (handIndex) {
+    // target: for cards that pick something (like Technical Foul), which
+    // one the player chose, e.g. the index of an enemy Power
+    combat.playCard = function (handIndex, target) {
         const s = combat.state;
         if (!s || s.result) return false;
 
@@ -162,6 +164,15 @@ window.SC = window.SC || {};
             return false;
         }
 
+        // Cards that remove an enemy Power need one to remove
+        if (card.target === 'enemyPower' && !s.enemy.powers[target]) {
+            addLog(s.enemy.powers.length
+                ? 'Choose an enemy Power for ' + card.name + '.'
+                : 'The enemy has no Powers to remove.');
+            return false;
+        }
+        s.pendingTarget = target;
+
         s.player.energy -= card.cost;
         s.player.cardsPlayed = (s.player.cardsPlayed || 0) + 1;   // Bin Dump counts these
         s.hand.splice(handIndex, 1);
@@ -169,6 +180,7 @@ window.SC = window.SC || {};
 
         // Track Sanity damage from this card, separate from any triggered Powers.
         const effectContext = resolveCard(card, 'player');
+        s.pendingTarget = null;
 
         // Where the card goes after it's played
         if (card.type === 'Power') {
@@ -511,6 +523,17 @@ window.SC = window.SC || {};
                 break;
             }
 
+            case 'removePower': {
+                // Take the chosen Power (playCard's target) off the other side
+                const foe = sideOf(foeWho);
+                const i = s.pendingTarget;
+                if (typeof i === 'number' && foe.powers[i]) {
+                    const removed = foe.powers.splice(i, 1)[0];
+                    addLog(removed.name + ' was removed!');
+                }
+                break;
+            }
+
             case 'confiscate':   // handled in playCard
             case 'power':        // passive; handled by firePowers
                 break;
@@ -758,8 +781,10 @@ window.SC = window.SC || {};
 combat.bossRewards = {
     'class-clown':   ['dismissal-bell', 'yard-stick', 'golden-apple'],
     'cafeteria-oven-enemy': ['golden-spork', 'bottomless-chocolate-milk', 'lunch-ladys-legendary-special'],
-    'gym-enemy':   ['team-spirit', 'basketball-pass', 'stacked-mats'],
+    'gym-enemy':   ['slam-dunk', 'bleacher-fortress', 'technical-foul'],
     'hallway-boss-enemy': ['wall-of-lockers', 'battle-cart', 'hall-pass']
+
+
 };
 
 // Boss rewards: fixed cards for a given boss
@@ -783,6 +808,16 @@ combat.bossRewardChoices = function (bossId) {
 // Reward options: boss gets specific cards, everything else is random
 // with no repeats within one set of choices
 combat.rewardChoices = function (count, bossId) {
+    // A level can list its own reward cards (rewards: [...] in levels.js)
+    const level = combat.state && combat.state.level;
+    if (level && level.rewards && level.rewards.length) {
+        return level.rewards.map(function (id) {
+            return SC.cards.find(function (card) { return card.id === id; });
+        }).filter(Boolean).map(function (card) {
+            return Object.assign({}, card);
+        });
+    }
+
     if (bossId) {
         const bossCards = combat.bossRewardChoices(bossId);
         if (bossCards && bossCards.length) return bossCards;

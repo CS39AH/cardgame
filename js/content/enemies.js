@@ -106,6 +106,7 @@ SC.enemies = {
         ]
     },
 
+    //========== CAFETERIA ENEMIES ============
     'cafeteria-enemy': {
         id: 'cafeteria-enemy',
         name: 'Living Burnt Pizza',
@@ -145,7 +146,8 @@ SC.enemies = {
     'cafeteria-food-fight-enemy': {
         id: 'cafeteria-food-fight-enemy',
         name: 'Food Fight Students',
-        art: '🧒🧑🧒',  // Placeholder until the team adds enemy artwork
+        art: '🧒🧑🧒', 
+        image: 'graphics/cards/cafeteria/food_fight_students.png',
         sanity: 50,
         energy: 3,
         order: 'inOrder',
@@ -175,7 +177,8 @@ SC.enemies = {
     'cafeteria-oven-enemy': {
         id: 'cafeteria-oven-enemy',
         name: 'Evil Possessed Oven',
-        art: '🔥',  // Placeholder until the team adds its enemy artwork
+        art: '🔥', 
+        image: 'graphics/cards/cafeteria/evil_possessed_oven.png',
         sanity: 80,
         energy: 3,
         order: 'inOrder',
@@ -214,10 +217,13 @@ SC.enemies = {
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
-        startingDeck: [
+        startingDeck: [            // 7 cards
+            'skip-slap',
+            'skip-slap',
+            'skip-slap',
+            'tangle',
+            'tangle',
             'medicine-ball',
-            'water-break',
-            'dodgeball-barrage',
             'water-break'
         ]
     },
@@ -230,11 +236,21 @@ SC.enemies = {
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
-        startingDeck: [
+        startingDeck: [            // 15 cards
+            'dodgeball-barrage',
+            'dodgeball-barrage',
             'dodgeball-barrage',
             'dodgeball-barrage',
             'medicine-ball',
+            'medicine-ball',
+            'medicine-ball',
+            'ball-avalanche',
+            'ball-avalanche',
+            'rolling-rack',
+            'rolling-rack',
             'bleacher-wall',
+            'bleacher-wall',
+            'water-break',
             'water-break'
         ]
     },
@@ -248,14 +264,27 @@ SC.enemies = {
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
-        startingDeck: [
+        startingDeck: [            // 20 cards
+            'beep',                // 1 Coffee: deal 4
+            'beep',
+            'beep',
+            'beep',
+            'beep',
             'dodgeball-barrage',   // 2 Coffee: deal 2, three times
+            'dodgeball-barrage',
             'dodgeball-barrage',
             'medicine-ball',       // 2 Coffee: deal 7
             'medicine-ball',
+            'medicine-ball',
+            'water-break',         // 1 Coffee: recover 5 Sanity
+            'water-break',
+            'water-break',
+            'final-lap',           // 3 Coffee: deal 15
+            'final-lap',
             'bleacher-wall',       // 1 Coffee: 6 Sanity defender
-            'padded-walls',        // 2 Coffee: Power, takes 1 less per hit
-            'water-break'          // 1 Coffee: recover 5 Sanity
+            'bleacher-wall',
+            'level-up',            // 2 Coffee: Power, its Attacks +1 per hit
+            'padded-walls'         // 2 Coffee: Power, takes 1 less per hit
         ]
     },
 
@@ -279,16 +308,26 @@ SC.enemies = {
         ]
     },
 
+<<<<<<< HEAD
     'hallway-lockers-enemy': {
         id: 'hallway-lockers-enemy',
         name: 'The Locker',
         art: '🗄️',
         image: 'graphics/cards/hallway/locker.png',
         sanity: 60,
+=======
+        'library-returns-enemy': {
+        id: 'library-returns-enemy',
+        name: 'Overdue Book Stack',
+        art: '📚',
+        image: 'graphics/cards/library/overdue-book-stack.png',
+        sanity: 40,
+>>>>>>> origin/dev
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
         startingDeck: [
+<<<<<<< HEAD
             'moldy-sandwich',       // 1 Coffee: 5 Sanity defender
             'combination-lock',
             'umbrella',
@@ -303,16 +342,39 @@ SC.enemies = {
         art: '🧑‍🏫',
         image: 'graphics/cards/hallway/hall-monitor.png',
         sanity: 70,
+=======
+            'stapler-shot',
+            'eraser',
+            'bin-dump',
+            'stapler-shot'
+        ]
+    },
+
+    'library-study-enemy': {
+        id: 'library-study-enemy',
+        name: 'Phone on Speaker',
+        art: '📱',
+        image: 'graphics/cards/library/phone-on-speaker.png',
+        sanity: 55,
+>>>>>>> origin/dev
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
         startingDeck: [
+<<<<<<< HEAD
             'water-splash',       // 2 Coffee: deal 3, three times
             'water-bottle',
             'fire-extinguisher',
             'chewed-gum',
             'school-bell'
 
+=======
+            'stapler-shot',
+            'pencil-sharpener',
+            'eraser',
+            'scattered-pencils',
+            'stapler-shot'
+>>>>>>> origin/dev
         ]
     },
     
@@ -330,5 +392,43 @@ SC.enemies = {
         'eraser',
         'stapler-shot'
     ]
-},
+    },
+    'mastermind': {
+        id: 'mastermind',
+        name: 'Robo Principal',
+        art: '🤖',
+        image: 'graphics/cards/robo-principal.jpg',
+        imageScale: 1.2,
+        sanity: 80,
+        energy: 4,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'blue-barrier',         //homeroom cards
+            'scattered-pencils',
+            'blackout',
+            'marked-up',
+            'critical-error',
+            'vengeful-leftovers',   //lunchroom cards
+            'spoiled-milk',
+            'boiling-water',
+            'undercooked-meat',
+            'malfunctioning-electric-can-opener',
+            'water-break',          //gym cards
+            'level-up',
+            'final-lap',
+            'tangle',
+            'ball-avalanche',
+            'locker',               //hallway cards
+            '',
+            '',
+            '',
+            '',
+            '', //library cards
+            '',
+            '',
+            '',
+            '',
+        ]
+    },
 };

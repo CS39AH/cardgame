@@ -1141,6 +1141,60 @@ window.SC = window.SC || {};
         }).finished.then(function () { ghost.remove(); });
     }
 
+    // ---------- Technical Foul: an enemy Power gets thrown out ----------
+
+    // slot = the Power's spot on the table (before render() removes it).
+    // Whistle, it shakes, a red "EJECTED!" stamp slams on, then it gets
+    // tossed spinning off the top of the screen.
+    function ejectPower(slot) {
+        const cardEl = slot && slot.querySelector('.card');
+        if (!cardEl || reducedMotion()) return;
+
+        const from = centerOf(slot);
+        const ghost = makeGhost(cardEl.cloneNode(true), from, POWER_W);
+        ghost.classList.add('fly-ghost--ejected');
+
+        const stamp = document.createElement('div');
+        stamp.className = 'fx-stamp fx-stamp--ejected';
+        stamp.textContent = 'EJECTED!';
+        ghost.appendChild(stamp);
+
+        hold(ms(1700));
+        if (SC.playSound) SC.playSound('whistle');
+
+        // Shake like it's protesting
+        ghost.animate([
+            { transform: 'translate(0, 0) rotate(0deg)' },
+            { transform: 'translate(-6px, 0) rotate(-3deg)', offset: 0.1 },
+            { transform: 'translate(6px, 0) rotate(3deg)', offset: 0.2 },
+            { transform: 'translate(-6px, 0) rotate(-3deg)', offset: 0.3 },
+            { transform: 'translate(6px, 0) rotate(3deg)', offset: 0.4 },
+            { transform: 'translate(0, 0) rotate(0deg)', offset: 0.5 },
+            // ...then get tossed up and off the screen, spinning
+            { transform: 'translate(0, -30px) scale(1.1) rotate(-10deg)', offset: 0.62 },
+            { transform: 'translate(160px, -' + (from.y + 250) + 'px) scale(0.7) rotate(240deg)', opacity: 0.2 }
+        ], { duration: ms(1600), easing: 'ease-in-out', fill: 'forwards' })
+            .finished.then(function () { ghost.remove(); });
+
+        // Red card glow
+        ghost.querySelector('.card').animate([
+            { boxShadow: '0 0 0 0 rgba(220, 30, 30, 0)' },
+            { boxShadow: '0 0 0 6px rgba(220, 30, 30, 1), 0 0 50px 16px rgba(220, 30, 30, 0.8)', offset: 0.3 },
+            { boxShadow: '0 0 0 6px rgba(220, 30, 30, 1), 0 0 50px 16px rgba(220, 30, 30, 0.8)' }
+        ], { duration: ms(1000), fill: 'forwards' });
+
+        // The stamp slams on partway through the shake
+        stamp.animate([
+            { transform: 'translate(-50%, -50%) rotate(-14deg) scale(3)', opacity: 0 },
+            { transform: 'translate(-50%, -50%) rotate(-14deg) scale(3)', opacity: 0, offset: 0.2 },
+            { transform: 'translate(-50%, -50%) rotate(-14deg) scale(1)', opacity: 1, offset: 0.3 },
+            { transform: 'translate(-50%, -50%) rotate(-14deg) scale(1)', opacity: 1 }
+        ], { duration: ms(1600), fill: 'forwards' });
+        later(480, function () {
+            if (SC.playSound) SC.playSound('slam');
+        });
+    }
+
     // Floating text like "+15 😌" that rises off something
     function floatText(selector, text, extraClass) {
         const el = document.querySelector(selector);
@@ -1606,6 +1660,7 @@ window.SC = window.SC || {};
         enemyCardFly: enemyCardFly,
         attackFly: attackFly,
         busyFor: busyFor,
+        ejectPower: ejectPower,
         clear: clear,
         ms: ms
     };

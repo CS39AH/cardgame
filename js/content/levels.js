@@ -74,7 +74,7 @@ SC.levels = {
         enemy: 'marker-horde'
     },
 
-
+    // ----- CAFETERIA ZONES -----
     cafeteria: {
         id: 'cafeteria',
         name: 'Bad Food on the Loose',
@@ -105,7 +105,15 @@ SC.levels = {
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'cafeteria-food-fight-enemy'
+        enemy: 'cafeteria-food-fight-enemy',
+
+        bonusCards: [
+            'fresh-fruits',
+            'chocolate-milk',
+            'protective-apron',
+            'serving-spoon',
+            'clean-tray'
+        ]
     },
 
     'cafeteria-oven': {
@@ -118,7 +126,15 @@ SC.levels = {
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'cafeteria-oven-enemy'
+        enemy: 'cafeteria-oven-enemy',
+
+        bonusCards: [
+            'fresh-fruits',
+            'chocolate-milk',
+            'protective-apron',
+            'serving-spoon',
+            'clean-tray'
+        ]
     },
 
     // ----- Gym zones (left basket, center court). The boss is `gym` below. -----
@@ -133,7 +149,10 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-warmup-enemy',
-        bonusCards: ['running-shoes', 'sports-drink']
+        bonusCards: ['running-shoes', 'sports-drink'],
+
+        // Win this zone: pick 1 of these 3 (instead of 3 random cards)
+        rewards: ['fast-break', 'knee-pads', 'coaches-whistle']
     },
 
     'gym-dodgeball': {
@@ -147,7 +166,10 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-dodgeball-enemy',
-        bonusCards: ['basketball-pass', 'stacked-mats']
+        bonusCards: ['basketball-pass', 'stacked-mats'],
+
+        // Win this zone: pick 1 of these 3 Rares
+        rewards: ['full-court-press', 'ice-bath', 'assistant-coach']
     },
 
     gym: {
@@ -192,15 +214,24 @@ SC.levels = {
         ]
     },
 
+<<<<<<< HEAD
     'hallway-lockers': {
         id: 'hallway-lockers',
         name: 'Locker Lockdown',
         intro: 'The lockers are jammed and students are panicking.',
         winText: 'The lockers are finally unlocked and the students can get their things.',
+=======
+    'library-returns': {
+        id: 'library-returns',
+        name: 'Overdue Returns',
+        intro: 'The return cart is overflowing, and the overdue books are fighting back!',
+        winText: 'Books have been returned, overdue fines have been paid. On to the study tables.',
+>>>>>>> origin/dev
         sanity: 30,
         energy: 3,
         refillEnergy: true,
         handSize: 5,
+<<<<<<< HEAD
         enemy: 'hallway-lockers-enemy'
     },
 
@@ -209,14 +240,30 @@ SC.levels = {
         name: 'Hall Monitor',
         intro: 'The hall monitor is out of control. You need to stop them.',
         winText: 'The hall monitor is finally under control and the hallway is safe.',
+=======
+        enemy: 'library-returns-enemy'
+    },
+
+        'library-study': {
+        id: 'library-study',
+        name: 'Ringing in the Stacks',
+        intro: 'Someone left a phone blasting on speaker between the shelves. Make it stop!',
+        winText: 'The phone is finally silent. Only the reading room is left.',
+>>>>>>> origin/dev
         sanity: 30,
         energy: 3,
         refillEnergy: true,
         handSize: 5,
+<<<<<<< HEAD
         enemy: 'hallway-boss-enemy'
     },
 
 
+=======
+        enemy: 'library-study-enemy'
+    },
+    
+>>>>>>> origin/dev
     library: {
     id: 'library',
     name: 'Library',
@@ -236,6 +283,18 @@ SC.levels = {
             'research-notes',
             'library-rules'
         ]
+    
+    },
+    principal: {
+    id: 'principal',
+    name: 'Principal\'s Office',
+    intro: 'Time to uncover who really runs this school!',
+    winText: 'Order has been restored! Time to go home.',
+    sanity: 30,
+    energy: 3,
+    refillEnergy: true,
+    handSize: 5,
+    enemy: 'mastermind',
     
     }
 
