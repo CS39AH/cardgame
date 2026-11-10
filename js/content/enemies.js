@@ -217,10 +217,13 @@ SC.enemies = {
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
-        startingDeck: [
+        startingDeck: [            // 7 cards
+            'skip-slap',
+            'skip-slap',
+            'skip-slap',
+            'tangle',
+            'tangle',
             'medicine-ball',
-            'water-break',
-            'dodgeball-barrage',
             'water-break'
         ]
     },
@@ -233,11 +236,21 @@ SC.enemies = {
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
-        startingDeck: [
+        startingDeck: [            // 15 cards
+            'dodgeball-barrage',
+            'dodgeball-barrage',
             'dodgeball-barrage',
             'dodgeball-barrage',
             'medicine-ball',
+            'medicine-ball',
+            'medicine-ball',
+            'ball-avalanche',
+            'ball-avalanche',
+            'rolling-rack',
+            'rolling-rack',
             'bleacher-wall',
+            'bleacher-wall',
+            'water-break',
             'water-break'
         ]
     },
@@ -251,22 +264,37 @@ SC.enemies = {
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
-        startingDeck: [
+        startingDeck: [            // 20 cards
+            'beep',                // 1 Coffee: deal 4
+            'beep',
+            'beep',
+            'beep',
+            'beep',
             'dodgeball-barrage',   // 2 Coffee: deal 2, three times
+            'dodgeball-barrage',
             'dodgeball-barrage',
             'medicine-ball',       // 2 Coffee: deal 7
             'medicine-ball',
+            'medicine-ball',
+            'water-break',         // 1 Coffee: recover 5 Sanity
+            'water-break',
+            'water-break',
+            'final-lap',           // 3 Coffee: deal 15
+            'final-lap',
             'bleacher-wall',       // 1 Coffee: 6 Sanity defender
-            'padded-walls',        // 2 Coffee: Power, takes 1 less per hit
-            'water-break'          // 1 Coffee: recover 5 Sanity
+            'bleacher-wall',
+            'level-up',            // 2 Coffee: Power, its Attacks +1 per hit
+            'padded-walls'         // 2 Coffee: Power, takes 1 less per hit
         ]
     },
+
+    // ----- Hallway zone enemies
 
     'hallway-enemy': {
         id: 'hallway-enemy',
         name: 'spilled-liquid',
         art: '🧹',
-        image: 'graphics/cards/spill.jpg',
+        image: 'graphics/cards/hallway/spill.jpg',
         sanity: 50,
         energy: 3,
         order: 'inOrder',
@@ -277,6 +305,41 @@ SC.enemies = {
             'dustpan',
             'locker',
             'trash-can'
+        ]
+    },
+        'hallway-lockers-enemy': {
+        id: 'hallway-lockers-enemy',
+        name: 'The Locker',
+        art: '🗄️',
+        image: 'graphics/cards/hallway/locker.png',
+        sanity: 60,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'moldy-sandwich',       // 1 Coffee: 5 Sanity defender
+            'combination-lock',
+            'umbrella',
+            'deodorant-spray',
+            'trophy'
+        ]
+    },
+
+    'hallway-boss-enemy': {
+        id: 'hallway-boss-enemy',
+        name: 'The Monitor',
+        art: '🧑‍🏫',
+        image: 'graphics/cards/hallway/hall-monitor.png',
+        sanity: 70,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'water-splash',       // 2 Coffee: deal 3, three times
+            'water-bottle',
+            'fire-extinguisher',
+            'chewed-gum',
+            'school-bell'
         ]
     },
 
@@ -352,10 +415,10 @@ SC.enemies = {
             'undercooked-meat',
             'malfunctioning-electric-can-opener',
             'water-break',          //gym cards
-            '',
-            '',
-            '',
-            '',
+            'level-up',
+            'final-lap',
+            'tangle',
+            'ball-avalanche',
             'locker',               //hallway cards
             '',
             '',

@@ -149,7 +149,10 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-warmup-enemy',
-        bonusCards: ['running-shoes', 'sports-drink']
+        bonusCards: ['running-shoes', 'sports-drink'],
+
+        // Win this zone: pick 1 of these 3 (instead of 3 random cards)
+        rewards: ['fast-break', 'knee-pads', 'coaches-whistle']
     },
 
     'gym-dodgeball': {
@@ -163,7 +166,10 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-dodgeball-enemy',
-        bonusCards: ['basketball-pass', 'stacked-mats']
+        bonusCards: ['basketball-pass', 'stacked-mats'],
+
+        // Win this zone: pick 1 of these 3 Rares
+        rewards: ['full-court-press', 'ice-bath', 'assistant-coach']
     },
 
     gym: {
@@ -186,6 +192,8 @@ SC.levels = {
         ]
     },
 
+    // ----- Hallway zones. The boss is `hallway-boss` below. -----
+
     hallway: {
         id: 'hallway',
         name: 'hallway',
@@ -204,6 +212,30 @@ SC.levels = {
             'vacuum',
             'gloves'
         ]
+    },
+
+        'hallway-lockers': {
+        id: 'hallway-lockers',
+        name: 'Locker Lockdown',
+        intro: 'The lockers are jammed and students are panicking.',
+        winText: 'The lockers are finally unlocked and the students can get their things.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'hallway-lockers-enemy'
+    },
+
+    'hallway-boss': {
+        id: 'hallway-boss',
+        name: 'Hall Monitor',
+        intro: 'The hall monitor is out of control. You need to stop them.',
+        winText: 'The hall monitor is finally under control and the hallway is safe.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'hallway-boss-enemy'
     },
 
     'library-returns': {

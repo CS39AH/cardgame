@@ -15,7 +15,7 @@ SC.credits = {
         { name: 'Aaron Villalobos',   role: 'What they worked on' },
         { name: 'Jonathan Chavez',   role: 'Staff images and selection, Cafeteria levels and cards, Called Out function and coffee reduction function' },
         { name: 'Landry Vewenda',   role: 'What they worked on' },
-        { name: 'Malachi Mooty',   role: 'Card developement, Homeroom battle, Starter Decks, Reward system and written tutorial' }
+        { name: 'Malachi Mooty',   role: 'Card developement, Homeroom battle, Principal Battle, Starter Decks, Reward system and written tutorial' }
     ],
 
     // Sections listed under the roster

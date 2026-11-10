@@ -1001,6 +1001,140 @@ SC.cards = [
         ]
     },
 
+    // ---------- GYM CLASS: zone 1 rewards (Jump Rope Warm-Up) ----------
+    // rewardOnly keeps them out of the random reward pool, so they only
+    // show up as the gym's zone 1 reward (rewards: in levels.js)
+    {
+        id: 'fast-break',
+        name: 'Fast Break',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '💨',
+        description: 'Deal 3 damage 2 times.',
+        effects: [
+            { type: 'damage', amount: 3 },
+            { type: 'multiplier', amount: 2 }
+        ]
+    },
+    {
+        id: 'knee-pads',
+        name: 'Knee Pads',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '🦵',
+        description: 'Gain 7 Relaxation.',
+        effects: [
+            { type: 'block', amount: 7 }
+        ]
+    },
+    {
+        id: 'coaches-whistle',
+        name: "Coach's Whistle",
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '📯',
+        description: 'Gain 1 Coffee. Draw 2 cards.',
+        effects: [
+            { type: 'energy', amount: 1 },
+            { type: 'draw', amount: 2 }
+        ]
+    },
+
+    // ---------- GYM CLASS: zone 2 rewards (Dodgeball Drill) ----------
+    // Rares: a step up from the Commons and Uncommons
+    {
+        id: 'full-court-press',
+        name: 'Full-Court Press',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🏃',
+        description: 'Deal 4 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 4 },
+            { type: 'multiplier', amount: 3 }
+        ]
+    },
+    {
+        id: 'ice-bath',
+        name: 'Ice Bath',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🧊',
+        description: 'Gain 10 Relaxation. Recover 4 Sanity.',
+        effects: [
+            { type: 'block', amount: 10 },
+            { type: 'heal', amount: 4 }
+        ]
+    },
+    {
+        id: 'assistant-coach',
+        name: 'Assistant Coach',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '📋',
+        description: 'Your Attack cards deal +2 damage on every hit.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 2 } }
+        ]
+    },
+
+    // ---------- GYM CLASS: PACER Test boss rewards ----------
+    // Legendaries (bossRewards['gym-enemy'] in combat.js)
+    {
+        id: 'slam-dunk',
+        name: 'Slam Dunk',
+        cost: 3,
+        type: 'Attack',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🏀',
+        description: 'Deal 20 damage.',
+        effects: [
+            { type: 'damage', amount: 20 }
+        ]
+    },
+    {
+        id: 'bleacher-fortress',
+        name: 'Bleacher Fortress',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🏟️',
+        description: 'Place a 20 Sanity defender. Gain 5 Relaxation.',
+        effects: [
+            { type: 'defender', amount: 20, name: 'Bleacher Fortress', art: '🏟️' },
+            { type: 'block', amount: 5 }
+        ]
+    },
+    {
+        id: 'technical-foul',
+        name: 'Technical Foul',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🟥',
+        description: 'Choose an enemy Power and remove it. Confiscated.',
+        target: 'enemyPower',          // you click an enemy Power to choose it (battle.js)
+        effects: [
+            { type: 'removePower' },
+            { type: 'confiscate' }
+        ]
+    },
+
     // ---------- GYM CLASS: enemy cards ----------
     {
         id: 'dodgeball-barrage',
@@ -1064,6 +1198,98 @@ SC.cards = [
         ]
     },
 
+    // ----- Runaway Jump Rope (zone 1) -----
+    {
+        id: 'skip-slap',
+        name: 'Skip Slap',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🪢',
+        description: 'Deal 2 damage 2 times.',
+        effects: [
+            { type: 'damage', amount: 2 },
+            { type: 'multiplier', amount: 2 }
+        ]
+    },
+    {
+        id: 'tangle',
+        name: 'Tangle',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '➰',
+        description: 'Gain 5 Relaxation.',
+        effects: [
+            { type: 'block', amount: 5 }
+        ]
+    },
+
+    // ----- The Ball Cart (zone 2) -----
+    {
+        id: 'ball-avalanche',
+        name: 'Ball Avalanche',
+        cost: 3,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '⚽',
+        description: 'Deal 3 damage 4 times.',
+        effects: [
+            { type: 'damage', amount: 3 },
+            { type: 'multiplier', amount: 4 }
+        ]
+    },
+    {
+        id: 'rolling-rack',
+        name: 'Rolling Rack',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🛒',
+        description: 'Place a 10 Sanity defender.',
+        effects: [
+            { type: 'defender', amount: 10, name: 'Rolling Rack', art: '🛒' }
+        ]
+    },
+
+    // ----- The PACER Test (boss) -----
+    {
+        id: 'beep',
+        name: 'Beep!',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🔊',
+        description: 'Deal 4 damage.',
+        effects: [
+            { type: 'damage', amount: 4 }
+        ]
+    },
+    {
+        id: 'level-up',
+        name: 'Level Up',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '📈',
+        description: 'Its Attack cards deal +1 damage on every hit.',
+        effects: [
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 1 } }
+        ]
+    },
+    {
+        id: 'final-lap',
+        name: 'Final Lap',
+        cost: 3,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🏁',
+        description: 'Deal 15 damage.',
+        effects: [
+            { type: 'damage', amount: 15 }
+        ]
+    },
+
     // ---------- HALLWAY: enemy cards ----------
     {
         id: 'mop',
@@ -1114,7 +1340,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Enemy',
         art: '🚪',
-        image: 'graphics/cards/evil-locker.jpg',
+        image: 'graphics/cards/hallway/evil-locker.png',
         description: 'Place a 5 Sanity defender.',
         effects: [
             { type: 'defender', amount: 5, name: 'Locker', art: '🚪' }
@@ -1128,10 +1354,150 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Enemy',
         art: '🗑️',
-        image: 'graphics/cards/evil-trashcan.jpg',
+        image: 'graphics/cards/hallway/evil-trashcan.png',
         description: 'Deal 1 damage.',
         effects: [
             { type: 'damage', amount: 1 }
+        ]
+    },
+
+    {
+        id: 'combination-lock',
+        name: 'Combination Lock',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🔒',
+        image: 'graphics/cards/hallway/combination-lock.png',
+        description: 'Gain 6 Relaxation.',
+        effects: [
+            { type: 'block', amount: 6 }
+        ]
+    },
+
+    {
+        id: 'moldy-sandwich',
+        name: 'Moldy Sandwich',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🥪',
+        image: 'graphics/cards/hallway/moldy-sandwich.png',
+        description: 'Deal 4 damage.',
+        effects: [
+            { type: 'damage', amount: 4 }
+        ]
+    },
+
+    {
+        id: 'umbrella',
+        name: 'Umbrella',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '☂️',
+        image: 'graphics/cards/hallway/umbrella.png',
+        description: 'Deal 3 damage.',
+        effects: [
+            { type: 'damage', amount: 3 }
+        ]
+    },
+
+    {
+        id: 'dentention-notice',
+        name: 'Detention Notice',
+        cost: 2,
+        type: 'Skill',
+        rarity: 'Enemy',
+        art: '📄',
+        image: 'graphics/cards/hallway/detention-notice.png',
+        description: 'Reduce the player\'s Coffee by 1 next turn.',
+        effects: [
+            { type: 'reduceNextTurnEnergy', amount: 1 }
+        ]
+    },
+
+    {
+        id: 'trophy',
+        name: 'Trophy',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '🏆',
+        image: 'graphics/cards/hallway/trophy.png',
+        description: 'add +1 damage to all future attacks.',
+        effects: [
+            { type: 'damage', amount: 1, times: 'all future attacks' }
+        ]
+    },
+
+    {
+        id: 'water-splash',
+        name: 'Water Splash',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '💦',
+        image: 'graphics/cards/hallway/water-splash.png',
+        description: 'Deal 3 damage.',
+        effects: [
+            { type: 'damage', amount: 3 }
+        ]
+    },
+
+    {
+        id: 'water-bottle',
+        name: 'Water Bottle',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Enemy',
+        art: '💧',
+        image: 'graphics/cards/hallway/water-bottle.png',
+        description: 'Recover 3 Sanity.',
+        effects: [
+            { type: 'heal', amount: 3 }
+        ]
+    },
+
+    {
+        id: 'school-bell',
+        name: 'School Bell',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '🔔',
+        image: 'graphics/cards/hallway/school-bell.png',
+        description: 'Gain 1 Relaxation whenever you play a Defense card.',
+        effects: [
+            { type: 'power', trigger: 'playDefense', effect: { type: 'block', amount: 1 } }
+        ]
+    },
+
+    {
+        id: 'chewing-gum',
+        name: 'Chewing Gum',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🍬',
+        image: 'graphics/cards/hallway/chewing-gum.png',
+        description: 'Gain 5 Relaxation.',
+        effects: [
+            { type: 'block', amount: 5 }
+        ]
+    },
+
+    {
+        id: 'fire-extinguisher',
+        name: 'Fire Extinguisher',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🧯',
+        image: 'graphics/cards/hallway/fire-extinguisher.png',
+        description: 'Deal 10 damage.',
+        effects: [
+            { type: 'damage', amount: 10 }
         ]
     },
 
@@ -1143,7 +1509,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Rare',
         art: '⚠️',
-        image: 'graphics/cards/wet-floor-sign.jpg',
+        image: 'graphics/cards/hallway/wet-floor-sign.png',
         description: 'Gain 10 Relaxation.',
         effects: [
             { type: 'block', amount: 10 }
@@ -1157,7 +1523,7 @@ SC.cards = [
         type: 'Skill',
         rarity: 'Common',
         art: '🧴',
-        image: 'graphics/cards/disinfectant-spray.jpg',
+        image: 'graphics/cards/hallway/disinfectant-spray.png',
         description: 'Recover 4 Sanity.',
         effects: [
             { type: 'heal', amount: 4 }
@@ -1171,7 +1537,7 @@ SC.cards = [
         type: 'Skill',
         rarity: 'Common',
         art: '🗝️',
-        image: 'graphics/cards/janitor-keys.jpg',
+        image: 'graphics/cards/hallway/janitor-keys.png',
         description: 'Draw 2 cards.',
         effects: [
             { type: 'draw', amount: 2 }
@@ -1185,10 +1551,10 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Common',
         art: '🧹',
-        image: 'graphics/cards/vacuum.jpg',
-        description: 'Deal 4 damage.',
+        image: 'graphics/cards/hallway/vacuum.png',
+        description: 'Deal 8 damage.',
         effects: [
-            { type: 'damage', amount: 4 }
+            { type: 'damage', amount: 8 }
         ]
     },
 
@@ -1199,14 +1565,65 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Uncommon',
         art: '🧤',
-        image: 'graphics/cards/gloves.jpg',
+        image: 'graphics/cards/hallway/gloves.png',
         description: 'Deal 4 damage.',
         effects: [
             { type: 'damage', amount: 4 }
         ]
     },
 
-    
+    // ---------- Hallway: boss rewards cards ----------
+
+    {
+        id: 'battle-cart',
+        name: 'Battle Cart',
+        cost: 3,
+        type: 'Attack',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🛒',
+        image: 'graphics/cards/hallway/battle-cart.png',
+        description: 'Deal 15 damage. add 1 coffee.',
+        effects: [
+            { type: 'damage', amount: 15 },
+            { type: 'energy', amount: 1 }
+        ]
+    },
+
+    {
+        id: 'wall-of-lockers',
+        name: 'Wall of Lockers',
+        cost: 3,    
+        type: 'Power',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🚪',
+        image: 'graphics/cards/hallway/wall-of-lockers.png',
+        description: 'place 10 sanity on defender. all future attacks deal +2 damage.',
+        effects: [
+            { type: 'defender', amount: 10, name: 'Wall of Lockers', art: '🚪' },
+            { type: 'power', trigger: 'Attacks', effect: { type: 'damage', amount: 2 } }
+        ]
+    },
+
+    {
+        id: 'hall-pass',
+        name: 'Hall Pass',
+        cost: 2,
+        type: 'Skill',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '📝',
+        image: 'graphics/cards/hallway/hall-pass.png',
+        description: 'Draw 3 cards. Gain 5 Relaxation.',
+        effects: [
+            { type: 'draw', amount: 3 },
+            { type: 'block', amount: 5 }
+        ]
+    },
+
+
+
     {
         // Title screen showcase only. demo: true keeps it off the Cards board.
         id: 'substitute-teacher',
@@ -1394,17 +1811,18 @@ SC.cards = [
         hero: true,
         startingSanity: 50,
         startingEnergy: 3,
-        startingDeck: [
-            'red-pen-markup',
+        startingDeck: [            
+            'pencil-of-destiny',
+            'assistant-coach',
+            'fast-break',
+            'sports-drink',
+            'worksheets',           
             'backpack-wall',
-            'morning-coffee',
-            'teachers-pet',
-            'red-pen-markup',
-            'desk-key',
+            'research-notes',
+            'quiet-corner',
             'coffee-refill',
-            'red-pen-markup',
-            'backpack-wall',
-            'morning-coffee'
+            'janitor-key',
+            'disinfectant-spray'
         ],
         badgeText: 'Staff · Principal',
         badgeColor: '#7b4aa3',
