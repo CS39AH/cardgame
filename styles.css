@@ -3571,6 +3571,84 @@ html.reduce-animations *::after {
 }
 
 /* Red rubber stamp for Confiscated cards */
+/* ----- Choosing a target (Technical Foul) ----- */
+.battle__target-banner {
+    position: fixed;
+    top: 4.5rem;
+    left: 50%;
+    z-index: 200;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    border: 3px solid #c0262b;
+    border-radius: 999px;
+    background: #fff4f2;
+    color: #8a1418;
+    font-family: var(--font-title);
+    font-size: 1.2rem;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    animation: target-banner 0.25s ease-out;
+}
+
+.battle__target-cancel {
+    padding: 2px 12px;
+    border: 2px solid #8a1418;
+    border-radius: 999px;
+    background: #fff;
+    color: #8a1418;
+    font-family: var(--font-body);
+    cursor: pointer;
+}
+
+@keyframes target-banner {
+    from { transform: translate(-50%, -12px); opacity: 0; }
+}
+
+/* Everything except the choices dims a little */
+.battle-screen.is-targeting .battle__hand,
+.battle-screen.is-targeting .battle__side--player {
+    opacity: 0.6;
+}
+
+/* The enemy Powers you can pick pulse red */
+.power-slot.is-target {
+    z-index: 6;
+    cursor: crosshair;
+    animation: target-pulse 0.9s ease-in-out infinite;
+}
+
+.power-slot.is-target .card {
+    box-shadow:
+        0 0 0 8px #e0262b,
+        0 0 50px 16px rgba(224, 38, 43, 0.8) !important;
+}
+
+.power-slot.is-target:hover {
+    animation: none;
+    transform: scale(1.2);
+}
+
+@keyframes target-pulse {
+    0%, 100% { scale: 1; }
+    50%      { scale: 1.08; }
+}
+
+/* The card you're playing lifts up out of your hand */
+.hand-slot.is-chosen {
+    translate: 0 -40px;
+    opacity: 1;
+}
+
+/* "EJECTED!" stamp, bigger and bolder than CONFISCATED */
+.fx-stamp--ejected {
+    z-index: 3;
+    font-size: 2.6rem;
+    border-width: 5px;
+}
+
 .fx-stamp {
     position: absolute;
     left: 50%;
