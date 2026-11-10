@@ -1430,6 +1430,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Common',
         art: '📕',
+        image: 'graphics/cards/library/hardcover-slam.png',
         description: 'Deal 9 damage.',
         effects: [
             { type: 'damage', amount: 9 }
@@ -1442,6 +1443,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Common',
         art: '🪑',
+        image: 'graphics/cards/library/quiet-corner.png',
         description: 'Gain 8 Relaxation.',
         effects: [
             { type: 'block', amount: 8 }
@@ -1454,6 +1456,8 @@ SC.cards = [
         type: 'Skill',
         rarity: 'Common',
         art: '🍵',
+        image: 'graphics/cards/library/herbal-tea.png',
+        imageAlt: 'A steaming cup of herbal tea with a small umbrella.',
         description: 'Recover 6 Sanity.',
         effects: [
             { type: 'heal', amount: 6 }
@@ -1494,6 +1498,8 @@ SC.cards = [
         rarity: 'Legendary',
         rewardOnly: true,
         art: '📖',
+        image: 'graphics/cards/library/first-edition.png',
+        imageAlt: 'A glowing leather-bound first edition book with a gold ribbon bookmark.',
         description: 'Draw 3 cards. Gain 1 Coffee. Confiscated.',
         effects: [
             { type: 'draw', amount: 3 },
@@ -1509,6 +1515,8 @@ SC.cards = [
         rarity: 'Legendary',
         rewardOnly: true,
         art: '🔖',
+        image: 'graphics/cards/library/librarians-stamp.png',
+        imageAlt: 'A glowing brass library date stamp leaving a red mark.',
         description: 'Deal 14 damage. Call Out the enemy.',
         effects: [
             { type: 'damage', amount: 14 },
@@ -1523,6 +1531,8 @@ SC.cards = [
         rarity: 'Legendary',
         rewardOnly: true,
         art: '🏰',
+        image: 'graphics/cards/library/reading-fort.png',
+        imageAlt: 'A castle built from stacked library books with a bookmark flag.',
         description: 'Place a 15 Sanity defender.',
         effects: [
             { type: 'defender', amount: 15, name: 'Reading Fort', art: '🏰' }
