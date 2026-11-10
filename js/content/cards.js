@@ -1888,6 +1888,8 @@ SC.cards = [
         type: 'Skill',
         rarity: 'Common',
         art: '📝',
+        image: 'graphics/cards/library/research-notes.png',
+        imageAlt: 'A stack of research notes with a pencil on top.',
         description: 'Draw 1 card. Gain 4 Relaxation.',
         effects: [
             { type: 'draw', amount: 1 },
@@ -1901,6 +1903,8 @@ SC.cards = [
         type: 'Power',
         rarity: 'Uncommon',
         art: '🤫',
+        image: 'graphics/cards/library/library-rules.png',
+        imageAlt: 'A sign with the words "Library Rules" written on it.',
         description: 'Whenever you play an Attack card, Call Out the enemy.',
         effects: [
             { type: 'power', trigger: 'playAttack', effect: { type: 'status', status: 'calledOut', amount: 1 } }

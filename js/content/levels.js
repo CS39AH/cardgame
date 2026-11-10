@@ -243,6 +243,7 @@ SC.levels = {
         name: 'Overdue Returns',
         intro: 'The return cart is overflowing, and the overdue books are fighting back!',
         winText: 'Books have been returned, overdue fines have been paid. On to the study tables.',
+        theme: 'library',         // uses the library's battle look
         sanity: 30,
         energy: 3,
         refillEnergy: true,
@@ -255,6 +256,7 @@ SC.levels = {
         name: 'Ringing in the Stacks',
         intro: 'Someone left a phone blasting on speaker between the shelves. Make it stop!',
         winText: 'The phone is finally silent. Only the reading room is left.',
+        theme: 'library',         // uses the library's battle look
         sanity: 30,
         energy: 3,
         refillEnergy: true,
