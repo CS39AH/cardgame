@@ -1483,7 +1483,52 @@ SC.cards = [
         effects: [
             { type: 'power', trigger: 'playAttack', effect: { type: 'status', status: 'calledOut', amount: 1 } }
         ]
+    },
+
+    // ---------- LIBRARY: Legendary boss rewards ----------
+    {
+        id: 'first-edition',
+        name: 'First Edition',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '📖',
+        description: 'Draw 3 cards. Gain 1 Coffee. Confiscated.',
+        effects: [
+            { type: 'draw', amount: 3 },
+            { type: 'energy', amount: 1 },
+            { type: 'confiscate' }
+        ]
+    },
+    {
+        id: 'librarians-stamp',
+        name: "Librarian's Stamp",
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🔖',
+        description: 'Deal 14 damage. Call Out the enemy.',
+        effects: [
+            { type: 'damage', amount: 14 },
+            { type: 'status', status: 'calledOut', amount: 1 }
+        ]
+    },
+    {
+        id: 'reading-fort',
+        name: 'Reading Fort',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'Legendary',
+        rewardOnly: true,
+        art: '🏰',
+        description: 'Place a 15 Sanity defender.',
+        effects: [
+            { type: 'defender', amount: 15, name: 'Reading Fort', art: '🏰' }
+        ]
     }
+
 ];
 /* Look up a card by id, e.g. SC.getCard('pencil-of-destiny') */
 SC.getCard = function (id) {
