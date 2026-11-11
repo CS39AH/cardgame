@@ -945,6 +945,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Common',
         art: '🏀',
+        image: 'graphics/cards/gym/basketball-pass.png',
         description: 'Deal 4 damage. Draw 1 card.',
         effects: [
             { type: 'damage', amount: 4 },
@@ -958,6 +959,7 @@ SC.cards = [
         type: 'Skill',
         rarity: 'Uncommon',
         art: '🧃',
+        image: 'graphics/cards/gym/sports-drink.png',
         description: 'Gain 1 Coffee. Recover 2 Sanity.',
         effects: [
             { type: 'energy', amount: 1 },
@@ -971,6 +973,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Uncommon',
         art: '🟦',
+        image: 'graphics/cards/gym/stacked-mats.png',
         description: 'Place a 10 Sanity defender.',
         effects: [
             { type: 'defender', amount: 10, name: 'Stacked Mats', art: '🟦' }
@@ -983,6 +986,7 @@ SC.cards = [
         type: 'Skill',
         rarity: 'Common',
         art: '👟',
+        image: 'graphics/cards/gym/running-shoes.png',
         description: 'Draw 2 cards.',
         effects: [
             { type: 'draw', amount: 2 }
@@ -995,6 +999,7 @@ SC.cards = [
         type: 'Power',
         rarity: 'Uncommon',
         art: '📣',
+        image: 'graphics/cards/gym/team-spirit.png',
         description: 'Whenever you play an Attack card, gain 2 Relaxation.',
         effects: [
             { type: 'power', trigger: 'playAttack', effect: { type: 'block', amount: 2 } }
@@ -1012,6 +1017,7 @@ SC.cards = [
         rarity: 'Uncommon',
         rewardOnly: true,
         art: '💨',
+        image: 'graphics/cards/gym/fast-break.png',
         description: 'Deal 3 damage 2 times.',
         effects: [
             { type: 'damage', amount: 3 },
@@ -1026,6 +1032,7 @@ SC.cards = [
         rarity: 'Uncommon',
         rewardOnly: true,
         art: '🦵',
+        image: 'graphics/cards/gym/knee-pads.png',
         description: 'Gain 7 Relaxation.',
         effects: [
             { type: 'block', amount: 7 }
@@ -1039,6 +1046,7 @@ SC.cards = [
         rarity: 'Uncommon',
         rewardOnly: true,
         art: '📯',
+        image: 'graphics/cards/gym/coaches-whistle.png',
         description: 'Gain 1 Coffee. Draw 2 cards.',
         effects: [
             { type: 'energy', amount: 1 },
@@ -1056,6 +1064,7 @@ SC.cards = [
         rarity: 'Rare',
         rewardOnly: true,
         art: '🏃',
+        image: 'graphics/cards/gym/full-court-press.png',
         description: 'Deal 4 damage 3 times.',
         effects: [
             { type: 'damage', amount: 4 },
@@ -1070,6 +1079,7 @@ SC.cards = [
         rarity: 'Rare',
         rewardOnly: true,
         art: '🧊',
+        image: 'graphics/cards/gym/ice-bath.png',
         description: 'Gain 10 Relaxation. Recover 4 Sanity.',
         effects: [
             { type: 'block', amount: 10 },
@@ -1084,6 +1094,7 @@ SC.cards = [
         rarity: 'Rare',
         rewardOnly: true,
         art: '📋',
+        image: 'graphics/cards/gym/assistant-coach.png',
         description: 'Your Attack cards deal +2 damage on every hit.',
         effects: [
             { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 2 } }
@@ -1100,6 +1111,7 @@ SC.cards = [
         rarity: 'Legendary',
         rewardOnly: true,
         art: '🏀',
+        image: 'graphics/cards/gym/slam-dunk.png',
         description: 'Deal 20 damage.',
         effects: [
             { type: 'damage', amount: 20 }
@@ -1113,6 +1125,7 @@ SC.cards = [
         rarity: 'Legendary',
         rewardOnly: true,
         art: '🏟️',
+        image: 'graphics/cards/gym/bleacher-fortress.png',
         description: 'Place a 20 Sanity defender. Gain 5 Relaxation.',
         effects: [
             { type: 'defender', amount: 20, name: 'Bleacher Fortress', art: '🏟️' },
@@ -1127,6 +1140,7 @@ SC.cards = [
         rarity: 'Legendary',
         rewardOnly: true,
         art: '🟥',
+        image: 'graphics/cards/gym/technical-foul.png',
         description: 'Choose an enemy Power and remove it. Confiscated.',
         target: 'enemyPower',          // you click an enemy Power to choose it (battle.js)
         effects: [
