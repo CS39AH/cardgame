@@ -2114,7 +2114,9 @@ SC.cards = [
         cost: 2,
         type: 'Attack',
         rarity: 'Enemy',
-        art: '✈️',                                  
+        art: '✈️', 
+        image: 'graphics/cards/library/paper-airplane-barrage.png',
+        imageAlt: 'A barrage of paper airplanes flying through the air.',                                 
         description: 'Deal 2 damage 4 times.',
         effects: [
             { type: 'damage', amount: 2 },
