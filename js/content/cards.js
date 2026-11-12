@@ -1586,6 +1586,106 @@ SC.cards = [
         ]
     },
 
+    // ---------- Hallway: zone 1 rewards -----------
+    // rewardOnly keeps them out of the random reward pool, so they only
+    // show up as the hallway's zone 1 reward (rewards: in levels.js)
+    {
+        id: 'fire-alarm',
+        name: 'Fire Alarm',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'uncommon',
+        rewardOnly: true,
+        art: '🚨',
+        image: 'graphics/cards/hallway/fire-alarm.png',
+        description: 'deal 3 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 3 },
+            { type: 'multiplier', amount: 3 }
+        ]
+    },
+
+    {
+        id: 'school-bench',
+        name: 'School Bench',
+        cost: 2,
+        type: 'Defense',
+        rarity: 'uncommon',
+        rewardOnly: true,
+        art: '🪑',
+        image: 'graphics/cards/hallway/school-bench.png',
+        description: 'place a 10 sanity defender.',
+        effects: [
+            {type: 'defender', amount: 10, name: 'School Bench', art: '🪑'}
+        ]
+    },
+
+    {
+        id: 'cleaning-rag',
+        name: 'Cleaning Rag',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'uncommon',
+        rewardOnly: true,
+        art: '🧽',
+        image: 'graphics/cards/hallway/cleaning-rag.png',
+        description: 'whenever you play a skill card, gain 1 coffee.',
+        effects: [
+            { type: 'power', trigger: 'playSkill', effect: { type: 'energy', amount: 1 } }
+        ]
+    },
+
+    // ---------- Hallway: zone 2 rewards -----------
+    // Rares: a step up from the Commons and Uncommons
+
+    {
+        id: 'ladder',
+        name: 'Ladder',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🪜',
+        image: 'graphics/cards/hallway/ladder.png',
+        description: 'deal 5 damage, gain 1 coffee.',
+        effects: [
+            { type: 'damage', amount: 5 },
+            { type: 'energy', amount: 1 }
+        ]
+
+    },
+
+    {
+        id: 'lockdown',
+        name: 'Lockdown',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🔒',
+        image: 'graphics/cards/hallway/lockdown.png',
+        description: 'all future attacks deal +3 damage.',
+        effects: [
+            { type: 'power', trigger: 'Attacks', effect: { type: 'damage', amount: 3 } }
+        ]
+    },
+
+    {
+        id: 'lost-and-found',
+        name: 'Lost and Found',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🎒',
+        image: 'graphics/cards/hallway/lost-and-found.png',
+        description: 'Draw 3 cards, gain 2 coffee.',
+        effects: [
+            { type: 'draw', amount: 3 },
+            { type: 'energy', amount: 2 }
+        ]
+    },
+
     // ---------- Hallway: boss rewards cards ----------
 
     {
