@@ -1973,7 +1973,256 @@ SC.cards = [
         effects: [
             { type: 'defender', amount: 15, name: 'Reading Fort', art: '🏰' }
         ]
-    }
+    },
+   // ---------- LIBRARY: Overdue Book Stack enemy cards ----------
+            {
+        id: 'bookshelf-dominoes',
+        name: 'Bookshelf Dominoes',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '📚',                                  // fallback if the image is missing
+        image: 'graphics/cards/library/bookshelf-dominoes.png',
+        imageAlt: 'A row of bookshelves toppling like dominoes.',
+        description: 'Deal 7 damage.',
+        effects: [
+            { type: 'damage', amount: 7 }
+        ]
+    },
+    {
+        id: 'overdue-slip',
+        name: 'Overdue Slip',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '💸',  
+        image: 'graphics/cards/library/overdue-slip.png',
+        imageAlt: 'A library slip with the words "Overdue" written on it.',                                
+        description: 'Deal 2 damage. Apply 1 Called Out to the player.',
+        effects: [
+            { type: 'damage', amount: 2 },
+            { type: 'status', status: 'calledOut', amount: 1 }
+        ]
+    },
+    {
+        id: 'bookmark-barricade',
+        name: 'Bookmark Barricade',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🔖',
+        image: 'graphics/cards/library/bookmark-barricade.png',
+        imageAlt: 'A barricade made of bookmarks.',                                  
+        description: 'Gain a 6 sanity barrier.',
+        effects: [
+            { type: 'defender', amount: 6, name: 'Bookmark Wall', art: '🔖' }
+        ]
+    },
+    {
+        id: 'dust-cloud',
+        name: 'Dust Cloud',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🌫️',
+        image: 'graphics/cards/library/dust-cloud.png',
+        imageAlt: 'A cloud of dust swirling in the air.',                                 
+        description: 'Gain 4 Relaxation.',
+        effects: [
+            { type: 'block', amount: 4 }
+        ]
+    },
+    {
+        id: 'torn-pages',
+        name: 'Torn Pages',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '📄',
+        image: 'graphics/cards/library/torn-pages.png',
+        imageAlt: 'A collection of torn pages flying through the air.',                                  
+        description: 'Deal 1 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 1 },
+            { type: 'multiplier', amount: 3 }
+        ]
+    },
+
+    // ---------- LIBRARY: Phone on Speaker enemy cards ----------
+    {
+        id: 'ringtone-blast',
+        name: 'Ringtone Blast',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🔔',
+        image: 'graphics/cards/library/ringtone-blast.png',
+        imageAlt: 'A phone blasting a loud ringtone.',                                  
+        description: 'Deal 2 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 2 },
+            { type: 'multiplier', amount: 3 }
+        ]
+    },
+    {
+        id: 'notification-buzz',
+        name: 'Notification Buzz',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Enemy',
+        art: '📳',
+        image: 'graphics/cards/library/notification-buzz.png',
+        imageAlt: 'A phone buzzing with a notification.',                                 
+        description: 'Reduce the player\'s Coffee by 1 next turn.',
+        effects: [
+            { type: 'reduceNextTurnEnergy', amount: 1 }
+        ]
+    },
+    {
+        id: 'autoplay-video',
+        name: 'Autoplay Video',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Enemy',
+        art: '▶️',
+        image: 'graphics/cards/library/autoplay-video.png',
+        imageAlt: 'A video playing on a phone screen.',                                  
+        description: 'All future attacks deal +1 damage.',
+        effects: [
+            { type: 'power', trigger: 'Attacks', effect: { type: 'damage', amount: 1 } }
+        ]
+    },
+    {
+        id: 'power-bank',
+        name: 'Power Bank',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Enemy',
+        art: '🪫',
+        image: 'graphics/cards/library/power-bank.png',
+        imageAlt: 'A power bank charging a phone.',                                  
+        description: 'Restore 5 sanity.',
+        effects: [
+            { type: 'heal', amount: 5 }
+        ]
+    },
+    {
+        id: 'group-chat-ping',
+        name: 'Group Chat Ping',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '💬',
+        image: 'graphics/cards/library/group-chat-ping.png',
+        imageAlt: 'A collection of message bubbles.',                                  
+        description: 'Deal 4 damage.',
+        effects: [
+            { type: 'damage', amount: 4 }
+        ]
+    },
+
+    // ---------- LIBRARY: The Loud Whisperer enemy cards ----------
+        {
+        id: 'paper-airplane-barrage',
+        name: 'Paper Airplane Barrage',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '✈️', 
+        image: 'graphics/cards/library/paper-airplane-barrage.png',
+        imageAlt: 'A barrage of paper airplanes flying through the air.',                                 
+        description: 'Deal 2 damage 4 times.',
+        effects: [
+            { type: 'damage', amount: 2 },
+            { type: 'multiplier', amount: 4 }
+        ]
+    },
+        {
+        id: 'snack-attack',
+        name: 'Snack Attack',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🥨', 
+        image: 'graphics/cards/library/snack-attack.png',
+        imageAlt: 'Eating chips and leaving stains on a book.',                                
+        description: 'Deal 8 damage.',
+        effects: [
+            { type: 'damage', amount: 8 }
+        ]
+    },
+        {
+        id: 'stink-bomb',
+        name: 'Stink Bomb',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '🤢',
+        image: 'graphics/cards/library/stink-bomb.png',
+        imageAlt: 'A lit fused stink bomb, expelling gasses.',                                  
+        description: 'Deal 4 damage. Reduce the player\'s Coffee by 1 next turn.',
+        effects: [
+            { type: 'damage', amount: 4 },
+            { type: 'reduceNextTurnEnergy', amount: 1 }
+        ]
+    },
+    {
+        id: 'loud-clap',
+        name: 'Loud Clap',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Enemy',
+        art: '👏', 
+        image: 'graphics/cards/library/loud-clap.png',
+        imageAlt: 'A loud clap with sound waves emanating from it.',                                 
+        description: 'Deal 4 damage.',
+        effects: [
+            { type: 'damage', amount: 4 }
+        ]
+    },
+    {
+        id: 'gossip-with-friends',
+        name: 'Gossip With Friends',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '👯',                                
+        image: 'graphics/cards/library/gossip-with-friends.png',
+        imageAlt: 'A group of friends gossiping together.',
+        description: 'Gain a 7 sanity barrier.',
+        effects: [
+            { type: 'defender', amount: 7, name: 'Gossip Circle', art: '👯' }
+        ]
+    },
+        {
+        id: 'headphones-on',
+        name: 'Headphones On',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Enemy',
+        art: '🎧',
+        image: 'graphics/cards/library/headphones-on.png',
+        imageAlt: 'A pair of headphones with music notes around it.',                                  
+        description: 'Gain 6 Relaxation.',
+        effects: [
+            { type: 'block', amount: 6 }
+        ]
+    },
+    {
+        id: 'day-dreaming',
+        name: 'Day Dreaming',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Enemy',
+        art: '😴', 
+        image: 'graphics/cards/library/day-dreaming.png',
+        imageAlt: 'A person daydreaming with thought bubbles above their head.',                                 
+        description: 'Restore 6 sanity.',
+        effects: [
+            { type: 'heal', amount: 6 }
+        ]
+    },
+
 
 ];
 /* Look up a card by id, e.g. SC.getCard('pencil-of-destiny') */
