@@ -23,7 +23,7 @@
 
     // ------- CONFIG -------
 
-    const SCREENS = ['tutorial', 'cards', 'credits', 'map', 'zones', 'battle'];
+    const SCREENS = ['tutorial', 'cards', 'credits', 'map', 'zones', 'battle', 'teacher'];
 
     // Screen-specific setup that runs after a screen is swapped in
     const SCREEN_SETUP = {
@@ -32,7 +32,8 @@
         credits: setupCredits,
         map: setupMap,
         zones: setupZones,
-        battle: function () { SC.setupBattle(); }
+        battle: function () { SC.setupBattle(); },
+        teacher: function () { SC.setupTeacher(); }     // teacher profile (js/ui/teacher.js)
     };
 
     // Exit animation lengths in ms (match the CSS)
@@ -163,8 +164,8 @@
             return wait(TIMING.titleFadeOut);
         }
 
-        // NEW: tutorial fades out like the other screens
-        if (from === 'tutorial') {
+        // NEW: tutorial and the teacher profile fade out like the other screens
+        if (from === 'tutorial' || from === 'teacher') {
             SCREEN.classList.add('is-fading');
             return wait(TIMING.titleFadeOut);
         }
@@ -394,7 +395,8 @@
             'principal'
         ];
 
-        let selectedTeacherIndex = 0;
+        // Start on the teacher you picked last time (from the profile screen)
+        let selectedTeacherIndex = Math.max(0, teacherIds.indexOf(SC.selectedTeacher));
 
         function renderSelectedTeacher() {
             const teacher = SC.getCard
@@ -478,14 +480,12 @@
             btnContinue.hidden = false;
         }
 
-            btnStart.addEventListener('click', function () {
-            SC.playSound('bell');
-            localStorage.setItem('sc-save', JSON.stringify({
-                dayId: SC.days.current.id,
-                nodeIndex: 0,
-                teacher: demoSlot.dataset.selectedTeacher
-            }));
-            window.location.hash = 'map';
+        // Start: open the teacher's profile first. The day starts from
+        // there with "Clock In" (js/ui/teacher.js).
+        btnStart.addEventListener('click', function () {
+            SC.selectedTeacher = demoSlot.dataset.selectedTeacher;
+            SC.playSound('chalkClick');
+            window.location.hash = 'teacher';
         });
 
         btnContinue.addEventListener('click', function () {
@@ -547,7 +547,7 @@
         const CARDS_PER_PAGE = 6;
 
         // All collection cards, including enemy-only cards (but not demo cards)
-        const boardCards = SC.cards.filter(function (card) {
+        const allCards = SC.cards.filter(function (card) {
             return !card.demo && (!card.enemyOnly || card.rarity === 'Enemy');
         });
 
@@ -555,35 +555,152 @@
             return (card.rarity || 'Common').toLowerCase();
         }
 
+        // Which locations each card shows up in, worked out from the game data
+        // (days.js -> levels.js -> enemies.js decks, bonusCards, rewards, bossRewards)
+        const locations = cardLocations(allCards);
+
         // Every page of every rarity is its own chalkboard, left to right:
         // [Common 1] [Common 2] [Common 3] [Uncommon 1] [Rare 1] ...
-        const boards = [];
-        const tabOfBoard = [];      // board index -> which tab it belongs to
-        const firstBoardOf = [];    // tab index -> its first board
+        let boards = [];
+        let tabOfBoard = [];      // board index -> which tab it belongs to
+        let firstBoardOf = [];    // tab index -> its first board
+
+        const tabsBox = SCREEN.querySelector('.chalkboard__tabs');
+        const backLink = SCREEN.querySelector('.cards-screen__back');
+        const screenTitle = SCREEN.querySelector('.cards-screen__title');
 
         tabs.forEach(function (tab, tabIndex) {
-            const rarity = tab.dataset.rarity;
-            const label = tab.textContent;
-            const list = boardCards.filter(function (card) {
-                return rarityOf(card) === rarity;
-            });
-
-            const pages = Math.max(1, Math.ceil(list.length / CARDS_PER_PAGE));
-            firstBoardOf[tabIndex] = boards.length;
-
-            for (let page = 0; page < pages; page++) {
-                const pageCards = list.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE);
-                const board = buildBoard(rarity, label, pageCards, list.length, page, pages);
-                boards.push(board);
-                tabOfBoard.push(tabIndex);
-                track.appendChild(board);
-            }
-
-            tab.textContent = label + ' (' + list.length + ')';
+            tab.dataset.label = tab.textContent;
             tab.addEventListener('click', function () {
                 showBoard(firstBoardOf[tabIndex], true);
             });
         });
+
+        // While a location is open, the top-left link goes back to the
+        // locations instead of the title screen
+        if (backLink) {
+            backLink.addEventListener('click', function (e) {
+                if (current === 0) return;       // on the picker: normal Back to Title
+                e.preventDefault();
+                if (SC.playSound) SC.playSound('chalkClick');
+                showPicker(true);                // slides back to the first board
+            });
+        }
+
+        // Take down the last location's boards, keeping the picker (board 0)
+        function clearBoards() {
+            clearDealTimers();
+            boards.slice(1).forEach(function (board) { board.remove(); });
+            boards = boards.slice(0, 1);
+            tabOfBoard = tabOfBoard.slice(0, 1);
+            firstBoardOf = [];
+        }
+
+        // The first board on the wall: pick which part of the school to look at.
+        // Each location's boards go up to the right of it, so picking one
+        // slides the wall over just like switching rarity tabs.
+        function buildPicker() {
+            const board = document.createElement('div');
+            board.className = 'chalkboard chalkboard--picker';
+
+            const title = document.createElement('h2');
+            title.className = 'chalkboard__title';
+            title.textContent = 'Pick a Location';
+
+            const subtitle = document.createElement('p');
+            subtitle.className = 'chalkboard__subtitle';
+            subtitle.textContent = 'See every card from each part of the school.';
+
+            const grid = document.createElement('div');
+            grid.className = 'location-picker';
+
+            locations.forEach(function (loc) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'location-pick';
+                btn.innerHTML =
+                    '<span class="location-pick__photo">' + locationPhoto(loc) + '</span>' +
+                    '<span class="location-pick__name">' + loc.label + '</span>' +
+                    '<span class="location-pick__count">' + loc.cards.length + ' cards</span>';
+                btn.addEventListener('click', function () {
+                    if (SC.playSound) SC.playSound('chalkClick');
+                    openLocation(loc);
+                });
+                grid.appendChild(btn);
+            });
+
+            board.appendChild(title);
+            board.appendChild(subtitle);
+            board.appendChild(grid);
+            track.appendChild(board);
+            boards.push(board);
+            tabOfBoard.push(-1);
+        }
+
+        // Back to the picker (slides the wall back when animate is true)
+        function showPicker(animate) {
+            if (screenTitle) screenTitle.textContent = 'Cards';
+            if (tabsBox) tabsBox.classList.add('is-off');
+            if (backLink) backLink.textContent = '← Back to Title';
+
+            showBoard(0, animate);
+        }
+
+        // The Polaroid picture for a location button. "All Cards" gets a
+        // little fan of real card pictures instead of a photo.
+        function locationPhoto(loc) {
+            if (LOCATION_PHOTOS[loc.id]) {
+                return '<img src="' + LOCATION_PHOTOS[loc.id] + '" alt="">';
+            }
+            const pics = ['hot-pan', 'golden-apple', 'slam-dunk'].map(function (id) {
+                return SC.cards.find(function (card) { return card.id === id; });
+            }).filter(function (card) { return card && card.image; });
+            return '<span class="location-pick__fan">' + pics.map(function (card) {
+                return '<span class="location-pick__mini"><img src="' + card.image + '" alt=""></span>';
+            }).join('') + '</span>';
+        }
+
+        // One location's cards, split into rarity boards like before
+        function openLocation(loc) {
+            clearBoards();
+
+            tabs.forEach(function (tab, tabIndex) {
+                const rarity = tab.dataset.rarity;
+                const label = tab.dataset.label;
+                const list = loc.cards.filter(function (card) {
+                    return rarityOf(card) === rarity;
+                });
+
+                // Hide rarities this location doesn't have
+                tab.hidden = list.length === 0;
+                if (!list.length) {
+                    firstBoardOf[tabIndex] = -1;
+                    return;
+                }
+
+                const pages = Math.ceil(list.length / CARDS_PER_PAGE);
+                firstBoardOf[tabIndex] = boards.length;
+
+                for (let page = 0; page < pages; page++) {
+                    const pageCards = list.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE);
+                    const board = buildBoard(rarity, label, pageCards, list.length, page, pages);
+                    board.classList.add('chalkboard--late');   // skips the screen's fade-in
+                    boards.push(board);
+                    tabOfBoard.push(tabIndex);
+                    track.appendChild(board);
+                }
+
+                tab.textContent = label + ' (' + list.length + ')';
+            });
+
+            if (screenTitle) screenTitle.textContent = loc.label;
+            if (tabsBox) tabsBox.classList.remove('is-off');
+            if (backLink) backLink.textContent = '← Back to Locations';
+
+            void track.offsetWidth;    // let the new boards land before the slide starts
+            showBoard(1, true);
+        }
+
         let current = 0;
 
         // Show or hide an arrow (hidden arrows can't be clicked or tabbed to)
@@ -616,7 +733,7 @@
 
             // Shift the room behind a little, like walking along the wall
             // (one step per rarity, so lots of pages don't pan off the photo)
-            document.body.style.setProperty('--pan', tabOfBoard[index]);
+            document.body.style.setProperty('--pan', Math.max(0, tabOfBoard[index]));
 
             // Light up the tab this page belongs to
             tabs.forEach(function (tab, i) {
@@ -664,7 +781,8 @@
             });
         }
 
-        showBoard(0, false);
+        buildPicker();
+        showPicker(false);
 
         // Make the boards grow out of the photo's chalkboard.
         // Work out how far the photo's chalkboard is from the viewport's
@@ -755,6 +873,70 @@
     function clearDealTimers() {
         dealTimers.forEach(clearTimeout);
         dealTimers = [];
+    }
+
+    // Small photos for the location buttons on the Cards screen
+    // (key = node id in days.js; shrunk copies of each location's art)
+    const LOCATION_PHOTOS = {
+        'homeroom-boss': 'graphics/screens/thumbs/homeroom.jpg',
+        'hallway':       'graphics/screens/thumbs/hallway.jpg',
+        'cafeteria':     'graphics/screens/thumbs/cafeteria.jpg',
+        'gym':           'graphics/screens/thumbs/gym.jpg',
+        'library':       'graphics/screens/thumbs/library.jpg',
+        'principal':     'graphics/screens/thumbs/principal.jpg'
+    };
+
+    // Each teacher's starting deck shows up in their home location
+    // (key = teacher card id, value = node id in days.js)
+    const TEACHER_HOME = {
+        'substitute-teacher': 'homeroom-boss',
+        'janitor':            'hallway',
+        'lunch-lady':         'cafeteria',
+        'gym-teacher':        'gym',
+        'librarian':          'library',
+        'principal':          'principal'
+    };
+
+    // Sorts the cards by location for the Cards screen.
+    // Each location on the day map collects every card from its zones
+    // (the enemy decks, bonus cards, zone rewards and boss rewards) plus
+    // its teacher's starting deck. A card used in two places shows up in both.
+    function cardLocations(allCards) {
+        const result = [];
+        const day = SC.days && SC.days.current;
+        const bossRewards = (SC.combat && SC.combat.bossRewards) || {};
+
+        (day ? day.nodes : []).forEach(function (node) {
+            const ids = [];
+            const zones = node.zones || [{ id: node.id }];
+
+            zones.forEach(function (zone) {
+                const level = SC.levels && SC.levels[zone.id];
+                if (!level) return;
+                const enemy = (SC.enemies && SC.enemies[level.enemy]) || {};
+                [].concat(enemy.startingDeck || [], level.bonusCards || [],
+                          level.rewards || [], bossRewards[level.enemy] || [])
+                    .forEach(function (id) { ids.push(id); });
+            });
+
+            // This location's teacher and their starting deck
+            SC.cards.forEach(function (card) {
+                if (card.hero && TEACHER_HOME[card.id] === node.id) {
+                    (card.startingDeck || []).forEach(function (id) { ids.push(id); });
+                }
+            });
+
+            // Keep the cards.js order, and each card only once per location
+            const cards = allCards.filter(function (card) {
+                return ids.indexOf(card.id) !== -1;
+            });
+            if (!cards.length) return;
+
+            result.push({ id: node.id, label: node.label, icon: node.icon || '📍', cards: cards });
+        });
+
+        result.push({ id: 'all', label: 'All Cards', icon: '🗂️', cards: allCards });
+        return result;
     }
     // ------- CREDITS SCREEN -------
 

@@ -1,0 +1,66 @@
+<!--
+    SCREEN: Teacher Profile
+    The teacher's staff file, shown after "Start as ..." on the title
+    screen. Everything inside is filled in by SC.setupTeacher() in
+    js/ui/teacher.js, from the teacher's card in cards.js and the
+    extra info in js/content/teachers.js.
+-->
+
+<section class="teacher-screen">
+
+    <a href="#" class="cards-screen__back">← Back to Title</a>
+
+    <div class="staff-file">
+
+        <!-- Folder tab: "PERSONNEL FILE · JANITOR" -->
+        <div class="staff-file__tab" id="staff-tab"></div>
+
+        <!-- Flip to the previous / next teacher -->
+        <button type="button" class="staff-file__flip staff-file__flip--prev" id="staff-prev" aria-label="Previous teacher">‹</button>
+        <button type="button" class="staff-file__flip staff-file__flip--next" id="staff-next" aria-label="Next teacher">›</button>
+
+        <div class="staff-file__pages" id="staff-pages">
+
+            <!-- LEFT PAGE: ID badge, stats, home turf -->
+            <div class="staff-page staff-page--left">
+                <div class="staff-id">
+                    <div class="staff-id__strip" id="staff-badge"></div>
+                    <div class="staff-id__photo"><img id="staff-photo" alt=""></div>
+                    <h1 class="staff-id__name" id="staff-name"></h1>
+                    <p class="staff-id__title" id="staff-title"></p>
+                </div>
+
+                <h2 class="staff-page__heading">Stats</h2>
+                <dl class="staff-stats" id="staff-stats"></dl>
+
+                <h2 class="staff-page__heading">Home Turf</h2>
+                <div class="staff-home" id="staff-home"></div>
+            </div>
+
+            <!-- RIGHT PAGE: bio, ability, playstyle, starting deck -->
+            <div class="staff-page staff-page--right">
+                <h2 class="staff-page__heading">About</h2>
+                <p class="staff-bio" id="staff-bio"></p>
+                <ul class="staff-tags" id="staff-tags"></ul>
+
+                <h2 class="staff-page__heading">Teacher Ability <span class="staff-page__note">once per fight · costs Coffee</span></h2>
+                <div class="staff-ability" id="staff-ability"></div>
+
+                <h2 class="staff-page__heading">Starting Deck <span class="staff-page__note" id="staff-deck-note"></span></h2>
+                <div class="staff-mix" id="staff-mix"></div>
+                <div class="staff-deck" id="staff-deck"></div>
+                <p class="staff-page__hint">Click a card for a closer look.</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="teacher-screen__actions">
+        <button type="button" class="btn btn--primary" id="btn-clock-in">Clock In</button>
+    </div>
+
+    <!-- "ON DUTY" stamp that slams onto the screen when you clock in -->
+    <div class="staff-file__stamp" id="staff-stamp" aria-hidden="true">On Duty</div>
+
+</section>

@@ -402,7 +402,7 @@ SC.enemies = {
         id: 'mastermind',
         name: 'Robo Principal',
         art: '🤖',
-        image: 'graphics/cards/robo-principal.jpg',
+        image: 'graphics/cards/robo-principal.png',
         imageScale: 1.2,
         sanity: 80,
         energy: 4,
