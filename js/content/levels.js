@@ -192,8 +192,6 @@ SC.levels = {
         ]
     },
 
-    // ----- Hallway zones. The boss is `hallway-boss` below. -----
-
     hallway: {
         id: 'hallway',
         name: 'hallway',
@@ -211,34 +209,7 @@ SC.levels = {
             'janitor-key',
             'vacuum',
             'gloves'
-        ],
-
-        rewards: ['fire-alarm', 'school-bench', 'cleaning-rag']
-    },
-
-     'hallway-lockers': {
-        id: 'hallway-lockers',
-        name: 'Locker Lockdown',
-        intro: 'The lockers are jammed and students are panicking.',
-        winText: 'The lockers are finally unlocked and the students can get their things.',
-        sanity: 30,
-        energy: 3,
-        refillEnergy: true,
-        handSize: 5,
-        enemy: 'hallway-lockers-enemy',
-        rewards: ['ladder', 'lost-and-found', 'lockdown']
-    },
-
-    'hallway-boss': {
-        id: 'hallway-boss',
-        name: 'Hall Monitor',
-        intro: 'The hall monitor is out of control. You need to stop them.',
-        winText: 'The hall monitor is finally under control and the hallway is safe.',
-        sanity: 30,
-        energy: 3,
-        refillEnergy: true,
-        handSize: 5,
-        enemy: 'hallway-boss-enemy'
+        ]
     },
 
     'library-returns': {

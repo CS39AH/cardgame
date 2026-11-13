@@ -402,7 +402,7 @@ SC.enemies = {
         id: 'mastermind',
         name: 'Robo Principal',
         art: '🤖',
-        image: 'graphics/cards/robo-principal.png',
+        image: 'graphics/cards/robo-principal.jpg',
         imageScale: 1.2,
         sanity: 80,
         energy: 4,
@@ -425,15 +425,15 @@ SC.enemies = {
             'tangle',
             'ball-avalanche',
             'locker',               //hallway cards
-            '',
-            '',
-            '',
-            '',
-            '', //library cards
-            '',
-            '',
-            '',
-            '',
+            'school-bell',
+            'fire-extinguisher',
+            'combination lock',
+            'water-bottle',
+            'ringtone-blast', //library cards
+            'autoplay-video',
+            'paper-airplane-barrage',
+            'notification-buzz',
+            'stink-bomb',
         ]
     },
 };
