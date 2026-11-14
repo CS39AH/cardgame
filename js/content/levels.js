@@ -149,7 +149,6 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-warmup-enemy',
-        bonusCards: ['running-shoes', 'sports-drink'],
 
         // Win this zone: pick 1 of these 3 (instead of 3 random cards)
         rewards: ['fast-break', 'knee-pads', 'coaches-whistle']
@@ -166,7 +165,6 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-dodgeball-enemy',
-        bonusCards: ['basketball-pass', 'stacked-mats'],
 
         // Win this zone: pick 1 of these 3 Rares
         rewards: ['full-court-press', 'ice-bath', 'assistant-coach']
@@ -181,15 +179,7 @@ SC.levels = {
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'gym-enemy',
-
-        bonusCards: [
-            'basketball-pass',
-            'sports-drink',
-            'stacked-mats',
-            'running-shoes',
-            'team-spirit'
-        ]
+        enemy: 'gym-enemy'
     },
 
     // ----- Hallway zones. The boss is `hallway-boss` below. -----
