@@ -60,7 +60,8 @@ SC.levels = {
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'class-computer'
+        enemy: 'class-computer',
+        rewards: ['track-record', 'worksheets', 'coffee-refill', 'morning-coffee', 'desk-key', 'red-pen-markup']
     },
     'homeroom-markers': {
         id: 'homeroom-markers',
@@ -71,7 +72,8 @@ SC.levels = {
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'marker-horde'
+        enemy: 'marker-horde',
+        rewards: ['teachers-pet', 'worksheets', 'coffee-refill', 'morning-coffee', 'desk-key', 'red-pen-markup']
     },
 
     // ----- CAFETERIA ZONES -----
