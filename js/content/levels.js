@@ -87,7 +87,7 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'cafeteria-enemy',
-
+        rewards: ['fresh-fruits', 'chocolate-milk', 'protective-apron', 'clean-tray'],
     },
 
     'cafeteria-food-fight': {
@@ -101,7 +101,7 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'cafeteria-food-fight-enemy',
-
+        rewards: ['fresh-fruits', 'chocolate-milk', 'protective-apron', 'clean-tray', 'serving-spoon'],
     },
 
     'cafeteria-oven': {
