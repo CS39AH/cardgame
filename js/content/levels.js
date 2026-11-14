@@ -88,13 +88,6 @@ SC.levels = {
         handSize: 5,
         enemy: 'cafeteria-enemy',
 
-        bonusCards: [
-            'fresh-fruits',
-            'chocolate-milk',
-            'protective-apron',
-            'serving-spoon',
-            'clean-tray'
-        ]
     },
 
     'cafeteria-food-fight': {
@@ -109,13 +102,6 @@ SC.levels = {
         handSize: 5,
         enemy: 'cafeteria-food-fight-enemy',
 
-        bonusCards: [
-            'fresh-fruits',
-            'chocolate-milk',
-            'protective-apron',
-            'serving-spoon',
-            'clean-tray'
-        ]
     },
 
     'cafeteria-oven': {
@@ -130,13 +116,6 @@ SC.levels = {
         handSize: 5,
         enemy: 'cafeteria-oven-enemy',
 
-        bonusCards: [
-            'fresh-fruits',
-            'chocolate-milk',
-            'protective-apron',
-            'serving-spoon',
-            'clean-tray'
-        ]
     },
 
     // ----- Gym zones (left basket, center court). The boss is `gym` below. -----
@@ -151,7 +130,6 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-warmup-enemy',
-        bonusCards: ['running-shoes', 'sports-drink'],
 
         // Win this zone: pick 1 of these 3 (instead of 3 random cards)
         rewards: ['fast-break', 'knee-pads', 'coaches-whistle']
@@ -168,7 +146,6 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-dodgeball-enemy',
-        bonusCards: ['basketball-pass', 'stacked-mats'],
 
         // Win this zone: pick 1 of these 3 Rares
         rewards: ['full-court-press', 'ice-bath', 'assistant-coach']
@@ -184,14 +161,6 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-enemy',
-
-        bonusCards: [
-            'basketball-pass',
-            'sports-drink',
-            'stacked-mats',
-            'running-shoes',
-            'team-spirit'
-        ]
     },
 
     hallway: {
@@ -204,14 +173,6 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'hallway-enemy',
-
-        bonusCards: [
-            'wet-floor-sign',
-            'disinfectant-spray',
-            'janitor-key',
-            'vacuum',
-            'gloves'
-        ]
     },
 
     'library-returns': {
@@ -248,15 +209,6 @@ SC.levels = {
     refillEnergy: true,
     handSize: 5,
     enemy: 'library-enemy',
-    
-
-    bonusCards: [
-            'hardcover-slam',
-            'quiet-corner',
-            'herbal-tea',
-            'research-notes',
-            'library-rules'
-        ]
     
     },
     principal: {
