@@ -1586,6 +1586,34 @@ SC.cards = [
         ]
     },
 
+    {
+        id: 'flashlight',
+        name: 'Flashlight',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Uncommon',
+        art: '🔦',
+        image: 'graphics/cards/hallway/flashlight.png',
+        description: 'place a 10 sanity defender.',
+        effects: [
+            { type: 'defender', amount: 10 }
+        ]
+    },
+
+    {
+        id: 'duster',
+        name: 'Duster',
+        cost: 1,
+        type: 'Power',
+        rarity: 'Uncommon',
+        art: '🧹',
+        image: 'graphics/cards/hallway/duster.png',
+        description: 'increase the damage of all future attacks by 1.',
+        effects: [
+            { type: 'power', trigger: 'Attacks', effect: { type: 'damage', amount: 1 } }
+        ]
+    },
+
     // ---------- Hallway: zone 1 rewards -----------
     // rewardOnly keeps them out of the random reward pool, so they only
     // show up as the hallway's zone 1 reward (rewards: in levels.js)
@@ -1791,12 +1819,12 @@ SC.cards = [
         startingDeck: [
             'wet-floor-sign',
             'disinfectant-spray',
-            'janitor-key',
+            'duster',
             'vacuum',
             'gloves',
             'gloves',
             'wet-floor-sign',
-            'disinfectant-spray',
+            'flashlight',
             'disinfectant-spray',
             'janitor-key',
         ],
