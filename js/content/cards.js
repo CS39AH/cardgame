@@ -1157,6 +1157,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Enemy',
         art: '🔴',
+        image: 'graphics/cards/gym/dodgeball-barrage.png',
         description: 'Deal 2 damage 3 times.',
         effects: [
             { type: 'damage', amount: 2 },
@@ -1170,6 +1171,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Enemy',
         art: '🏐',
+        image: 'graphics/cards/gym/medicine-ball.png',
         description: 'Deal 7 damage.',
         effects: [
             { type: 'damage', amount: 7 }
@@ -1182,6 +1184,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Enemy',
         art: '🪜',
+    	image: 'graphics/cards/gym/bleacher-wall.png',
         description: 'Place a 6 Sanity defender.',
         effects: [
             { type: 'defender', amount: 6, name: 'Bleachers', art: '🪜' }
@@ -1194,6 +1197,7 @@ SC.cards = [
         type: 'Power',
         rarity: 'Enemy',
         art: '🧱',
+        image: 'graphics/cards/gym/padded-walls.png',
         description: 'Take 1 less damage from every hit.',
         effects: [
             { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -1 } }
@@ -1206,6 +1210,7 @@ SC.cards = [
         type: 'Skill',
         rarity: 'Enemy',
         art: '💧',
+        image: 'graphics/cards/gym/water-break.png',
         description: 'Recover 5 Sanity.',
         effects: [
             { type: 'heal', amount: 5 }
@@ -1220,6 +1225,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Enemy',
         art: '🪢',
+        image: 'graphics/cards/gym/skip-slap.png',
         description: 'Deal 2 damage 2 times.',
         effects: [
             { type: 'damage', amount: 2 },
@@ -1233,6 +1239,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Enemy',
         art: '➰',
+        image: 'graphics/cards/gym/tangle.png',
         description: 'Gain 5 Relaxation.',
         effects: [
             { type: 'block', amount: 5 }
@@ -1247,6 +1254,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Enemy',
         art: '⚽',
+        image: 'graphics/cards/gym/ball-avalanche.png',
         description: 'Deal 3 damage 4 times.',
         effects: [
             { type: 'damage', amount: 3 },
@@ -1260,6 +1268,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Enemy',
         art: '🛒',
+        image: 'graphics/cards/gym/rolling-rack.png',
         description: 'Place a 10 Sanity defender.',
         effects: [
             { type: 'defender', amount: 10, name: 'Rolling Rack', art: '🛒' }
@@ -1274,6 +1283,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Enemy',
         art: '🔊',
+        image: 'graphics/cards/gym/beep.png',
         description: 'Deal 4 damage.',
         effects: [
             { type: 'damage', amount: 4 }
@@ -1286,6 +1296,7 @@ SC.cards = [
         type: 'Power',
         rarity: 'Enemy',
         art: '📈',
+        image: 'graphics/cards/gym/level-up.png',
         description: 'Its Attack cards deal +1 damage on every hit.',
         effects: [
             { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 1 } }
@@ -1298,6 +1309,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Enemy',
         art: '🏁',
+        image: 'graphics/cards/gym/final-lap.png',
         description: 'Deal 15 damage.',
         effects: [
             { type: 'damage', amount: 15 }
@@ -2052,7 +2064,104 @@ SC.cards = [
             { type: 'power', trigger: 'playAttack', effect: { type: 'status', status: 'calledOut', amount: 1 } }
         ]
     },
+    // ---------- LIBRARY: zone 1 rewards (Overdue Returns, Uncommon) ----------
+    {
+        id: 'paperback-flurry',
+        name: 'Paperback Flurry',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '📖',
+        image: 'graphics/cards/library/paperback-flurry.png',
+        imageAlt: 'A flurry of paperback books flying forward.',
+        description: 'Deal 2 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 2 },
+            { type: 'multiplier', amount: 3 }
+        ]
+    },
+    {
+        id: 'bookend-guard',
+        name: 'Bookend Guard',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '📚',
+        image: 'graphics/cards/library/bookend-guard.png',
+        imageAlt: 'Two sturdy bookends with a row of books between them.',
+        description: 'Place a 7 Sanity defender.',
+        effects: [
+            { type: 'defender', amount: 7, name: 'Bookends', art: '📚' }
+        ]
+    },
+    {
+        id: 'study-group',
+        name: 'Study Group',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '👥',
+        image: 'graphics/cards/library/study-group.png',
+        imageAlt: 'Students working together around a library table.',
+        description: 'Draw 2 cards. Recover 3 Sanity.',
+        effects: [
+            { type: 'draw', amount: 2 },
+            { type: 'heal', amount: 3 }
+        ]
+    },
 
+    // ---------- LIBRARY: zone 2 rewards (Ringing in the Stacks, Rare) ----------
+    {
+        id: 'encyclopedia-barrage',
+        name: 'Encyclopedia Barrage',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '📘',
+        image: 'graphics/cards/library/encyclopedia-barrage.png',
+        imageAlt: 'A set of heavy encyclopedias launched in a volley.',
+        description: 'Deal 3 damage 4 times.',
+        effects: [
+            { type: 'damage', amount: 3 },
+            { type: 'multiplier', amount: 4 }
+        ]
+    },
+    {
+        id: 'silent-study-hall',
+        name: 'Silent Study Hall',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🤫',
+        image: 'graphics/cards/library/silent-study-hall.png',
+        imageAlt: 'A peaceful, silent reading room with a finger-to-lips sign.',
+        description: 'Gain 9 Relaxation. Draw 1 card.',
+        effects: [
+            { type: 'block', amount: 9 },
+            { type: 'draw', amount: 1 }
+        ]
+    },
+        {
+        id: 'cardigan-of-calm',
+        name: 'Cardigan of Calm',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🧶',
+        image: 'graphics/cards/library/cardigan-of-calm.png',
+        imageAlt: 'A cozy knit cardigan draped over a library chair.',
+        description: 'Whenever you are hit by an Attack, Mitigate 1 damage. Whenever you play a Defense card, recover 1 Sanity.',
+        effects: [
+            { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -1 } },
+            { type: 'power', trigger: 'playDefense', effect: { type: 'heal', amount: 1 } }
+        ]
+    },
     // ---------- LIBRARY: Legendary boss rewards ----------
     {
         id: 'first-edition',
@@ -2319,7 +2428,7 @@ SC.cards = [
         imageAlt: 'A group of friends gossiping together.',
         description: 'Gain a 7 sanity barrier.',
         effects: [
-            { type: 'defender', amount: 7, name: 'Gossip Circle', art: '👯' }
+            { type: 'defender', amount: 7, name: 'Gossip Circle' }
         ]
     },
         {

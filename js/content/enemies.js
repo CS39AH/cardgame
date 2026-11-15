@@ -232,6 +232,7 @@ SC.enemies = {
         id: 'gym-dodgeball-enemy',
         name: 'The Ball Cart',
         art: '🛒',
+        image: 'graphics/cards/gym/ball-cart.png',
         sanity: 40,
         energy: 3,
         order: 'inOrder',
@@ -363,10 +364,11 @@ SC.enemies = {
         order: 'inOrder',
         shuffleEnemyDeck: true,
         startingDeck: [
-            'stapler-shot',
-            'eraser',
-            'bin-dump',
-            'stapler-shot'
+            'bookshelf-dominoes',
+            'overdue-slip',
+            'bookmark-barricade',
+            'dust-cloud',
+            'torn-pages'
         ]
     },
 
@@ -380,11 +382,11 @@ SC.enemies = {
         order: 'inOrder',
         shuffleEnemyDeck: true,
         startingDeck: [
-            'stapler-shot',
-            'pencil-sharpener',
-            'eraser',
-            'scattered-pencils',
-            'stapler-shot'
+            'ringtone-blast',
+            'notification-buzz',
+            'autoplay-video',
+            'power-bank',
+            'group-chat-ping'
         ]
     },
     
@@ -398,11 +400,15 @@ SC.enemies = {
     order: 'inOrder',
     shuffleEnemyDeck: true,
     startingDeck: [
-        'stapler-shot',
-        'eraser',
-        'stapler-shot'
+        'paper-airplane-barrage',
+        'snack-attack',
+        'stink-bomb',
+        'loud-clap',
+        'gossip-with-friends',
+        'headphones-on',
+        'day-dreaming'
     ]
-    },
+},
     'mastermind': {
         id: 'mastermind',
         name: 'Robo Principal',
@@ -439,6 +445,11 @@ SC.enemies = {
             '',
             '',
             '',
+            'paper-airplane-barrage', //library cards
+            'snack-attack',
+            'stink-bomb',
+            'gossip-with-friends',
+            'day-dreaming',
         ]
     },
 };
