@@ -232,6 +232,7 @@ SC.enemies = {
         id: 'gym-dodgeball-enemy',
         name: 'The Ball Cart',
         art: '🛒',
+        image: 'graphics/cards/gym/ball-cart.png',
         sanity: 40,
         energy: 3,
         order: 'inOrder',
