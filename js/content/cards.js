@@ -1524,9 +1524,9 @@ SC.cards = [
         rarity: 'Rare',
         art: '⚠️',
         image: 'graphics/cards/hallway/wet-floor-sign.png',
-        description: 'Gain 10 Relaxation.',
+        description: 'Gain 12 Relaxation.',
         effects: [
-            { type: 'block', amount: 10 }
+            { type: 'block', amount: 12 }
         ]
     },
 
@@ -1538,9 +1538,9 @@ SC.cards = [
         rarity: 'Common',
         art: '🧴',
         image: 'graphics/cards/hallway/disinfectant-spray.png',
-        description: 'Recover 4 Sanity.',
+        description: 'Recover 6 Sanity.',
         effects: [
-            { type: 'heal', amount: 4 }
+            { type: 'heal', amount: 6 }
         ]
     },
 
@@ -1566,9 +1566,9 @@ SC.cards = [
         rarity: 'Common',
         art: '🧹',
         image: 'graphics/cards/hallway/vacuum.png',
-        description: 'Deal 8 damage.',
+        description: 'Deal 12 damage.',
         effects: [
-            { type: 'damage', amount: 8 }
+            { type: 'damage', amount: 12 }
         ]
     },
 
@@ -1580,9 +1580,9 @@ SC.cards = [
         rarity: 'Uncommon',
         art: '🧤',
         image: 'graphics/cards/hallway/gloves.png',
-        description: 'Deal 4 damage.',
+        description: 'Deal 6 damage.',
         effects: [
-            { type: 'damage', amount: 4 }
+            { type: 'damage', amount: 6 }
         ]
     },
 
@@ -1594,9 +1594,9 @@ SC.cards = [
         rarity: 'Uncommon',
         art: '🔦',
         image: 'graphics/cards/hallway/flashlight.png',
-        description: 'place a 10 sanity defender.',
+        description: 'place a 12 sanity defender.',
         effects: [
-            { type: 'defender', amount: 10 }
+            { type: 'defender', amount: 12, name: 'Flashlight', art: '🔦' }
         ]
     },
 
@@ -1608,9 +1608,9 @@ SC.cards = [
         rarity: 'Uncommon',
         art: '🧹',
         image: 'graphics/cards/hallway/duster.png',
-        description: 'increase the damage of all future attacks by 1.',
+        description: 'increase the damage of all future attacks by 2.',
         effects: [
-            { type: 'power', trigger: 'Attacks', effect: { type: 'damage', amount: 1 } }
+            { type: 'power', trigger: 'Attacks', effect: { type: 'damage', amount: 2 } }
         ]
     },
 
