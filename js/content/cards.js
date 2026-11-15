@@ -1453,9 +1453,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '💦',
         image: 'graphics/cards/hallway/water-splash.png',
-        description: 'Deal 4 damage.',
+        description: 'Deal 6 damage.',
         effects: [
-            { type: 'damage', amount: 4 }
+            { type: 'damage', amount: 6 }
         ]
     },
 
@@ -1467,9 +1467,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '💧',
         image: 'graphics/cards/hallway/water-bottle.png',
-        description: 'Recover 5 Sanity.',
+        description: 'Recover 8 Sanity.',
         effects: [
-            { type: 'heal', amount: 5 }
+            { type: 'heal', amount: 8 }
         ]
     },
 
