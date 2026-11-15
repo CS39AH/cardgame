@@ -23,7 +23,7 @@
 
     // ------- CONFIG -------
 
-    const SCREENS = ['tutorial', 'cards', 'credits', 'map', 'zones', 'battle', 'teacher'];
+    const SCREENS = ['tutorial', 'cards', 'credits', 'map', 'zones', 'battle', 'teacher', 'saves'];
 
     // Screen-specific setup that runs after a screen is swapped in
     const SCREEN_SETUP = {
@@ -33,7 +33,8 @@
         map: setupMap,
         zones: setupZones,
         battle: function () { SC.setupBattle(); },
-        teacher: function () { SC.setupTeacher(); }     // teacher profile (js/ui/teacher.js)
+        teacher: function () { SC.setupTeacher(); },    // teacher profile (js/ui/teacher.js)
+        saves: function () { SC.setupSaves(); }         // save slots (js/ui/saves.js)
     };
 
     // Exit animation lengths in ms (match the CSS)
@@ -165,7 +166,7 @@
         }
 
         // NEW: tutorial and the teacher profile fade out like the other screens
-        if (from === 'tutorial' || from === 'teacher') {
+        if (from === 'tutorial' || from === 'teacher' || from === 'saves') {
             SCREEN.classList.add('is-fading');
             return wait(TIMING.titleFadeOut);
         }
@@ -243,9 +244,10 @@
         const day = SC.days.current;
 
         // Read the save. If there is none (or it's for a different day),
-        // start at the first node.
-        const save = JSON.parse(localStorage.getItem('sc-save') || 'null');
-        const nodeIndex = (save && save.dayId === day.id) ? save.nodeIndex : 0;
+        // start at the first node. A finished day shows every node done.
+        const save = SC.save.load();
+        let nodeIndex = (save && save.dayId === day.id) ? save.nodeIndex : 0;
+        if (save && save.dayComplete) nodeIndex = day.nodes.length;
 
         // Draw the map. The function below runs when the player clicks
         // the current node.
@@ -276,20 +278,17 @@
             // so the map flow can be tested end to end.
             const nextIndex = index + 1;
 
-            // Last node finished: delete the save (so Continue disappears)
-            // and redraw the map in its "complete" state.
+            // Last node finished: mark the day complete and redraw the
+            // map in its "complete" state.
             if (nextIndex >= day.nodes.length) {
                 console.log('Day complete!');
-                localStorage.removeItem('sc-save');
+                SC.save.update({ dayId: day.id, nodeIndex: day.nodes.length, dayComplete: true });
                 SC.buildDayPath(container, day, day.nodes.length, function () {});
                 return;
             }
 
-            // Otherwise save the new progress (keeping the chosen teacher)
-            // and redraw the map.
-            localStorage.setItem('sc-save', JSON.stringify(
-                Object.assign({}, save, { dayId: day.id, nodeIndex: nextIndex })
-            ));
+            // Otherwise save the new progress and redraw the map.
+            SC.save.update({ dayId: day.id, nodeIndex: nextIndex });
             setupMap();
         });
     }
@@ -340,7 +339,7 @@
         if (!container) return;
 
         const day = SC.days.current;
-        const save = JSON.parse(localStorage.getItem('sc-save') || 'null');
+        const save = SC.save.load();
 
         // Which location: the one just clicked, or the one in the save
         let nodeIndex = SC.currentLocation ? SC.currentLocation.nodeIndex : null;
@@ -476,7 +475,8 @@
         const btnHow = document.getElementById('btn-how');
         const btnCredits = document.getElementById('btn-credits');
 
-        if (localStorage.getItem('sc-save')) {
+        // Continue shows when any save slot has a game in it
+        if (SC.save.hasAny()) {
             btnContinue.hidden = false;
         }
 
@@ -488,8 +488,11 @@
             window.location.hash = 'teacher';
         });
 
+        // Continue: pick which save to load (js/ui/saves.js)
         btnContinue.addEventListener('click', function () {
-            window.location.hash = 'map';
+            SC.saveMode = 'load';
+            SC.playSound('chalkClick');
+            window.location.hash = 'saves';
         });
 
         btnHow.addEventListener('click', function () {

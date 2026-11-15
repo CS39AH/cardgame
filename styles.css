@@ -4817,6 +4817,7 @@ html.reduce-animations *::after {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: var(--space-5) var(--space-3);
+}
 
 .staff-deck__slot {
     position: relative;
@@ -4929,4 +4930,228 @@ html.reduce-animations *::after {
 
     .staff-file__flip--prev { left: -8px; }
     .staff-file__flip--next { right: -8px; }
+}
+
+/* ---------- SAVE SLOTS SCREEN ----------
+   Three manila folders, one per save (screens/saves.html,
+   filled in by js/ui/saves.js). */
+
+#screen[data-screen="saves"] {
+    max-width: 1040px;
+}
+
+.saves-screen {
+    display: flex;
+    flex-direction: column;
+    animation: fade-in 0.35s ease both;
+}
+
+.saves-screen__title {
+    margin: var(--space-4) 0 0;
+    text-align: center;
+}
+
+.saves-screen__subtitle {
+    margin: var(--space-1) 0 var(--space-6);
+    text-align: center;
+    color: var(--color-chalk-dim);
+}
+
+.save-slots {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+}
+
+/* One folder */
+.save-slot {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;           /* room for the tab */
+    padding: var(--space-3);
+    background: linear-gradient(160deg, #e9c98c 0%, #dcb877 55%, #cfa964 100%);
+    border-radius: 4px 12px 12px 12px;
+    box-shadow:
+        inset 0 0 0 1px rgba(120, 80, 30, 0.35),
+        0 12px 26px rgba(0, 0, 0, 0.5);
+    animation: file-in 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+    animation-delay: calc(var(--slot, 0) * 0.08s);
+}
+
+.save-slot:nth-child(1) { rotate: -1deg; }
+.save-slot:nth-child(3) { rotate: 1deg; }
+
+.save-slot__tab {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    padding: 5px 18px 3px;
+    background: #e9c98c;
+    border-radius: 10px 10px 0 0;
+    color: #5a3a14;
+    font-family: var(--font-body);
+    font-size: var(--size-small);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.save-slot__page {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-4);
+    background:
+        repeating-linear-gradient(transparent 0 27px, rgba(90, 130, 200, 0.15) 27px 28px),
+        #fbf8f1;
+    border-radius: 3px;
+    color: #2a2a35;
+    text-align: center;
+}
+
+.save-slot__photo {
+    width: 55%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border: 3px solid #e4ded0;
+    border-radius: 8px;
+    background: #f1ece0;
+}
+
+.save-slot__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+}
+
+.save-slot__name {
+    margin: var(--space-2) 0 0;
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    color: #2a2a35;
+}
+
+.save-slot__where {
+    margin: 2px 0 var(--space-3);
+    font-family: var(--font-title);
+    font-weight: 700;
+    color: #b0332f;
+}
+
+.save-slot__facts {
+    width: 100%;
+    margin: 0 0 var(--space-4);
+    font-size: var(--size-small);
+}
+
+.save-slot__facts div {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    border-bottom: 1px dashed rgba(42, 42, 53, 0.2);
+}
+
+.save-slot__facts dt { color: rgba(42, 42, 53, 0.65); }
+.save-slot__facts dd { margin: 0; font-weight: 700; }
+
+.save-slot__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
+    margin-top: auto;
+}
+
+/* Delete / Cancel: dark ink on the paper so they're readable */
+.save-slot .btn--secondary {
+    background: transparent;
+    border: 2px solid rgba(42, 42, 53, 0.45);
+    color: #2a2a35;
+}
+
+.save-slot .btn--secondary:hover,
+.save-slot .btn--secondary:focus-visible {
+    background: rgba(192, 38, 43, 0.1);
+    border-color: #c0262b;
+    color: #8a1418;
+}
+
+/* Empty slot: a dashed outline */
+.save-slot__page--empty {
+    justify-content: center;
+    min-height: 340px;
+    background: rgba(251, 248, 241, 0.55);
+    outline: 2px dashed rgba(90, 58, 20, 0.35);
+    outline-offset: -10px;
+}
+
+.save-slot__empty {
+    margin: 0;
+    font-family: var(--font-title);
+    font-size: 1.8rem;
+    color: rgba(42, 42, 53, 0.4);
+}
+
+.save-slot__hint {
+    margin: var(--space-2) 0 0;
+    font-size: var(--size-small);
+    color: rgba(42, 42, 53, 0.5);
+}
+
+/* "Are you sure?" note covering the folder */
+.save-slot__confirm {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    background: rgba(251, 248, 241, 0.97);
+    border: 3px solid #c0262b;
+    border-radius: 3px;
+    animation: fade-in 0.2s ease both;
+}
+
+.save-slot__confirm p {
+    margin: 0 0 var(--space-2);
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #8a1418;
+}
+
+/* Phones: folders stack */
+@media (max-width: 760px) {
+    .save-slots {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* "Saved ✓" note that pops up in the corner after an autosave
+   (made by js/engine/save.js) */
+.save-toast {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 300;
+    padding: 6px 14px;
+    border: 2px solid rgba(244, 240, 229, 0.6);
+    border-radius: 999px;
+    background: rgba(15, 36, 24, 0.9);
+    color: var(--color-chalk);
+    font-family: var(--font-title);
+    font-weight: 700;
+    pointer-events: none;
+    opacity: 0;
+    translate: 0 10px;
+    transition: opacity 0.3s ease, translate 0.3s ease;
+}
+
+.save-toast.is-showing {
+    opacity: 1;
+    translate: 0 0;
 }
