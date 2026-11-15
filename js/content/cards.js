@@ -2064,7 +2064,104 @@ SC.cards = [
             { type: 'power', trigger: 'playAttack', effect: { type: 'status', status: 'calledOut', amount: 1 } }
         ]
     },
+    // ---------- LIBRARY: zone 1 rewards (Overdue Returns, Uncommon) ----------
+    {
+        id: 'paperback-flurry',
+        name: 'Paperback Flurry',
+        cost: 1,
+        type: 'Attack',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '📖',
+        image: 'graphics/cards/library/paperback-flurry.png',
+        imageAlt: 'A flurry of paperback books flying forward.',
+        description: 'Deal 2 damage 3 times.',
+        effects: [
+            { type: 'damage', amount: 2 },
+            { type: 'multiplier', amount: 3 }
+        ]
+    },
+    {
+        id: 'bookend-guard',
+        name: 'Bookend Guard',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '📚',
+        image: 'graphics/cards/library/bookend-guard.png',
+        imageAlt: 'Two sturdy bookends with a row of books between them.',
+        description: 'Place a 7 Sanity defender.',
+        effects: [
+            { type: 'defender', amount: 7, name: 'Bookends', art: '📚' }
+        ]
+    },
+    {
+        id: 'study-group',
+        name: 'Study Group',
+        cost: 1,
+        type: 'Skill',
+        rarity: 'Uncommon',
+        rewardOnly: true,
+        art: '👥',
+        image: 'graphics/cards/library/study-group.png',
+        imageAlt: 'Students working together around a library table.',
+        description: 'Draw 2 cards. Recover 3 Sanity.',
+        effects: [
+            { type: 'draw', amount: 2 },
+            { type: 'heal', amount: 3 }
+        ]
+    },
 
+    // ---------- LIBRARY: zone 2 rewards (Ringing in the Stacks, Rare) ----------
+    {
+        id: 'encyclopedia-barrage',
+        name: 'Encyclopedia Barrage',
+        cost: 2,
+        type: 'Attack',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '📘',
+        image: 'graphics/cards/library/encyclopedia-barrage.png',
+        imageAlt: 'A set of heavy encyclopedias launched in a volley.',
+        description: 'Deal 3 damage 4 times.',
+        effects: [
+            { type: 'damage', amount: 3 },
+            { type: 'multiplier', amount: 4 }
+        ]
+    },
+    {
+        id: 'silent-study-hall',
+        name: 'Silent Study Hall',
+        cost: 1,
+        type: 'Defense',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🤫',
+        image: 'graphics/cards/library/silent-study-hall.png',
+        imageAlt: 'A peaceful, silent reading room with a finger-to-lips sign.',
+        description: 'Gain 9 Relaxation. Draw 1 card.',
+        effects: [
+            { type: 'block', amount: 9 },
+            { type: 'draw', amount: 1 }
+        ]
+    },
+        {
+        id: 'cardigan-of-calm',
+        name: 'Cardigan of Calm',
+        cost: 2,
+        type: 'Power',
+        rarity: 'Rare',
+        rewardOnly: true,
+        art: '🧶',
+        image: 'graphics/cards/library/cardigan-of-calm.png',
+        imageAlt: 'A cozy knit cardigan draped over a library chair.',
+        description: 'Whenever you are hit by an Attack, Mitigate 1 damage. Whenever you play a Defense card, recover 1 Sanity.',
+        effects: [
+            { type: 'power', trigger: 'Attacked', effect: { type: 'damage', amount: -1 } },
+            { type: 'power', trigger: 'playDefense', effect: { type: 'heal', amount: 1 } }
+        ]
+    },
     // ---------- LIBRARY: Legendary boss rewards ----------
     {
         id: 'first-edition',
