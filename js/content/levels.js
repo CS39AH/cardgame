@@ -202,29 +202,37 @@ SC.levels = {
         enemy: 'hallway-boss-enemy'
     },
 
-
-    'library-returns': {
+    // ----- Library zones -----
+        'library-returns': {
         id: 'library-returns',
         name: 'Overdue Returns',
+        theme: 'library',
         intro: 'The return cart is overflowing, and the overdue books are fighting back!',
         winText: 'Books have been returned, overdue fines have been paid. On to the study tables.',
         sanity: 30,
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'library-returns-enemy'
+        enemy: 'library-returns-enemy',
+
+        // Win this zone: pick 1 of these 3 Uncommons
+        rewards: ['paperback-flurry', 'bookend-guard', 'study-group']
     },
 
-        'library-study': {
+    'library-study': {
         id: 'library-study',
         name: 'Ringing in the Stacks',
+        theme: 'library',
         intro: 'Someone left a phone blasting on speaker between the shelves. Make it stop!',
         winText: 'The phone is finally silent. Only the reading room is left.',
         sanity: 30,
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'library-study-enemy'
+        enemy: 'library-study-enemy',
+
+        // Win this zone: pick 1 of these 3 Rares
+        rewards: ['encyclopedia-barrage', 'silent-study-hall', 'quiet-hours']
     },
     
     library: {
