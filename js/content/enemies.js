@@ -304,10 +304,14 @@ SC.enemies = {
             'broom',
             'dustpan',
             'locker',
-            'trash-can'
+            'trash-can',
+            'mop',
+            'broom',
+            'locker'
         ]
     },
-        'hallway-lockers-enemy': {
+
+     'hallway-lockers-enemy': {
         id: 'hallway-lockers-enemy',
         name: 'The Locker',
         art: '🗄️',
@@ -321,7 +325,10 @@ SC.enemies = {
             'combination-lock',
             'umbrella',
             'deodorant-spray',
-            'trophy'
+            'trophy',
+            'moldy-sandwich',
+            'combination-lock',
+            'detention-notice',
         ]
     },
 
@@ -339,7 +346,10 @@ SC.enemies = {
             'water-bottle',
             'fire-extinguisher',
             'chewed-gum',
-            'school-bell'
+            'school-bell',
+            'water-splash',
+            'fire-extinguisher',
+            'chewing-gum'
         ]
     },
 
@@ -353,11 +363,10 @@ SC.enemies = {
         order: 'inOrder',
         shuffleEnemyDeck: true,
         startingDeck: [
-            'bookshelf-dominoes',
-            'overdue-slip',
-            'bookmark-barricade',
-            'dust-cloud',
-            'torn-pages'
+            'stapler-shot',
+            'eraser',
+            'bin-dump',
+            'stapler-shot'
         ]
     },
 
@@ -371,11 +380,11 @@ SC.enemies = {
         order: 'inOrder',
         shuffleEnemyDeck: true,
         startingDeck: [
-            'ringtone-blast',
-            'notification-buzz',
-            'autoplay-video',
-            'power-bank',
-            'group-chat-ping'
+            'stapler-shot',
+            'pencil-sharpener',
+            'eraser',
+            'scattered-pencils',
+            'stapler-shot'
         ]
     },
     
@@ -389,13 +398,9 @@ SC.enemies = {
     order: 'inOrder',
     shuffleEnemyDeck: true,
     startingDeck: [
-        'paper-airplane-barrage',
-        'snack-attack',
-        'stink-bomb',
-        'loud-clap',
-        'gossip-with-friends',
-        'headphones-on',
-        'day-dreaming'
+        'stapler-shot',
+        'eraser',
+        'stapler-shot'
     ]
     },
     'mastermind': {
@@ -425,15 +430,15 @@ SC.enemies = {
             'tangle',
             'ball-avalanche',
             'locker',               //hallway cards
-            'school-bell',
-            'fire-extinguisher',
-            'combination lock',
-            'water-bottle',
-            'ringtone-blast', //library cards
-            'autoplay-video',
-            'paper-airplane-barrage',
-            'notification-buzz',
-            'stink-bomb',
+            '',
+            '',
+            '',
+            '',
+            '', //library cards
+            '',
+            '',
+            '',
+            '',
         ]
     },
 };
