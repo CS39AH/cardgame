@@ -1312,10 +1312,10 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Enemy',
         art: '🧼',
-        image: 'graphics/cards/mop.jpg',
-        description: 'Deal 3 damage.',
+        image: 'graphics/cards/hallway/mop.jpg',
+        description: 'Deal 5 damage.',
         effects: [
-            { type: 'damage', amount: 3 }
+            { type: 'damage', amount: 5 }
         ]
     },
 
@@ -1327,9 +1327,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '🧹',
         image: 'graphics/cards/broom.jpg',
-        description: 'Deal 2 damage.',
+        description: 'Deal 4 damage.',
         effects: [
-            { type: 'damage', amount: 2 }
+            { type: 'damage', amount: 4 }
         ]
     },
 
@@ -1341,9 +1341,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '🧹',
         image: 'graphics/cards/dustpan.jpg',
-        description: 'Gain 4 Relaxation.',
+        description: 'Gain 7 Relaxation.',
         effects: [
-            { type: 'block', amount: 4 }
+            { type: 'block', amount: 7 }
         ]
     },
 
@@ -1355,9 +1355,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '🚪',
         image: 'graphics/cards/hallway/evil-locker.png',
-        description: 'Place a 5 Sanity defender.',
+        description: 'Place a 8 Sanity defender.',
         effects: [
-            { type: 'defender', amount: 5, name: 'Locker', art: '🚪' }
+            { type: 'defender', amount: 8, name: 'Locker', art: '🚪' }
         ]
     },
 
@@ -1369,9 +1369,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '🗑️',
         image: 'graphics/cards/hallway/evil-trashcan.png',
-        description: 'Deal 1 damage.',
+        description: 'Deal 3 damage, multiply by 2.',
         effects: [
-            { type: 'damage', amount: 1 }
+            { type: 'damage', amount: 3, multiplier: 2 }
         ]
     },
 
@@ -1383,9 +1383,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '🔒',
         image: 'graphics/cards/hallway/combination-lock.png',
-        description: 'Gain 6 Relaxation.',
+        description: 'Gain 12 Relaxation.',
         effects: [
-            { type: 'block', amount: 6 }
+            { type: 'block', amount: 12 }
         ]
     },
 
@@ -1397,9 +1397,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '🥪',
         image: 'graphics/cards/hallway/moldy-sandwich.png',
-        description: 'Deal 4 damage.',
+        description: 'Deal 6 damage.',
         effects: [
-            { type: 'damage', amount: 4 }
+            { type: 'damage', amount: 6 }
         ]
     },
 
@@ -1411,23 +1411,23 @@ SC.cards = [
         rarity: 'Enemy',
         art: '☂️',
         image: 'graphics/cards/hallway/umbrella.png',
-        description: 'Deal 3 damage.',
+        description: 'Deal 5 damage.',
         effects: [
-            { type: 'damage', amount: 3 }
+            { type: 'damage', amount: 5 }
         ]
     },
 
     {
         id: 'dentention-notice',
         name: 'Detention Notice',
-        cost: 2,
-        type: 'Skill',
+        cost: 1,
+        type: 'Defese',
         rarity: 'Enemy',
         art: '📄',
         image: 'graphics/cards/hallway/detention-notice.png',
-        description: 'Reduce the player\'s Coffee by 1 next turn.',
+        description: 'apply 10 sanity defender.',
         effects: [
-            { type: 'reduceNextTurnEnergy', amount: 1 }
+            { type: 'defender', amount: 10, name: 'Detention Notice', art: '📄' }
         ]
     },
 
@@ -1439,9 +1439,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '🏆',
         image: 'graphics/cards/hallway/trophy.png',
-        description: 'add +1 damage to all future attacks.',
+        description: 'add +2 damage to all future attacks.',
         effects: [
-            { type: 'damage', amount: 1, times: 'all future attacks' }
+            { type: 'power', trigger: 'Attacks', effect: { type: 'damage', amount: 2 } }
         ]
     },
 
@@ -1453,9 +1453,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '💦',
         image: 'graphics/cards/hallway/water-splash.png',
-        description: 'Deal 3 damage.',
+        description: 'Deal 4 damage.',
         effects: [
-            { type: 'damage', amount: 3 }
+            { type: 'damage', amount: 4 }
         ]
     },
 
@@ -1467,9 +1467,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '💧',
         image: 'graphics/cards/hallway/water-bottle.png',
-        description: 'Recover 3 Sanity.',
+        description: 'Recover 5 Sanity.',
         effects: [
-            { type: 'heal', amount: 3 }
+            { type: 'heal', amount: 5 }
         ]
     },
 
@@ -1481,9 +1481,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '🔔',
         image: 'graphics/cards/hallway/school-bell.png',
-        description: 'Gain 1 Relaxation whenever you play a Defense card.',
+        description: 'increase damage by 2 when you play an Attack card.',
         effects: [
-            { type: 'power', trigger: 'playDefense', effect: { type: 'block', amount: 1 } }
+            { type: 'power', trigger: 'playAttack', effect: { type: 'damage', amount: 2 } }
         ]
     },
 
@@ -1494,10 +1494,10 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Enemy',
         art: '🍬',
-        image: 'graphics/cards/hallway/chewing-gum.png',
-        description: 'Gain 5 Relaxation.',
+        image: 'graphics/cards/hallway/chewed-gum.png',
+        description: 'Gain 10 sanity.',
         effects: [
-            { type: 'block', amount: 5 }
+            { type: 'defender', amount: 10 }
         ]
     },
 
@@ -1509,9 +1509,9 @@ SC.cards = [
         rarity: 'Enemy',
         art: '🧯',
         image: 'graphics/cards/hallway/fire-extinguisher.png',
-        description: 'Deal 10 damage.',
+        description: 'Deal 12 damage.',
         effects: [
-            { type: 'damage', amount: 10 }
+            { type: 'damage', amount: 12 }
         ]
     },
 
