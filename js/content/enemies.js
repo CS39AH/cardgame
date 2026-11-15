@@ -430,10 +430,10 @@ SC.enemies = {
             'tangle',
             'ball-avalanche',
             'locker',               //hallway cards
-            '',
-            '',
-            '',
-            '',
+            'combination-lock',
+            'trash-can',
+            'school-bell',
+            'water-bottle',
             '', //library cards
             '',
             '',
