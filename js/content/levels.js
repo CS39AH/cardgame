@@ -232,7 +232,7 @@ SC.levels = {
         enemy: 'library-study-enemy',
 
         // Win this zone: pick 1 of these 3 Rares
-        rewards: ['encyclopedia-barrage', 'silent-study-hall', 'quiet-hours']
+        rewards: ['encyclopedia-barrage', 'silent-study-hall', 'cardigan-of-calm']
     },
     
     library: {
