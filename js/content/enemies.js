@@ -440,11 +440,6 @@ SC.enemies = {
             'trash-can',
             'school-bell',
             'water-bottle',
-            '', //library cards
-            '',
-            '',
-            '',
-            '',
             'paper-airplane-barrage', //library cards
             'snack-attack',
             'stink-bomb',
