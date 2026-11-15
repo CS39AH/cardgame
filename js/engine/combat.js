@@ -809,12 +809,20 @@ combat.bossRewardChoices = function (bossId) {
 // Reward options: boss gets specific cards, everything else is random
 // with no repeats within one set of choices
 combat.rewardChoices = function (count, bossId) {
-    // A level can list its own reward cards (rewards: [...] in levels.js)
+    // A level can list its own reward cards (rewards: [...] in levels.js).
+    // Pick 3 different ones at random from that list.
     const level = combat.state && combat.state.level;
     if (level && level.rewards && level.rewards.length) {
-        return level.rewards.map(function (id) {
+        // Remove duplicate ids so the same card can't appear twice
+        const uniqueIds = level.rewards.filter(function (id, index, arr) {
+            return arr.indexOf(id) === index;
+        });
+
+        const cards = uniqueIds.map(function (id) {
             return SC.cards.find(function (card) { return card.id === id; });
-        }).filter(Boolean).map(function (card) {
+        }).filter(Boolean);
+
+        return shuffle(cards.slice()).slice(0, 3).map(function (card) {
             return Object.assign({}, card);
         });
     }
