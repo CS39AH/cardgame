@@ -200,12 +200,8 @@ window.SC = window.SC || {};
         if (SC.currentBattle && SC.currentBattle.heroId) {
             return SC.currentBattle.heroId;
         }
-        try {
-            const save = JSON.parse(localStorage.getItem('sc-save') || 'null');
-            return save && save.teacher;
-        } catch (e) {
-            return null;
-        }
+        const save = SC.save.load();
+        return save && save.teacher;
     }
 
     // Won the fight. Tutorial: back to the title.
@@ -221,8 +217,11 @@ window.SC = window.SC || {};
         const day = SC.days && SC.days.current;
 
         if (battle && day) {
-            const save = readSave() || {};
+            const save = SC.save.load() || {};
             const hero = SC.getCard(save.teacher);
+
+            // Remember this level was beaten (zones unlock from this later)
+            SC.save.beat(battle.levelId);
             const deck = (save.playerDeck || (hero && hero.startingDeck) || []).slice();
             if (rewardId) deck.push(rewardId);
 
@@ -230,15 +229,13 @@ window.SC = window.SC || {};
             // stay in the location and go back to its zone map
             const zones = day.nodes[battle.nodeIndex] && day.nodes[battle.nodeIndex].zones;
             if (zones && typeof battle.zoneIndex === 'number' && battle.zoneIndex + 1 < zones.length) {
-                localStorage.setItem('sc-save', JSON.stringify(
-                    Object.assign({}, save, {
-                        dayId: day.id,
-                        nodeIndex: battle.nodeIndex,
-                        zoneNode: battle.nodeIndex,
-                        zoneIndex: battle.zoneIndex + 1,
-                        playerDeck: deck
-                    })
-                ));
+                SC.save.update({
+                    dayId: day.id,
+                    nodeIndex: battle.nodeIndex,
+                    zoneNode: battle.nodeIndex,
+                    zoneIndex: battle.zoneIndex + 1,
+                    playerDeck: deck
+                });
                 SC.currentLocation = { nodeIndex: battle.nodeIndex };
                 SC.currentBattle = null;
                 window.location.hash = 'zones';
@@ -247,36 +244,26 @@ window.SC = window.SC || {};
 
             // Otherwise the location is done: on to the next one on the day map
             const nextIndex = battle.nodeIndex + 1;
-            if (nextIndex >= day.nodes.length) {
-                localStorage.removeItem('sc-save');
-            } else {
-                localStorage.setItem('sc-save', JSON.stringify(
-                    Object.assign({}, save, {
-                        dayId: day.id,
-                        nodeIndex: nextIndex,
-                        zoneNode: null,          // no zones in progress
-                        zoneIndex: 0,
-                        playerDeck: deck
-                    })
-                ));
-            }
+            // (finishing the last one marks the day complete instead of
+            // deleting the save, so what you've beaten is kept)
+            SC.save.update({
+                dayId: day.id,
+                nodeIndex: Math.min(nextIndex, day.nodes.length),
+                zoneNode: null,          // no zones in progress
+                zoneIndex: 0,
+                playerDeck: deck,
+                dayComplete: nextIndex >= day.nodes.length
+            });
         }
 
         SC.currentBattle = null;
         window.location.hash = 'map';
     }
-    function readSave() {
-        try {
-            return JSON.parse(localStorage.getItem('sc-save') || 'null');
-        } catch (e) {
-            return null;
-        }
-    }
 
     // Deck saved after earlier fights (null = use the teacher's starting deck)
     function savedDeck() {
         if (!fromMap()) return null;
-        const save = readSave();
+        const save = SC.save.load();
         return (save && save.playerDeck) || null;
     }
 

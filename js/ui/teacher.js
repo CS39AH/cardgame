@@ -192,11 +192,10 @@ window.SC = window.SC || {};
             if (clockingIn) return;
             clockingIn = true;
 
-            localStorage.setItem('sc-save', JSON.stringify({
-                dayId: SC.days.current.id,
-                nodeIndex: 0,
-                teacher: order[index]
-            }));
+            // New game goes in the first empty save slot. All 3 full:
+            // the saves screen asks which one to replace.
+            const slot = SC.save.firstEmpty();
+            if (slot !== -1) SC.save.startNew(slot, order[index]);
 
             const reduce = SC.REDUCE_ANIMATIONS;
             $('staff-stamp').classList.add('is-stamped');
@@ -204,7 +203,13 @@ window.SC = window.SC || {};
 
             setTimeout(function () {
                 if (SC.playSound) SC.playSound('bell');
-                window.location.hash = 'map';
+                if (slot !== -1) {
+                    window.location.hash = 'map';
+                } else {
+                    SC.saveMode = 'new';
+                    SC.pendingTeacher = order[index];
+                    window.location.hash = 'saves';
+                }
             }, reduce ? 150 : 900);
         });
 
