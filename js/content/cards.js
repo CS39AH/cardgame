@@ -2291,7 +2291,7 @@ SC.cards = [
         imageAlt: 'A group of friends gossiping together.',
         description: 'Gain a 7 sanity barrier.',
         effects: [
-            { type: 'defender', amount: 7, name: 'Gossip Circle', art: '👯' }
+            { type: 'defender', amount: 7, name: 'Gossip Circle' }
         ]
     },
         {
