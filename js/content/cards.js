@@ -382,10 +382,10 @@ SC.cards = [
         image: 'graphics/cards/incorrect-strikes.jpg',
         imageAlt: 'Red marker with 3 Xs',
         imageScale: 1.2,
-        description: 'Deal 1 damage 6 times',
+        description: 'Deal 1 damage 5 times',
         effects: [
             {type: 'damage', amount: 1},
-            { type: 'multiplier', amount: 6}
+            { type: 'multiplier', amount: 5}
         ]
     },
     {
