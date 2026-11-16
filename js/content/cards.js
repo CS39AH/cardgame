@@ -1430,10 +1430,10 @@ SC.cards = [
     },
 
     {
-        id: 'dentention-notice',
+        id: 'detention-notice',
         name: 'Detention Notice',
         cost: 1,
-        type: 'Defese',
+        type: 'Defense',
         rarity: 'Enemy',
         art: '📄',
         image: 'graphics/cards/hallway/detention-notice.png',
@@ -1957,7 +1957,7 @@ SC.cards = [
         cost: 3,
         type: 'Power',
         art: '📋',
-        image: 'graphics/cards/principal.png',
+        image: 'graphics/cards/principal.jpg',
         imageAlt: 'The school principal',
         imageScale: 1.1,
         description: 'Whenever you play an Attack card, apply 1 Called Out. Confiscated.',

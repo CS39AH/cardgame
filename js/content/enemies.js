@@ -101,7 +101,7 @@ SC.enemies = {
             'incorrect-strikes', 
             'incorrect-strikes', 
             'blue-barrier',
-            'healing-green0ink',
+            'healing-green-ink',
             'incorrect-strikes'
         ]
     },
@@ -436,10 +436,10 @@ SC.enemies = {
             'tangle',
             'ball-avalanche',
             'locker',               //hallway cards
-            '',
-            '',
-            '',
-            '',
+            'combination-lock',
+            'trash-can',
+            'school-bell',
+            'water-bottle',
             'paper-airplane-barrage', //library cards
             'snack-attack',
             'stink-bomb',
