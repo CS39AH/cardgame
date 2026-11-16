@@ -1430,10 +1430,10 @@ SC.cards = [
     },
 
     {
-        id: 'dentention-notice',
+        id: 'detention-notice',
         name: 'Detention Notice',
         cost: 1,
-        type: 'Defese',
+        type: 'Defense',
         rarity: 'Enemy',
         art: '📄',
         image: 'graphics/cards/hallway/detention-notice.png',
