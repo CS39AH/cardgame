@@ -101,7 +101,7 @@ SC.enemies = {
             'incorrect-strikes', 
             'incorrect-strikes', 
             'blue-barrier',
-            'healing-green0ink',
+            'healing-green-ink',
             'incorrect-strikes'
         ]
     },
