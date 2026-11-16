@@ -20,9 +20,9 @@
 
 window.SC = window.SC || {};
 
-// TEMPORARY: every location can be played in any order while the team
-// builds the levels. Set this back to false to lock them again.
-SC.UNLOCK_ALL_NODES = true;
+// Locations and zones unlock one at a time as you beat them.
+// (Set to true to play anything in any order while testing.)
+SC.UNLOCK_ALL_NODES = false;
 
 SC.buildDayPath = function (container, day, currentIndex, onAdvance) {
     // Clear any previous nodes so this function can safely be called again
