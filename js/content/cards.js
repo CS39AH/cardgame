@@ -1338,7 +1338,7 @@ SC.cards = [
         type: 'Attack',
         rarity: 'Enemy',
         art: '🧹',
-        image: 'graphics/cards/broom.jpg',
+        image: 'graphics/cards/hallway/broom.jpg',
         description: 'Deal 4 damage.',
         effects: [
             { type: 'damage', amount: 4 }
@@ -1352,7 +1352,7 @@ SC.cards = [
         type: 'Defense',
         rarity: 'Enemy',
         art: '🧹',
-        image: 'graphics/cards/dustpan.jpg',
+        image: 'graphics/cards/hallway/dustpan.jpg',
         description: 'Gain 7 Relaxation.',
         effects: [
             { type: 'block', amount: 7 }
