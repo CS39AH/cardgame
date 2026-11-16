@@ -11,10 +11,10 @@ SC.credits = {
 
     // One row per team member on the attendance roster
     team: [
-        { name: 'Erik Porter',  role: 'Title screen, card system, screen router, Cards screen' },
-        { name: 'Aaron Villalobos',   role: 'What they worked on' },
-        { name: 'Jonathan Chavez',   role: 'What they worked on' },
-        { name: 'Landry Vewenda',   role: 'What they worked on' },
+        { name: 'Erik Porter',  role: 'Title screen, card system, screen router, Cards screen, gym battle'},
+        { name: 'Aaron Villalobos',   role: 'Library battle' },
+        { name: 'Jonathan Chavez',   role: 'Staff images and selection, Cafeteria levels and cards, Called Out function and coffee reduction function' },
+        { name: 'Landry Vewenda',   role: 'Hallway battle' },
         { name: 'Malachi Mooty',   role: 'Card developement, Homeroom battle, Principal Battle, Starter Decks, Reward system and written tutorial' }
     ],
 

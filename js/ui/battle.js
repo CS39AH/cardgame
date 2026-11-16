@@ -19,6 +19,9 @@ window.SC = window.SC || {};
     let levelId = 'tutorial';
     let resultTimer = null;    
 
+    // Choosing a target (Technical Foul): { handIndex } while waiting for a click
+    let targeting = null;
+
     // While the enemy is playing its cards (or your attack is flying),
     // you can't click anything. fightId stops old timers from a fight you left.
     let enemyTurnRunning = false;
@@ -57,6 +60,10 @@ window.SC = window.SC || {};
         levelId = (SC.currentBattle && SC.currentBattle.levelId)
             || root.dataset.level
             || 'tutorial';
+
+        // While choosing a target, catch every click first (capture phase)
+        targeting = null;
+        root.addEventListener('click', onTargetClick, true);
             
         // Apply cafeteria styling only during Cafeteria Duty.
         // A level can borrow another level's look (theme: 'gym' on the gym zones)
@@ -64,8 +71,11 @@ window.SC = window.SC || {};
         root.classList.toggle('battle-screen--cafeteria', theme === 'cafeteria');
         root.classList.toggle('battle-screen--gym', theme === 'gym');
         root.classList.toggle('battle-screen--library', theme === 'library');
-        root.classList.toggle('battle-screen--principal', theme === 'principal')
+        root.classList.toggle('battle-screen--hallway', theme === 'hallway');
+        root.classList.toggle('battle-screen--principal', theme === 'principal');
 
+        //Apply the specific theme for this battle
+        root.classList.add('battle-screen--' + theme);
         // Page background behind the battle, e.g. body.scene--gym = the gym photo
         // (main.js clears these when you leave, so other screens get the classroom)
         document.body.classList.add('scene--' + theme);
@@ -190,12 +200,8 @@ window.SC = window.SC || {};
         if (SC.currentBattle && SC.currentBattle.heroId) {
             return SC.currentBattle.heroId;
         }
-        try {
-            const save = JSON.parse(localStorage.getItem('sc-save') || 'null');
-            return save && save.teacher;
-        } catch (e) {
-            return null;
-        }
+        const save = SC.save.load();
+        return save && save.teacher;
     }
 
     // Won the fight. Tutorial: back to the title.
@@ -211,8 +217,11 @@ window.SC = window.SC || {};
         const day = SC.days && SC.days.current;
 
         if (battle && day) {
-            const save = readSave() || {};
+            const save = SC.save.load() || {};
             const hero = SC.getCard(save.teacher);
+
+            // Remember this level was beaten (zones unlock from this later)
+            SC.save.beat(battle.levelId);
             const deck = (save.playerDeck || (hero && hero.startingDeck) || []).slice();
             if (rewardId) deck.push(rewardId);
 
@@ -220,15 +229,13 @@ window.SC = window.SC || {};
             // stay in the location and go back to its zone map
             const zones = day.nodes[battle.nodeIndex] && day.nodes[battle.nodeIndex].zones;
             if (zones && typeof battle.zoneIndex === 'number' && battle.zoneIndex + 1 < zones.length) {
-                localStorage.setItem('sc-save', JSON.stringify(
-                    Object.assign({}, save, {
-                        dayId: day.id,
-                        nodeIndex: battle.nodeIndex,
-                        zoneNode: battle.nodeIndex,
-                        zoneIndex: battle.zoneIndex + 1,
-                        playerDeck: deck
-                    })
-                ));
+                SC.save.update({
+                    dayId: day.id,
+                    nodeIndex: battle.nodeIndex,
+                    zoneNode: battle.nodeIndex,
+                    zoneIndex: battle.zoneIndex + 1,
+                    playerDeck: deck
+                });
                 SC.currentLocation = { nodeIndex: battle.nodeIndex };
                 SC.currentBattle = null;
                 window.location.hash = 'zones';
@@ -237,36 +244,26 @@ window.SC = window.SC || {};
 
             // Otherwise the location is done: on to the next one on the day map
             const nextIndex = battle.nodeIndex + 1;
-            if (nextIndex >= day.nodes.length) {
-                localStorage.removeItem('sc-save');
-            } else {
-                localStorage.setItem('sc-save', JSON.stringify(
-                    Object.assign({}, save, {
-                        dayId: day.id,
-                        nodeIndex: nextIndex,
-                        zoneNode: null,          // no zones in progress
-                        zoneIndex: 0,
-                        playerDeck: deck
-                    })
-                ));
-            }
+            // (finishing the last one marks the day complete instead of
+            // deleting the save, so what you've beaten is kept)
+            SC.save.update({
+                dayId: day.id,
+                nodeIndex: Math.min(nextIndex, day.nodes.length),
+                zoneNode: null,          // no zones in progress
+                zoneIndex: 0,
+                playerDeck: deck,
+                dayComplete: nextIndex >= day.nodes.length
+            });
         }
 
         SC.currentBattle = null;
         window.location.hash = 'map';
     }
-    function readSave() {
-        try {
-            return JSON.parse(localStorage.getItem('sc-save') || 'null');
-        } catch (e) {
-            return null;
-        }
-    }
 
     // Deck saved after earlier fights (null = use the teacher's starting deck)
     function savedDeck() {
         if (!fromMap()) return null;
-        const save = readSave();
+        const save = SC.save.load();
         return (save && save.playerDeck) || null;
     }
 
@@ -1004,9 +1001,17 @@ window.SC = window.SC || {};
             return;
         }
 
+        const card = s.hand[handIndex];
+
+        // Cards that remove an enemy Power: pick which one first
+        if (card && card.target === 'enemyPower' && card.cost <= s.player.energy &&
+            s.enemy.powers.length) {
+            startTargeting(handIndex);
+            return;
+        }
+
         // Attacks fly at their target first and only hit when they land,
         // so the damage, tearing, etc. happen at the moment of impact
-        const card = s.hand[handIndex];
         if (card && isAttackCard(card) && card.cost <= s.player.energy) {
             const flyTime = SC.battleFx.attackFly(handIndex);
             if (flyTime > 0) {
@@ -1026,11 +1031,72 @@ window.SC = window.SC || {};
         playNow(handIndex);
     }
 
-    function playNow(handIndex) {
-        if (SC.combat.playCard(handIndex) && SC.playSound) {
+    function playNow(handIndex, target) {
+        if (SC.combat.playCard(handIndex, target) && SC.playSound) {
             SC.playSound('slam');
         }
         render();
+    }
+
+    // ------- CHOOSING A TARGET (Technical Foul) -------
+
+    // The enemy's Powers light up and a banner says what to do.
+    // Click one to choose it; click anywhere else (or Escape) to cancel.
+    function startTargeting(handIndex) {
+        targeting = { handIndex: handIndex };
+        root.classList.add('is-targeting');
+
+        root.querySelectorAll('.battle__powers--enemy > .power-slot').forEach(function (slot) {
+            slot.classList.add('is-target');
+        });
+        const handSlot = root.querySelectorAll('.battle__hand .hand-slot')[handIndex];
+        if (handSlot) handSlot.classList.add('is-chosen');
+
+        const banner = document.createElement('div');
+        banner.className = 'battle__target-banner';
+        banner.innerHTML = 'Choose an enemy Power to remove <button type="button" class="battle__target-cancel">Cancel</button>';
+        root.appendChild(banner);
+
+        document.addEventListener('keydown', onTargetKey);
+        if (SC.playSound) SC.playSound('chalkClick');
+    }
+
+    function endTargeting() {
+        targeting = null;
+        root.classList.remove('is-targeting');
+        root.querySelectorAll('.is-target, .is-chosen').forEach(function (el) {
+            el.classList.remove('is-target', 'is-chosen');
+        });
+        const banner = root.querySelector('.battle__target-banner');
+        if (banner) banner.remove();
+        document.removeEventListener('keydown', onTargetKey);
+    }
+
+    function onTargetKey(e) {
+        if (e.key === 'Escape') endTargeting();
+    }
+
+    function onTargetClick(e) {
+        if (!targeting) return;
+
+        // Every click goes here while choosing, nothing else reacts to it
+        e.stopPropagation();
+        e.preventDefault();
+
+        const slot = e.target.closest('.battle__powers--enemy > .power-slot');
+        const handIndex = targeting.handIndex;
+        if (!slot) {
+            endTargeting();           // clicked somewhere else: cancel
+            return;
+        }
+
+        const slots = Array.from(root.querySelectorAll('.battle__powers--enemy > .power-slot'));
+        const index = slots.indexOf(slot);
+        endTargeting();
+
+        // Show the Power getting thrown out, then play the card
+        SC.battleFx.ejectPower(slot);
+        playNow(handIndex, index);
     }
 
     // Deals damage, and isn't a Power or a card that gets confiscated

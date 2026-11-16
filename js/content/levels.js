@@ -60,7 +60,8 @@ SC.levels = {
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'class-computer'
+        enemy: 'class-computer',
+        rewards: ['track-record', 'worksheets', 'coffee-refill', 'morning-coffee', 'desk-key', 'red-pen-markup']
     },
     'homeroom-markers': {
         id: 'homeroom-markers',
@@ -71,10 +72,11 @@ SC.levels = {
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'marker-horde'
+        enemy: 'marker-horde',
+        rewards: ['teachers-pet', 'worksheets', 'coffee-refill', 'morning-coffee', 'desk-key', 'red-pen-markup']
     },
 
-
+    // ----- CAFETERIA ZONES -----
     cafeteria: {
         id: 'cafeteria',
         name: 'Bad Food on the Loose',
@@ -85,14 +87,7 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'cafeteria-enemy',
-
-        bonusCards: [
-            'fresh-fruits',
-            'chocolate-milk',
-            'protective-apron',
-            'serving-spoon',
-            'clean-tray'
-        ]
+        rewards: ['fresh-fruits', 'chocolate-milk', 'protective-apron', 'clean-tray'],
     },
 
     'cafeteria-food-fight': {
@@ -105,7 +100,8 @@ SC.levels = {
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'cafeteria-food-fight-enemy'
+        enemy: 'cafeteria-food-fight-enemy',
+        rewards: ['fresh-fruits', 'chocolate-milk', 'protective-apron', 'clean-tray', 'serving-spoon'],
     },
 
     'cafeteria-oven': {
@@ -118,7 +114,8 @@ SC.levels = {
         energy: 3,
         refillEnergy: true,
         handSize: 5,
-        enemy: 'cafeteria-oven-enemy'
+        enemy: 'cafeteria-oven-enemy',
+
     },
 
     // ----- Gym zones (left basket, center court). The boss is `gym` below. -----
@@ -133,7 +130,9 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-warmup-enemy',
-        bonusCards: ['running-shoes', 'sports-drink']
+
+        // Win this zone: pick 1 of these 3 (instead of 3 random cards)
+        rewards: ['fast-break', 'knee-pads', 'coaches-whistle']
     },
 
     'gym-dodgeball': {
@@ -147,7 +146,9 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-dodgeball-enemy',
-        bonusCards: ['basketball-pass', 'stacked-mats']
+
+        // Win this zone: pick 1 of these 3 Rares
+        rewards: ['full-court-press', 'ice-bath', 'assistant-coach']
     },
 
     gym: {
@@ -160,15 +161,10 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'gym-enemy',
-
-        bonusCards: [
-            'basketball-pass',
-            'sports-drink',
-            'stacked-mats',
-            'running-shoes',
-            'team-spirit'
-        ]
     },
+
+
+    // ----- Hallway zones 
 
     hallway: {
         id: 'hallway',
@@ -180,14 +176,63 @@ SC.levels = {
         refillEnergy: true,
         handSize: 5,
         enemy: 'hallway-enemy',
+    },
 
-        bonusCards: [
-            'wet-floor-sign',
-            'disinfectant-spray',
-            'janitor-key',
-            'vacuum',
-            'gloves'
-        ]
+     'hallway-lockers': {
+        id: 'hallway-lockers',
+        name: 'Locker Lockdown',
+        intro: 'The lockers are jammed and students are panicking.',
+        winText: 'The lockers are finally unlocked and the students can get their things.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'hallway-lockers-enemy'
+    },
+
+     'hallway-boss': {
+        id: 'hallway-boss',
+        name: 'Hall Monitor',
+        intro: 'The hall monitor is out of control. You need to stop them.',
+        winText: 'The hall monitor is finally under control and the hallway is safe.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'hallway-boss-enemy'
+    },
+
+    // ----- Library zones -----
+        'library-returns': {
+        id: 'library-returns',
+        name: 'Overdue Returns',
+        theme: 'library',
+        intro: 'The return cart is overflowing, and the overdue books are fighting back!',
+        winText: 'Books have been returned, overdue fines have been paid. On to the study tables.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'library-returns-enemy',
+
+        // Win this zone: pick 1 of these 3 Uncommons
+        rewards: ['paperback-flurry', 'bookend-guard', 'study-group']
+    },
+
+    'library-study': {
+        id: 'library-study',
+        name: 'Ringing in the Stacks',
+        theme: 'library',
+        intro: 'Someone left a phone blasting on speaker between the shelves. Make it stop!',
+        winText: 'The phone is finally silent. Only the reading room is left.',
+        sanity: 30,
+        energy: 3,
+        refillEnergy: true,
+        handSize: 5,
+        enemy: 'library-study-enemy',
+
+        // Win this zone: pick 1 of these 3 Rares
+        rewards: ['encyclopedia-barrage', 'silent-study-hall', 'cardigan-of-calm']
     },
     
     library: {
@@ -200,15 +245,6 @@ SC.levels = {
     refillEnergy: true,
     handSize: 5,
     enemy: 'library-enemy',
-    
-
-    bonusCards: [
-            'hardcover-slam',
-            'quiet-corner',
-            'herbal-tea',
-            'research-notes',
-            'library-rules'
-        ]
     
     },
     principal: {

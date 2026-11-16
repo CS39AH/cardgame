@@ -101,11 +101,12 @@ SC.enemies = {
             'incorrect-strikes', 
             'incorrect-strikes', 
             'blue-barrier',
-            'healing-green0ink',
+            'healing-green-ink',
             'incorrect-strikes'
         ]
     },
 
+    //========== CAFETERIA ENEMIES ============
     'cafeteria-enemy': {
         id: 'cafeteria-enemy',
         name: 'Living Burnt Pizza',
@@ -145,7 +146,8 @@ SC.enemies = {
     'cafeteria-food-fight-enemy': {
         id: 'cafeteria-food-fight-enemy',
         name: 'Food Fight Students',
-        art: '🧒🧑🧒',  // Placeholder until the team adds enemy artwork
+        art: '🧒🧑🧒', 
+        image: 'graphics/cards/cafeteria/food_fight_students.png',
         sanity: 50,
         energy: 3,
         order: 'inOrder',
@@ -175,7 +177,8 @@ SC.enemies = {
     'cafeteria-oven-enemy': {
         id: 'cafeteria-oven-enemy',
         name: 'Evil Possessed Oven',
-        art: '🔥',  // Placeholder until the team adds its enemy artwork
+        art: '🔥', 
+        image: 'graphics/cards/cafeteria/evil_possessed_oven.png',
         sanity: 80,
         energy: 3,
         order: 'inOrder',
@@ -214,10 +217,13 @@ SC.enemies = {
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
-        startingDeck: [
+        startingDeck: [            // 7 cards
+            'skip-slap',
+            'skip-slap',
+            'skip-slap',
+            'tangle',
+            'tangle',
             'medicine-ball',
-            'water-break',
-            'dodgeball-barrage',
             'water-break'
         ]
     },
@@ -226,15 +232,26 @@ SC.enemies = {
         id: 'gym-dodgeball-enemy',
         name: 'The Ball Cart',
         art: '🛒',
+        image: 'graphics/cards/gym/ball-cart.png',
         sanity: 40,
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
-        startingDeck: [
+        startingDeck: [            // 15 cards
+            'dodgeball-barrage',
+            'dodgeball-barrage',
             'dodgeball-barrage',
             'dodgeball-barrage',
             'medicine-ball',
+            'medicine-ball',
+            'medicine-ball',
+            'ball-avalanche',
+            'ball-avalanche',
+            'rolling-rack',
+            'rolling-rack',
             'bleacher-wall',
+            'bleacher-wall',
+            'water-break',
             'water-break'
         ]
     },
@@ -248,22 +265,37 @@ SC.enemies = {
         energy: 3,
         order: 'inOrder',
         shuffleEnemyDeck: true,
-        startingDeck: [
+        startingDeck: [            // 20 cards
+            'beep',                // 1 Coffee: deal 4
+            'beep',
+            'beep',
+            'beep',
+            'beep',
             'dodgeball-barrage',   // 2 Coffee: deal 2, three times
+            'dodgeball-barrage',
             'dodgeball-barrage',
             'medicine-ball',       // 2 Coffee: deal 7
             'medicine-ball',
+            'medicine-ball',
+            'water-break',         // 1 Coffee: recover 5 Sanity
+            'water-break',
+            'water-break',
+            'final-lap',           // 3 Coffee: deal 15
+            'final-lap',
             'bleacher-wall',       // 1 Coffee: 6 Sanity defender
-            'padded-walls',        // 2 Coffee: Power, takes 1 less per hit
-            'water-break'          // 1 Coffee: recover 5 Sanity
+            'bleacher-wall',
+            'level-up',            // 2 Coffee: Power, its Attacks +1 per hit
+            'padded-walls'         // 2 Coffee: Power, takes 1 less per hit
         ]
     },
+
+    // ----- Hallway zone enemies
 
     'hallway-enemy': {
         id: 'hallway-enemy',
         name: 'spilled-liquid',
         art: '🧹',
-        image: 'graphics/cards/spill.jpg',
+        image: 'graphics/cards/hallway/spill.jpg',
         sanity: 50,
         energy: 3,
         order: 'inOrder',
@@ -273,7 +305,88 @@ SC.enemies = {
             'broom',
             'dustpan',
             'locker',
-            'trash-can'
+            'trash-can',
+            'mop',
+            'broom',
+            'locker'
+        ]
+    },
+
+     'hallway-lockers-enemy': {
+        id: 'hallway-lockers-enemy',
+        name: 'The Locker',
+        art: '🗄️',
+        image: 'graphics/cards/hallway/locker.png',
+        sanity: 60,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'moldy-sandwich',       // 1 Coffee: 5 Sanity defender
+            'combination-lock',
+            'umbrella',
+            'deodorant-spray',
+            'trophy',
+            'moldy-sandwich',
+            'combination-lock',
+            'detention-notice',
+        ]
+    },
+
+    'hallway-boss-enemy': {
+        id: 'hallway-boss-enemy',
+        name: 'The Monitor',
+        art: '🧑‍🏫',
+        image: 'graphics/cards/hallway/hall-monitor.png',
+        sanity: 70,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'water-splash',       // 2 Coffee: deal 3, three times
+            'water-bottle',
+            'fire-extinguisher',
+            'chewed-gum',
+            'school-bell',
+            'water-splash',
+            'fire-extinguisher',
+            'chewing-gum'
+        ]
+    },
+
+        'library-returns-enemy': {
+        id: 'library-returns-enemy',
+        name: 'Overdue Book Stack',
+        art: '📚',
+        image: 'graphics/cards/library/overdue-book-stack.png',
+        sanity: 40,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'bookshelf-dominoes',
+            'overdue-slip',
+            'bookmark-barricade',
+            'dust-cloud',
+            'torn-pages'
+        ]
+    },
+
+    'library-study-enemy': {
+        id: 'library-study-enemy',
+        name: 'Phone on Speaker',
+        art: '📱',
+        image: 'graphics/cards/library/phone-on-speaker.png',
+        sanity: 55,
+        energy: 3,
+        order: 'inOrder',
+        shuffleEnemyDeck: true,
+        startingDeck: [
+            'ringtone-blast',
+            'notification-buzz',
+            'autoplay-video',
+            'power-bank',
+            'group-chat-ping'
         ]
     },
     
@@ -287,16 +400,20 @@ SC.enemies = {
     order: 'inOrder',
     shuffleEnemyDeck: true,
     startingDeck: [
-        'stapler-shot',
-        'eraser',
-        'stapler-shot'
+        'paper-airplane-barrage',
+        'snack-attack',
+        'stink-bomb',
+        'loud-clap',
+        'gossip-with-friends',
+        'headphones-on',
+        'day-dreaming'
     ]
-    },
+},
     'mastermind': {
         id: 'mastermind',
         name: 'Robo Principal',
         art: '🤖',
-        image: 'graphics/cards/robo-principal.jpg',
+        image: 'graphics/cards/robo-principal.png',
         imageScale: 1.2,
         sanity: 80,
         energy: 4,
@@ -314,20 +431,20 @@ SC.enemies = {
             'undercooked-meat',
             'malfunctioning-electric-can-opener',
             'water-break',          //gym cards
-            '',
-            '',
-            '',
-            '',
+            'level-up',
+            'final-lap',
+            'tangle',
+            'ball-avalanche',
             'locker',               //hallway cards
-            '',
-            '',
-            '',
-            '',
-            '', //library cards
-            '',
-            '',
-            '',
-            '',
+            'combination-lock',
+            'trash-can',
+            'school-bell',
+            'water-bottle',
+            'paper-airplane-barrage', //library cards
+            'snack-attack',
+            'stink-bomb',
+            'gossip-with-friends',
+            'day-dreaming',
         ]
     },
 };
