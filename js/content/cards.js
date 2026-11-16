@@ -1957,7 +1957,7 @@ SC.cards = [
         cost: 3,
         type: 'Power',
         art: '📋',
-        image: 'graphics/cards/principal.jpg',
+        image: 'graphics/cards/principal.png',
         imageAlt: 'The school principal',
         imageScale: 1.1,
         description: 'Whenever you play an Attack card, apply 1 Called Out. Confiscated.',
